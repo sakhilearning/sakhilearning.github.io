@@ -16,24 +16,34 @@ jobs:
   audio-smoke:
     runs-on: ubuntu-latest
     steps:
-      - name: Call Sakhi TTS gateway
+      - name: Call Sakhi narration and phoneme gateway
         shell: bash
         run: |
           set -euo pipefail
           ENDPOINT='https://okzmrlrijovbuatjcgqi.supabase.co/functions/v1/sakhi-tts'
           CLIENT_KEY='sb_publishable_2rp84hm1GThThM-V5-s4jA_3Z_090ne'
-          CODE=$(curl --silent --show-error \
-            --output /tmp/sakhi-test.mp3 \
-            --dump-header /tmp/sakhi-headers.txt \
-            --write-out '%{http_code}' \
-            --request POST "$ENDPOINT" \
-            --header 'Origin: https://sakhilearning.github.io' \
-            --header 'Content-Type: application/json' \
-            --header "apikey: $CLIENT_KEY" \
-            --data '{"text":"Hello Sakhi","kind":"word","profile":"sakhi"}')
-          test "$CODE" = '200' || { cat /tmp/sakhi-headers.txt; echo "TTS HTTP $CODE"; exit 1; }
-          grep -qi '^content-type: audio/mpeg' /tmp/sakhi-headers.txt
-          grep -qi '^x-sakhi-audio: elevenlabs' /tmp/sakhi-headers.txt
-          BYTES=$(wc -c < /tmp/sakhi-test.mp3)
-          test "$BYTES" -gt 1000 || { echo "Audio response too small: $BYTES bytes"; exit 1; }
-          echo "Live ElevenLabs path returned $BYTES bytes of MP3 audio."
+          call_audio() {
+            local NAME="$1" BODY="$2" HEADER="$3"
+            local MP3="/tmp/${NAME}.mp3" HDR="/tmp/${NAME}.headers"
+            local CODE
+            CODE=$(curl --silent --show-error \
+              --output "$MP3" \
+              --dump-header "$HDR" \
+              --write-out '%{http_code}' \
+              --request POST "$ENDPOINT" \
+              --header 'Origin: https://sakhilearning.github.io' \
+              --header 'Content-Type: application/json' \
+              --header "apikey: $CLIENT_KEY" \
+              --data "$BODY")
+            test "$CODE" = '200' || { cat "$HDR"; echo "$NAME HTTP $CODE"; exit 1; }
+            grep -qi '^content-type: audio/mpeg' "$HDR"
+            grep -qi "^x-sakhi-audio: $HEADER" "$HDR"
+            local BYTES
+            BYTES=$(wc -c < "$MP3")
+            test "$BYTES" -gt 1000 || { echo "$NAME audio too small: $BYTES bytes"; exit 1; }
+            echo "$NAME returned $BYTES bytes of MP3 audio."
+          }
+          call_audio narration '{"text":"Welcome to Sakhi Magic Learning","kind":"instruction","profile":"sakhi"}' elevenlabs
+          call_audio phoneme_m '{"text":"m","kind":"phoneme","profile":"sakhi"}' elevenlabs-phoneme
+          call_audio phoneme_s '{"text":"s","kind":"phoneme","profile":"sakhi"}' elevenlabs-phoneme
+          call_audio phoneme_a '{"text":"a","kind":"phoneme","profile":"sakhi"}' elevenlabs-phoneme
