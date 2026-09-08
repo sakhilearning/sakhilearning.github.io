@@ -35,7 +35,7 @@ jobs:
               --header 'Content-Type: application/json' \
               --header "apikey: $CLIENT_KEY" \
               --data "$BODY")
-            test "$CODE" = '200' || { cat "$HDR"; echo "$NAME HTTP $CODE"; exit 1; }
+            if [ "$CODE" != '200' ]; then cat "$HDR"; cat "$MP3"; echo; echo "$NAME HTTP $CODE"; exit 1; fi
             grep -qi '^content-type: audio/mpeg' "$HDR"
             grep -qi "^x-sakhi-audio: $HEADER" "$HDR"
             local BYTES
