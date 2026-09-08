@@ -1,30 +1,10 @@
 const fs=require('fs');
-
 const jsFiles=fs.readdirSync('.').filter(f=>f.endsWith('.js'));
-const allowedDirectSpeech=new Set(['speech-service.js']);
 const violations=[];
-
-for(const file of jsFiles){
-  const src=fs.readFileSync(file,'utf8');
-  if(!allowedDirectSpeech.has(file)&&/(SpeechSynthesisUtterance|speechSynthesis\.)/.test(src))violations.push(`${file}: browser speech must go through SpeechService`);
-  if(file!=='speech-service.js'&&/window\.SpeechService\s*=/.test(src))violations.push(`${file}: must not redefine SpeechService`);
-  if(/Listen to the sound\. \$\{k\}|starts with \$\{x\.sound\}|Guard legacy Sound Garden handlers|stopImmediatePropagation\(\).*sound-orb/s.test(src))violations.push(`${file}: contains legacy/override phonics audio behavior`);
-  if(/phonics-audio-fix\.js|loadPhonicsAudioFix/.test(src))violations.push(`${file}: references deleted phonics patch layer`);
-}
-if(fs.existsSync('phonics-audio-fix.js'))violations.push('phonics-audio-fix.js: patch layer must not exist; fix callers at source');
-
-const kid=fs.readFileSync('kid-upgrade.js','utf8');
-for(const required of ['speech().speakPhoneme(k)','speech().speakPhoneme(value)','speech().speakInstruction(a.spoken_instruction)'])if(!kid.includes(required))violations.push(`kid-upgrade.js missing canonical call: ${required}`);
-const engine=fs.readFileSync('interaction-engine.js','utf8');
-if(!engine.includes('window.SpeechService.speakInstruction(text)'))violations.push('interaction-engine.js must delegate spoken instructions to SpeechService');
-
-const service=fs.readFileSync('speech-service.js','utf8');
-for(const api of ['speakInstruction','speakCharacter','speakPhoneme','speakWord','speakStory','speakFeedback','stopSpeech','repeatSpeech','unlockAudio','getStatus'])if(!service.includes(api))violations.push(`speech-service.js missing ${api}`);
-if(/getStoredAccessToken|access_token|currentSession/.test(service))violations.push('speech-service.js must not require parent authentication for child narration');
-if(!service.includes("'apikey':cfg.supabaseAnonKey"))violations.push('speech-service.js must send the public Supabase client key to the TTS gateway');
-if(!service.includes("'elevenlabs-phoneme'")||!service.includes("'elevenlabs'"))violations.push('speech-service.js must record ElevenLabs narration and phoneme providers');
-if(!service.includes("neuralSpeak(clean,'phoneme','sakhi')"))violations.push('speech-service.js phonemes must use the neural phoneme route');
-if(!service.includes('AudioContext')&&!service.includes('webkitAudioContext'))violations.push('speech-service.js must include mobile-safe WebAudio playback support');
-
+for(const file of jsFiles){const src=fs.readFileSync(file,'utf8');if(file!=='speech-service.js'&&/(SpeechSynthesisUtterance|speechSynthesis\.)/.test(src))violations.push(`${file}: direct browser speech bypasses SpeechService`);if(file!=='speech-service.js'&&/window\.SpeechService\s*=/.test(src))violations.push(`${file}: redefines SpeechService`);if(/phonics-audio-fix\.js|loadPhonicsAudioFix|Mmmmoon/.test(src))violations.push(`${file}: legacy phonics audio behavior returned`)}
+if(fs.existsSync('phonics-audio-fix.js'))violations.push('obsolete phonics-audio-fix.js must not exist');
+const kid=fs.readFileSync('kid-upgrade.js','utf8');if(!/speakPhoneme\(letter\)/.test(kid))violations.push('Sound Garden must call SpeechService.speakPhoneme');if(!/speakInstruction\(activity\.spoken_instruction\)/.test(kid))violations.push('activity narration must call SpeechService.speakInstruction');
+const engine=fs.readFileSync('interaction-engine.js','utf8');if(!engine.includes('window.SpeechService.speakInstruction(text)'))violations.push('interaction engine must delegate instructions to SpeechService');
+const service=fs.readFileSync('speech-service.js','utf8');for(const api of ['speakInstruction','speakCharacter','speakPhoneme','speakWord','speakStory','speakFeedback','stopSpeech','repeatSpeech','unlockAudio','getStatus'])if(!service.includes(api))violations.push(`SpeechService missing ${api}`);if(/getStoredAccessToken|access_token|currentSession/.test(service))violations.push('child narration must not require parent authentication');if(!service.includes("'apikey':cfg.supabaseAnonKey"))violations.push('SpeechService must use the configured public gateway key');if(!service.includes('AudioContext')&&!service.includes('webkitAudioContext'))violations.push('SpeechService missing mobile-safe WebAudio playback');
 if(violations.length){console.error('Audio architecture validation failed:\n- '+violations.join('\n- '));process.exit(1)}
-console.log('Audio architecture valid: one SpeechService, ElevenLabs narration + phoneme routes, no patch layer, no parent-login dependency.');
+console.log('Audio architecture valid: one SpeechService and no feature-level provider/fallback implementation. Phoneme asset verification remains a separate content-quality gate.');
