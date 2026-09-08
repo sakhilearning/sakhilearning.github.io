@@ -8,7 +8,7 @@ on:
     - cron: '*/30 * * * *'
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -23,18 +23,42 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Sakhi source
+      - name: Checkout Sakhi destination
+        uses: actions/checkout@v4
+        with:
+          path: target
+
+      - name: Checkout current Sakhi source
         uses: actions/checkout@v4
         with:
           repository: vgovindam/rainbow-unicorn-phonics
           ref: main
-          path: site
+          path: source
+
+      - name: Sync app into Sakhi repository
+        shell: bash
+        run: |
+          rsync -a --delete \
+            --exclude '.git/' \
+            --exclude '.github/' \
+            source/ target/
+          cd target
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m "Sync Sakhi application source"
+            git push origin HEAD:main
+          fi
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
-      - name: Upload site
+
+      - name: Upload Sakhi site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: site
+          path: target
+
       - name: Deploy Pages
         id: deployment
         uses: actions/deploy-pages@v4
