@@ -2,8 +2,8 @@
 'use strict';
 
 const KID_AUDIO={
-  m:{label:'m',sound:'mmmm',word:'moon'},s:{label:'s',sound:'ssss',word:'sun'},t:{label:'t',sound:'t',word:'top'},p:{label:'p',sound:'p',word:'pig'},a:{label:'a',sound:'aaa',word:'apple'},
-  n:{label:'n',sound:'nnnn',word:'nest'},f:{label:'f',sound:'ffff',word:'fish'},l:{label:'l',sound:'llll',word:'leaf'},h:{label:'h',sound:'hhh',word:'hat'},r:{label:'r',sound:'rrrr',word:'rainbow'}
+  m:{label:'m',word:'moon'},s:{label:'s',word:'sun'},t:{label:'t',word:'top'},p:{label:'p',word:'pig'},a:{label:'a',word:'apple'},
+  n:{label:'n',word:'nest'},f:{label:'f',word:'fish'},l:{label:'l',word:'leaf'},h:{label:'h',word:'hat'},r:{label:'r',word:'rainbow'}
 };
 const DIRECT_SCENES={
   unicorn:'./assets/hq/fairy-castle-rainbow.jpg',
@@ -22,17 +22,15 @@ const DIRECT_SCENES={
   memory:'./assets/hq/anna-elsa-ballroom.jpg'
 };
 
-function safeSpeak(text){
-  if(!('speechSynthesis' in window)||!text)return;
-  speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(text);u.rate=.78;u.pitch=1.08;u.lang='en-US';speechSynthesis.speak(u);
+function speech(){
+  if(!window.SpeechService)throw new Error('SpeechService must load before kid-upgrade.js');
+  return window.SpeechService;
 }
-function playLetterSound(k){
-  const x=KID_AUDIO[k];if(!x)return;
-  const phrase=k==='t'||k==='p'?`Listen to the sound. ${k}. ${k}. ${k}. ${x.word}.`:`Listen. ${x.sound}. ${x.word} starts with ${x.sound}.`;
-  safeSpeak(phrase);
+async function playLetterSound(k){
+  if(!KID_AUDIO[k])return false;
   document.querySelectorAll('.sound-orb').forEach(b=>b.classList.toggle('playing',b.dataset.sound===k));
-  setTimeout(()=>document.querySelectorAll('.sound-orb').forEach(b=>b.classList.remove('playing')),700);
+  try{return await speech().speakPhoneme(k);}
+  finally{document.querySelectorAll('.sound-orb').forEach(b=>b.classList.remove('playing'));}
 }
 window.playLetterSound=playLetterSound;
 
@@ -100,7 +98,7 @@ window.renderWordBuilder=function(a,m){
    if(slotIndex>=a.targets.length)return;
    while(st.order.length<slotIndex)st.order.push(null);
    if(st.order[slotIndex]){const oldIndex=slotIndex;st.order.splice(oldIndex,1);st.tileIds.splice(oldIndex,1);}
-   st.order[slotIndex]=value;st.tileIds[slotIndex]=id;sync();safeSpeak(value);
+   st.order[slotIndex]=value;st.tileIds[slotIndex]=id;sync();speech().speakPhoneme(value);
  }
  m.querySelectorAll('.movable-letter').forEach(t=>{
    t.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',JSON.stringify({id:t.dataset.id,value:t.dataset.value}));});
@@ -111,7 +109,7 @@ window.renderWordBuilder=function(a,m){
    s.addEventListener('drop',e=>{e.preventDefault();try{const x=JSON.parse(e.dataTransfer.getData('text/plain'));place(x.id,x.value,+s.dataset.slot);}catch(_){}});
    s.addEventListener('click',()=>{const idx=+s.dataset.slot;if(st.order[idx]){st.order.splice(idx,1);st.tileIds.splice(idx,1);sync();}});
  });
- m.querySelectorAll('.tile-sound').forEach(b=>b.addEventListener('click',()=>safeSpeak(`Sound: ${b.dataset.value}`)));
+ m.querySelectorAll('.tile-sound').forEach(b=>b.addEventListener('click',()=>speech().speakPhoneme(b.dataset.value)));
  sync();
 };
 
@@ -128,7 +126,7 @@ window.openStructuredActivity=function(a,containerId,source){
    }
    const tools=mission.querySelector('.child-tools');
    if(tools&&!tools.querySelector('.start-over')){const b=document.createElement('button');b.className='child-tool start-over';b.textContent='↻ Start Over';b.onclick=()=>restartCurrentMission(false);tools.appendChild(b);}
-   safeSpeak(a.spoken_instruction);
+   speech().speakInstruction(a.spoken_instruction);
  },30);
 };
 

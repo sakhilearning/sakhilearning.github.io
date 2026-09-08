@@ -74,38 +74,6 @@ function repeatSpeech(){return lastText?speak(lastText):Promise.resolve(false);}
 function pause(){if(current instanceof Audio)current.pause();else try{speechSynthesis.pause();}catch(_){}}
 function resume(){if(current instanceof Audio)current.play();else try{speechSynthesis.resume();}catch(_){}}
 
-async function playPurePhoneme(id,button){
-  if(button){
-    document.querySelectorAll('.sound-orb').forEach(b=>b.classList.toggle('playing',b===button));
-  }
-  await speakPhoneme(id);
-  if(button)button.classList.remove('playing');
-}
-
-// Guard legacy Sound Garden handlers. The old UI used to say things like
-// “Listen… rainbow starts with…”. Capture the click first and play only the phoneme.
-document.addEventListener('click',async e=>{
-  const orb=e.target?.closest?.('.sound-orb');
-  if(orb){
-    e.preventDefault();e.stopImmediatePropagation();
-    await playPurePhoneme(orb.dataset.sound,orb);
-    return;
-  }
-  const all=e.target?.closest?.('.sound-all');
-  if(all){
-    e.preventDefault();e.stopImmediatePropagation();
-    for(const id of ['m','s','t','p','a'])await playPurePhoneme(id,null);
-    return;
-  }
-  const tile=e.target?.closest?.('.tile-sound');
-  if(tile){
-    e.preventDefault();e.stopImmediatePropagation();
-    const value=String(tile.dataset.value||'').trim();
-    if(/^[a-z]$/i.test(value))await speakPhoneme(value.toLowerCase());
-    else if(value)await speak(value,{kind:'word',profile:'sakhi'});
-  }
-},true);
-
 window.SpeechService={
  speakInstruction:(t,p='sakhi')=>speak(t,{kind:'instruction',profile:p}),
  speakCharacter:(t,p='sakhi')=>speak(t,{kind:'character',profile:p}),
