@@ -1,0 +1,35 @@
+name: Refactor Audio Architecture
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/refactor-audio.cjs'
+      - '.github/workflows/audio-refactor.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refactor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Refactor audio ownership
+        run: node scripts/refactor-audio.cjs
+      - name: Validate refactor
+        run: |
+          node --check speech-service.js
+          node --check kid-upgrade.js
+          node scripts/validate-audio-architecture.cjs
+      - name: Commit source refactor
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add kid-upgrade.js speech-service.js sw.js
+          if ! git diff --cached --quiet; then
+            git commit -m "Refactor audio to single SpeechService architecture"
+            git push origin HEAD:main
+          fi
