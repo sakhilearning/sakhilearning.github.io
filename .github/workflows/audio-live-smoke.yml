@@ -1,0 +1,39 @@
+name: Live ElevenLabs Audio Smoke Test
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'speech-service.js'
+      - 'supabase-config.js'
+      - '.github/workflows/audio-live-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audio-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Sakhi TTS gateway
+        shell: bash
+        run: |
+          set -euo pipefail
+          ENDPOINT='https://okzmrlrijovbuatjcgqi.supabase.co/functions/v1/sakhi-tts'
+          CLIENT_KEY='sb_publishable_2rp84hm1GThThM-V5-s4jA_3Z_090ne'
+          CODE=$(curl --silent --show-error \
+            --output /tmp/sakhi-test.mp3 \
+            --dump-header /tmp/sakhi-headers.txt \
+            --write-out '%{http_code}' \
+            --request POST "$ENDPOINT" \
+            --header 'Origin: https://sakhilearning.github.io' \
+            --header 'Content-Type: application/json' \
+            --header "apikey: $CLIENT_KEY" \
+            --data '{"text":"Hello Sakhi","kind":"word","profile":"sakhi"}')
+          test "$CODE" = '200' || { cat /tmp/sakhi-headers.txt; echo "TTS HTTP $CODE"; exit 1; }
+          grep -qi '^content-type: audio/mpeg' /tmp/sakhi-headers.txt
+          grep -qi '^x-sakhi-audio: elevenlabs' /tmp/sakhi-headers.txt
+          BYTES=$(wc -c < /tmp/sakhi-test.mp3)
+          test "$BYTES" -gt 1000 || { echo "Audio response too small: $BYTES bytes"; exit 1; }
+          echo "Live ElevenLabs path returned $BYTES bytes of MP3 audio."
