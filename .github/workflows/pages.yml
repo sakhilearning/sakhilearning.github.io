@@ -4,11 +4,9 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
-  schedule:
-    - cron: '*/30 * * * *'
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
@@ -23,33 +21,23 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Sakhi destination
+      - name: Checkout Sakhi
         uses: actions/checkout@v4
-        with:
-          path: target
 
-      - name: Checkout current Sakhi source
-        uses: actions/checkout@v4
-        with:
-          repository: vgovindam/rainbow-unicorn-phonics
-          ref: main
-          path: source
-
-      - name: Sync app into Sakhi repository
-        shell: bash
+      - name: Validate JavaScript
         run: |
-          rsync -a --delete \
-            --exclude '.git/' \
-            --exclude '.github/' \
-            source/ target/
-          cd target
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          if ! git diff --cached --quiet; then
-            git commit -m "Sync Sakhi application source"
-            git push origin HEAD:main
-          fi
+          node --check app.js
+          node --check scheduler.js
+          node --check interaction-engine.js
+          node --check curriculum.js
+          node --check persistence.js
+          node --check adaptive-engine.js
+          node --check backend-bridge.js
+          node --check kid-upgrade.js
+          node --check visuals.js
+          node --check speech-service.js
+          node --check sakhi-shell.js
+          node scripts/validate-activities.cjs
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
@@ -57,7 +45,7 @@ jobs:
       - name: Upload Sakhi site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: target
+          path: .
 
       - name: Deploy Pages
         id: deployment
