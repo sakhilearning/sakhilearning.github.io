@@ -1,3 +1,4 @@
+# Validates the production Sakhi -> Supabase -> ElevenLabs path, including phonemes.
 name: Live ElevenLabs Audio Smoke Test
 
 on:
