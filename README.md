@@ -1,23 +1,28 @@
-# Rainbow Magic Learning Adventure
+# Sakhi Magic Learning
 
-A mobile-first, parent-guided educational web app for a 5-year-old learner. It began as a phonics app and now includes a mastery-based whole-child learning system while keeping foundational literacy and mathematics as the highest priorities.
+Sakhi Magic Learning is a touch-first, mastery-based learning PWA for a Kindergarten-age learner. It automatically plans short daily adventures from curriculum readiness, review needs, recent performance, and interaction variety.
 
-## Educational model
+## Architecture
 
-- 15–25 minute sessions with short 2–7 minute activities
-- literacy + mathematics in the daily core
-- rotating language, logic, science, memory, executive-function, social-emotional, practical-life, creativity, motor and general-knowledge activities
-- every activity includes a learning objective, target skill, educational reason, materials, parent coaching, observable success criterion and optional extension
-- adaptive skill states: Not Introduced, Introduced, Learning, Developing, Mostly Mastered, Mastered, Review Needed
-- mastery requires repeated evidence rather than one successful attempt
-- constructive scaffolding and gradual difficulty changes
-- reading baseline for letter sounds, vowels, phonemic awareness, blending, segmenting and CVC decoding
-- local-only progress storage; no account, ads, microphone, camera, or child-data upload
+The authoritative service map is documented in `ARCHITECTURE.md`. Feature code must not create competing speech, asset, mastery, lesson-planning, persistence, parent-auth, or lifecycle implementations.
 
-## Themes
+## Learning model
 
-Original motivational themes include Rainbow Unicorn Kingdom, Ice Princess Castle, Mermaid Ocean Adventure, Enchanted Library, Tower Princess Adventure, Fairy Garden, Dragon Rescue and Space Princess. The public project intentionally avoids official Disney artwork/branding.
+- 15–25 minute recommended adventures
+- literacy and mathematics as frequent core domains
+- rotating comprehension, logic, science, memory, executive function, social-emotional learning, writing, creativity, motor, life skills and general knowledge
+- repeated evidence across sessions before mastery
+- spaced review and automatic next-skill selection
+- touch-first interactive activities rather than static worksheets
+
+## Audio and visuals
+
+Narration is owned by `SpeechService` and uses the configured premium ElevenLabs route through Supabase. Critical phoneme pronunciation remains a separate quality gate and is not curriculum-verified until the validated phoneme asset bank is complete. Visual selection is owned by `AssetService`; approved user-owned/original high-resolution artwork can be added there without changing activity logic.
+
+## Progress
+
+`ProgressService` owns persistence. When Family Progress Sync is authenticated, Supabase is the durable source of truth and browser storage is a local cache/offline bridge.
 
 ## Hosting
 
-Static PWA hosted with GitHub Pages. All core files are in the repository root.
+Static PWA hosted at https://sakhilearning.github.io/.
