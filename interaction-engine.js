@@ -102,9 +102,8 @@ persist(false);
 
 let interactionRuntime=null;
 function speakInstruction(text){
- if(!('speechSynthesis' in window))return;
- window.speechSynthesis.cancel();
- const u=new SpeechSynthesisUtterance(text);u.rate=.86;u.pitch=1.08;u.lang='en-US';window.speechSynthesis.speak(u);
+ if(!window.SpeechService)throw new Error('SpeechService must load before interaction-engine.js');
+ return window.SpeechService.speakInstruction(text);
 }
 function shinyProgress(){
  const ids=data.quest||[];return `<div class="shiny-progress" aria-label="Quest progress">${ids.map(id=>data.questResults[id]!=null?'<span class="filled">⭐</span>':'<span>☆</span>').join('')}</div>`;
