@@ -19,9 +19,7 @@ jobs:
         run: |
           from pathlib import Path
 
-          # Canonical child-facing phonics copy: fix the source data, not a runtime override.
-          p=Path('interaction-engine.js')
-          s=p.read_text()
+          p=Path('interaction-engine.js');s=p.read_text()
           replacements={
             "spoken_instruction:'Put the pictures that start with mmm in Luna’s pink cloud and the pictures that start with sss in the blue cloud.'":"spoken_instruction:'Listen to each picture name. Put the /m/ pictures in Luna’s pink cloud and the /s/ pictures in the blue cloud.'",
             "hint_2:'Mmmmoon starts with /m/.'":"hint_2:'Moon begins with the /m/ sound.'",
@@ -29,12 +27,10 @@ jobs:
             "success_feedback:'Yes! Moon and map start with /m/.'":"success_feedback:'Yes! You sorted the pictures by their first sounds.'"
           }
           for old,new in replacements.items():
-            if old not in s:
-              raise SystemExit(f'Missing expected interaction-engine source: {old}')
+            if old not in s: raise SystemExit(f'Missing expected source: {old}')
             s=s.replace(old,new)
           p.write_text(s)
 
-          # Load services in dependency order and load shared design tokens first.
           p=Path('index.html');s=p.read_text()
           if '<link rel="stylesheet" href="./design-tokens.css" />' not in s:
             s=s.replace('<link rel="stylesheet" href="./styles.css" />','<link rel="stylesheet" href="./design-tokens.css" />\n<link rel="stylesheet" href="./styles.css" />')
@@ -44,35 +40,19 @@ jobs:
           s=s.replace(old,new).replace('style="margin-top:12px"','class="space-top"').replace('class="grid" style="margin-top:13px"','class="grid space-top"')
           p.write_text(s)
 
-          # Accurate project documentation.
-          Path('README.md').write_text('''# Sakhi Magic Learning\n\nSakhi Magic Learning is a touch-first, mastery-based learning PWA for a Kindergarten-age learner. It automatically plans short daily adventures from curriculum readiness, review needs, recent performance, and interaction variety.\n\n## Architecture\n\nThe authoritative service map is documented in `ARCHITECTURE.md`. Feature code must not create competing speech, asset, mastery, lesson-planning, persistence, parent-auth, or lifecycle implementations.\n\n## Learning model\n\n- 15–25 minute recommended adventures\n- literacy and mathematics as frequent core domains\n- rotating comprehension, logic, science, memory, executive function, social-emotional learning, writing, creativity, motor, life skills and general knowledge\n- repeated evidence across sessions before mastery\n- spaced review and automatic next-skill selection\n- touch-first interactive activities rather than static worksheets\n\n## Audio and visuals\n\nNarration is owned by `SpeechService` and currently uses the configured premium ElevenLabs route through Supabase. Critical phoneme pronunciation is tracked separately and is not considered curriculum-verified until the validated phoneme asset bank is complete. Visual selection is owned by `AssetService`; approved user-owned/original high-resolution artwork can be added there without changing activity logic.\n\n## Progress\n\n`ProgressService` owns persistence. When Family Progress Sync is authenticated, Supabase is the durable source of truth and browser storage is a local cache/offline bridge.\n\n## Hosting\n\nStatic PWA hosted at https://sakhilearning.github.io/.\n''')
+          Path('README.md').write_text('''# Sakhi Magic Learning\n\nSakhi Magic Learning is a touch-first, mastery-based learning PWA for a Kindergarten-age learner. It automatically plans short daily adventures from curriculum readiness, review needs, recent performance, and interaction variety.\n\n## Architecture\n\nThe authoritative service map is documented in `ARCHITECTURE.md`. Feature code must not create competing speech, asset, mastery, lesson-planning, persistence, parent-auth, or lifecycle implementations.\n\n## Learning model\n\n- 15–25 minute recommended adventures\n- literacy and mathematics as frequent core domains\n- rotating comprehension, logic, science, memory, executive function, social-emotional learning, writing, creativity, motor, life skills and general knowledge\n- repeated evidence across sessions before mastery\n- spaced review and automatic next-skill selection\n- touch-first interactive activities rather than static worksheets\n\n## Audio and visuals\n\nNarration is owned by `SpeechService` and uses the configured premium ElevenLabs route through Supabase. Critical phoneme pronunciation remains a separate quality gate and is not curriculum-verified until the validated phoneme asset bank is complete. Visual selection is owned by `AssetService`; approved user-owned/original high-resolution artwork can be added there without changing activity logic.\n\n## Progress\n\n`ProgressService` owns persistence. When Family Progress Sync is authenticated, Supabase is the durable source of truth and browser storage is a local cache/offline bridge.\n\n## Hosting\n\nStatic PWA hosted at https://sakhilearning.github.io/.\n''')
 
-          # Cache the reorganized application as one version.
-          p=Path('sw.js');s=p.read_text()
-          s=s.replace("const CACHE='sakhi-magic-learning-v16';","const CACHE='sakhi-magic-learning-v17';")
-          old="'./styles.css','./interactions.css'"
-          new="'./design-tokens.css','./styles.css','./interactions.css'"
-          s=s.replace(old,new)
-          for asset in ['./core-learning-services.js','./ui-hooks.js','./progress-service.js','./parent-auth-service.js','./asset-service.js']:
-            if repr(asset) not in s:
-              s=s.replace("'./scheduler.js'",repr(asset)+",'./scheduler.js'",1)
+          p=Path('sw.js');s=p.read_text().replace("const CACHE='sakhi-magic-learning-v16';","const CACHE='sakhi-magic-learning-v17';")
+          s=s.replace("'./styles.css','./interactions.css'","'./design-tokens.css','./styles.css','./interactions.css'")
+          marker="'./scheduler.js'"
+          additions=['./core-learning-services.js','./ui-hooks.js','./progress-service.js','./parent-auth-service.js','./asset-service.js']
+          for asset in reversed(additions):
+            if repr(asset) not in s:s=s.replace(marker,repr(asset)+','+marker,1)
           p.write_text(s)
-
-          # Expand deployment gates to the authoritative architecture.
-          p=Path('.github/workflows/pages.yml');s=p.read_text()
-          checks='''          node --check core-learning-services.js\n          node --check ui-hooks.js\n          node --check progress-service.js\n          node --check parent-auth-service.js\n          node --check asset-service.js\n'''
-          if 'node --check core-learning-services.js' not in s:
-            s=s.replace('          node --check scheduler.js\n',checks+'          node --check scheduler.js\n')
-          if 'node scripts/validate-architecture.cjs' not in s:
-            s=s.replace('          node scripts/validate-child-experience.cjs\n','          node scripts/validate-child-experience.cjs\n          node scripts/validate-architecture.cjs\n')
-          p.write_text(s)
-
-          # Remove this migration workflow after it has done its job.
-          Path('.github/workflows/source-refactor.yml').unlink()
       - name: Commit consolidated source
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
+          git add interaction-engine.js index.html README.md sw.js
           git commit -m "Consolidate Sakhi source-of-truth architecture"
           git push
