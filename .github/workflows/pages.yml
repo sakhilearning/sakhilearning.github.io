@@ -38,6 +38,7 @@ jobs:
           node --check speech-service.js
           node --check sakhi-shell.js
           node scripts/validate-activities.cjs
+          node scripts/validate-audio-architecture.cjs
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
