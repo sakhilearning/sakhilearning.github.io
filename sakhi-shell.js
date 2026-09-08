@@ -108,6 +108,14 @@ function installParentGuard(){
  document.querySelectorAll('[data-go="parent"]').forEach(b=>{b.onclick=e=>{e.preventDefault();window.go('parent');};});
 }
 
-function init(){rebrand();installParentGuard();simplifyHome();ensureParentGate();ensureFamilySyncCard();}
+function loadPhonicsAudioFix(){
+  if(document.querySelector('script[data-sakhi-phonics-fix]'))return;
+  const s=document.createElement('script');
+  s.src='./phonics-audio-fix.js?v=20260908-2';
+  s.dataset.sakhiPhonicsFix='1';
+  document.head.appendChild(s);
+}
+
+function init(){rebrand();installParentGuard();simplifyHome();ensureParentGate();ensureFamilySyncCard();loadPhonicsAudioFix();}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
