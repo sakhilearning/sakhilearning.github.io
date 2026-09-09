@@ -1,0 +1,45 @@
+name: One-time local phoneme asset install
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/install-phoneme-assets.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download source-verified isolated stop consonants
+        run: |
+          set -euo pipefail
+          mkdir -p assets/audio/phonemes
+          curl --fail --location --retry 3 --output assets/audio/phonemes/phoneme_t.ogg 'https://upload.wikimedia.org/wikipedia/commons/0/02/Voiceless_alveolar_plosive.ogg'
+          curl --fail --location --retry 3 --output assets/audio/phonemes/phoneme_p.ogg 'https://upload.wikimedia.org/wikipedia/commons/5/51/Voiceless_bilabial_plosive.ogg'
+          test "$(wc -c < assets/audio/phonemes/phoneme_t.ogg)" -gt 1000
+          test "$(wc -c < assets/audio/phonemes/phoneme_p.ogg)" -gt 1000
+          file assets/audio/phonemes/phoneme_t.ogg | grep -qi 'ogg'
+          file assets/audio/phonemes/phoneme_p.ogg | grep -qi 'ogg'
+          cat > assets/audio/phonemes/ATTRIBUTION.md <<'EOF'
+          # Phoneme audio attribution
+
+          These source-verified phonetic recordings are stored locally so the child's critical stop-consonant practice does not depend on remote URLs or general TTS.
+
+          - `phoneme_t.ogg` — *Voiceless alveolar plosive.ogg*, Wikimedia Commons. Current source describes isolated IPA [t]. License listed by Commons: CC BY-SA 3.0 / GFDL. Source page: https://commons.wikimedia.org/wiki/File:Voiceless_alveolar_plosive.ogg
+          - `phoneme_p.ogg` — *Voiceless bilabial plosive.ogg*, Wikimedia Commons. Source describes isolated IPA [p]. License listed by Commons: CC BY-SA 3.0 / GFDL. Source page: https://commons.wikimedia.org/wiki/File:Voiceless_bilabial_plosive.ogg
+
+          These are phonetic reference recordings. `phoneme-audio.js` records source verification separately from any later educator/parent listening review.
+          EOF
+      - name: Commit phoneme assets
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/audio/phonemes
+          git diff --cached --quiet && exit 0
+          git commit -m "Store local source-verified t and p phoneme audio"
+          git push
