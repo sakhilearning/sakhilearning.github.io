@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const S=window.SettingsService,A=window.AssetService;if(!S||!A)throw new Error('settings-service.js and asset-service.js must load before adventure-service.js');
+const S=window.SettingsService;if(!S)throw new Error('settings-service.js must load before adventure-service.js');
 const WORLDS=Object.freeze({
  meadow:{id:'meadow',display_name:'Rainbow Unicorn Meadow',legacy_theme:'unicorn',character_set:['Luna'],background_asset:'world_meadow_01',icon:'🦄',description:'Rainbows, unicorns and bright meadow magic.',narrative:'Help Luna solve the challenge and light up the rainbow trail.'},
  frozen:{id:'frozen',display_name:'Frozen Star Palace',legacy_theme:'ice',character_set:['Sakhi'],background_asset:'world_frozen_01',icon:'❄️',description:'Snowy stars, crystal paths and cool blue puzzles.',narrative:'Solve the challenge to brighten the crystal star palace.'},
@@ -15,7 +15,7 @@ function history(){const d=window.data||{};d.adventureHistory=d.adventureHistory
 function autoWorld(value={}){const ids=validIds(),preferred=DOMAIN_PREFERENCE[value.domain]||'meadow',recent=history().slice(-8),last=recent.at(-1)?.world||null,counts=Object.fromEntries(ids.map(id=>[id,recent.filter(x=>x.world===id).length]));return [...ids].sort((a,b)=>{const score=id=>(id===preferred?-5:0)+(counts[id]||0)*1.8+(id===last?3:0);return score(a)-score(b)})[0]||preferred}
 function worldFor(value){if(typeof value==='string'&&WORLDS[value])return value;const settings=S.all();if(settings.adventure_mode==='MANUAL'&&settings.preferred_adventure!=='AUTO'&&WORLDS[settings.preferred_adventure])return settings.preferred_adventure;return autoWorld(value||{})}
 function previewWorld(){return worldFor({domain:'creativity'})}function meta(id){return WORLDS[id]||WORLDS.meadow}
-function sceneMarkup(value,className='scene-art'){return A.sceneMarkup(value,className)}
+function sceneMarkup(value,className='scene-art'){const service=window.AssetService;if(service?.sceneMarkup)return service.sceneMarkup(value,className);const id=worldFor(value),m=meta(id);return `<span class="${className}" role="img" aria-label="${m.display_name}"><span class="scene-character">${m.icon}</span></span>`}
 function applyBody(id){const world=WORLDS[id]?id:'meadow',m=meta(world),d=window.data||{};if(document.body){document.body.dataset.adventure=world;document.body.dataset.theme=m.legacy_theme}d.theme=m.legacy_theme;const art=document.getElementById('heroArt');if(art)art.textContent=m.icon;const title=document.getElementById('questTitle');if(title)title.textContent=`${m.icon} ${m.display_name}`;const summary=document.getElementById('questSummary');if(summary)summary.textContent=`${m.narrative} Sakhi still chooses the learning skills from progress.`;window.dispatchEvent(new CustomEvent('sakhi-adventure-applied',{detail:{world,meta:m}}));return world}
 function applyCurrent(value){return applyBody(worldFor(value||{}))}
 function recordActivity(activity){const world=worldFor(activity),h=history();h.push({world,activity_id:activity?.id||null,at:new Date().toISOString()});window.data.adventureHistory=h.slice(-40);try{window.persist?.(false)}catch(_){}applyBody(world);return world}
