@@ -5,6 +5,9 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: sakhi-runtime-e2e
+  cancel-in-progress: true
 jobs:
   browser-runtime:
     runs-on: ubuntu-latest
