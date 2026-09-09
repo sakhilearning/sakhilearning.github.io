@@ -9,9 +9,9 @@ This document defines the source of truth for each major application system. Fea
 | Curriculum graph | `curriculum.js` + adapter in `core-learning-services.js` | `CurriculumEngine` |
 | Mastery/review | `core-learning-services.js` | `MasteryEngine` |
 | Daily planning | `core-learning-services.js` | `LessonPlanner` |
-| Activity lifecycle | `interaction-engine.js` through `ui-hooks.js` | `ActivityRenderer`, `UIHooks` |
+| Activity contract + lifecycle | `activity-contract.js` + `interaction-engine.js` | `ActivityContract`, `ActivityRenderer`, `ActivityStateMachine` |
 | Progress persistence | `persistence.js` through `progress-service.js` | `ProgressService` |
-| Rewards | `core-learning-services.js` | `RewardService` |
+| Rewards | `reward-service.js` | `RewardService` |
 | Parent authentication | `parent-auth-service.js` | `ParentAuthService` |
 | Learner profile | `core-learning-services.js` | `LearnerProfileService` |
 | AI content policy | `core-learning-services.js` | `AIContentService` |

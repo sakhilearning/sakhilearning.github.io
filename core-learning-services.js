@@ -110,7 +110,7 @@ const LearnerProfileService=Object.freeze({
   snapshot:()=>({age:5,grade:'Kindergarten',known:{uppercase:true,lowercase:true,numbers:true,rhyming:true},phonics:'relatively-strong',themes:[window.data?.theme||'unicorn']}),
   shouldSkipAlphabetRestart:()=>true
 });
-const RewardService=Object.freeze({count:()=>Number(window.data?.rewards?.length||window.data?.rewardCount||0),award:(reward)=>{window.data.rewards=window.data.rewards||[];window.data.rewards.push({...reward,date:new Date().toISOString()});window.persist?.(false);}});
+// RewardService is authoritative in reward-service.js.
 const AIContentService=Object.freeze({
   mode:'vetted-bank-first',
   createWrapper:({world='Rainbow Unicorn Meadow',goal=''})=>({intro:`A magical challenge is ready in ${world}.`,goal}),
@@ -121,7 +121,7 @@ window.CurriculumEngine=CurriculumEngine;
 window.MasteryEngine=MasteryEngine;
 window.LessonPlanner=LessonPlanner;
 window.LearnerProfileService=LearnerProfileService;
-window.RewardService=RewardService;
+
 window.AIContentService=AIContentService;
 
 // Temporary compatibility names for legacy renderers. Planning/mastery logic lives only above.
