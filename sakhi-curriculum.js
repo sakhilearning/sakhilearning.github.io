@@ -79,6 +79,10 @@ window.SakhiCurriculum = (function () {
     return graph;
   }
 
+  /* Test/offline seam: build the graph from an already-fetched snapshot object
+   * without touching the network. Used by the Node test harness. */
+  function loadFrom(raw) { graph = normalise(raw); return graph; }
+
   function get() { return graph; }
   function skill(id) { return graph && graph.byId[id] || null; }
   function domains() { return graph ? graph.domains : []; }
@@ -103,7 +107,9 @@ window.SakhiCurriculum = (function () {
   function frontier(domainId, masteryOf) {
     return skillsIn(domainId).filter(function (s) {
       var m = masteryOf(s.skill_id);
-      if (m === 'MASTERED') return false;
+      /* Consolidated skills are not new work. Re-offering them here is what
+       * sends a strong reader back to the alphabet; spaced review owns them. */
+      if (m === 'MASTERED' || m === 'MOSTLY_MASTERED') return false;
       return isAvailable(s.skill_id, masteryOf);
     });
   }
@@ -125,7 +131,7 @@ window.SakhiCurriculum = (function () {
 
   return {
     ACTIVE_VERSION: ACTIVE_VERSION,
-    load: load, get: get,
+    load: load, loadFrom: loadFrom, get: get,
     skill: skill, domains: domains, skillsIn: skillsIn,
     prerequisites: prerequisites, unlockedBy: unlockedBy,
     isAvailable: isAvailable, frontier: frontier, nextAfter: nextAfter
