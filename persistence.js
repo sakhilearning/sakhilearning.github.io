@@ -21,7 +21,7 @@ async function ensureProfile(){
   let {data,error}=await client.from('learner_profiles').select('*').eq('parent_user_id',user.id).order('created_at',{ascending:true}).limit(1).maybeSingle();
   if(error)throw error;
   if(!data){
-    const ins=await client.from('learner_profiles').insert({parent_user_id:user.id,display_name:'Learner',birth_year_or_age:'5',current_grade_level:'Pre-K / Kindergarten',preferred_themes:['unicorn'],typical_session_length:20,curriculum_version:window.RainbowCurriculum?.version||'2026.09.09-v2',adaptive_state:{},domain_levels:{},learning_velocity:0}).select('*').single();
+    const ins=await client.from('learner_profiles').insert({parent_user_id:user.id,display_name:'Learner',birth_year_or_age:'5',current_grade_level:'Pre-K / Kindergarten',preferred_themes:['unicorn'],typical_session_length:20,curriculum_version:window.RainbowCurriculum?.version||'2026.09.09-v2',adaptive_state:{challenge_mode:false},domain_levels:{},learning_velocity:0}).select('*').single();
     if(ins.error)throw ins.error;data=ins.data;
   }
   learnerId=data.learner_id;return data;
@@ -72,7 +72,8 @@ async function saveSettings(settings){if(!remote||!learnerId)return {saved:false
 async function completeSession(summary){if(!remote||!learnerId)return {saved:false,remote:false};const sid=summary?.session_id||sessionId;if(!sid)return {saved:false,remote:true,reason:'no_session'};const r=await client.rpc('complete_learning_session',{p_learner_id:learnerId,p_session_id:sid});if(r.error)throw r.error;if(sessionId===sid)sessionId=null;return {saved:true,remote:true,...r.data};}
 async function syncSnapshot(data){
   if(!remote||!learnerId)return {saved:false,remote:false};
-  const adaptive=data.adaptiveProfile||{},domainLevels={};for(const [domain,x] of Object.entries(adaptive.domains||{}))domainLevels[domain]={difficulty:x.difficulty,current_skill_id:x.current_skill_id,ready_next:x.ready_next,stretch_skill:x.stretch_skill};
+  const adaptive={...(data.adaptiveProfile||{})};adaptive.challenge_mode=adaptive.challenge_mode??adaptive.challengeMode??false;
+  const domainLevels={};for(const [domain,x] of Object.entries(adaptive.domains||{}))domainLevels[domain]={difficulty:x.difficulty,current_skill_id:x.current_skill_id,ready_next:x.ready_next,stretch_skill:x.stretch_skill};
   const p=await client.from('learner_profiles').update({preferred_themes:[data.theme||'unicorn'],curriculum_version:window.RainbowCurriculum?.version||'2026.09.09-v2',adaptive_state:adaptive,domain_levels:domainLevels,learning_velocity:Number(adaptive.learningVelocity||0),last_session_summary:adaptive.lastSummary||null}).eq('learner_id',learnerId);if(p.error)throw p.error;
   if(window.SettingsService)await saveSettings(window.SettingsService.all());return {saved:true,remote:true};
 }
