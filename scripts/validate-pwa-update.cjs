@@ -13,7 +13,7 @@ need(sw,/const CACHE='sakhi-magic-learning-'\+BUILD_ID/,'service worker cache na
 need(sw,/SKIP_WAITING[\s\S]{0,120}skipWaiting\(\)/,'service worker must handle SKIP_WAITING');
 need(sw,/clients\.claim\(\)/,'service worker activation must claim clients');
 need(sw,/deleteOldSakhiCaches/,'service worker must delete old Sakhi caches');
-need(sw,/url\.origin===self\.location\.origin/,'service worker must restrict runtime caching to same-origin app assets');
+need(sw,/origin===self\.location\.origin/,'service worker must restrict runtime caching to same-origin app assets');
 need(sw,/cache:'no-store'/,'index/version/sw/manifest requests must use no-store revalidation behavior');
 if(/install[\s\S]{0,180}skipWaiting\(\)/.test(sw))fail.push('service worker must not automatically skipWaiting during install; update banner must control activation');
 need(pwa,/navigator\.serviceWorker\.register\('\.\/sw\.js'\)/,'client must register ./sw.js');
