@@ -10,19 +10,19 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="Sakhi Magic Learning" />
-    <meta name="sakhi-build" content="2026.09.09-storybook-audio" />
+    <meta name="sakhi-build" content="2026.09.09-playful-activities" />
     <meta
       name="description"
       content="Sakhi — Princess & Unicorn Learning Adventure for a 5-year-old learner."
     />
     <title>Sakhi Magic Learning</title>
-    <link rel="manifest" href="./manifest.json?v=20260909-storybook-audio" />
+    <link rel="manifest" href="./manifest.json?v=20260909-playful-activities" />
     <link rel="apple-touch-icon" href="./unicorn-icon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="./sakhi-production.css?v=20260909-storybook-audio"
+      href="./sakhi-production.css?v=20260909-playful-activities"
     />
   </head>
   <body data-world="reading">
@@ -192,6 +192,11 @@
               ><small>Courage Hearts</small>
             </div>
           </div>
+          <div
+            id="treasureCollection"
+            class="treasure-collection"
+            aria-label="Earned treasures"
+          ></div>
           <div class="reward-actions">
             <button class="magic-btn" id="bedtimeBtn">Bedtime Story</button>
             <button class="soft-btn" id="rewardHome">🏠 Home</button>
@@ -204,7 +209,9 @@
           <span class="label">ADULT AREA</span>
           <h1>Parent Dashboard</h1>
           <p>
-            See what your child practices, the evidence collected, and the planned learning sequence. Progress is saved on this device; use Export history backup to keep a copy.
+            See what your child practices, the evidence collected, and the
+            planned learning sequence. Progress is saved on this device; use
+            Export history backup to keep a copy.
           </p>
           <div class="parent-grid">
             <div class="parent-goal">
@@ -257,19 +264,26 @@
       <button data-nav="parents">Parents</button>
     </nav>
 
-    <div class="completion" id="completionOverlay">
+    <div
+      class="completion"
+      id="completionOverlay"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Mission complete"
+    >
       <div class="completion-card">
         <div class="big">
           <img src="./assets/scenes/rainbow-meadow.webp" alt="" />
         </div>
+        <div id="completionTreasure" class="completion-treasure"></div>
         <h2 id="completionTitle">Beautiful work!</h2>
         <p id="completionText">Progress saved.</p>
         <button class="magic-btn" id="nextActivity">Next adventure →</button>
-        <button class="soft-btn" id="completionClose">Stay here</button>
+        <button class="soft-btn" id="completionClose">See my treasures</button>
       </div>
     </div>
     <div class="toast" id="toast" role="status">Saved ✨</div>
     <audio id="sakhiAudio" preload="auto" playsinline hidden></audio>
-    <script src="./sakhi-production.js?v=20260909-storybook-audio"></script>
+    <script src="./sakhi-production.js?v=20260909-playful-activities"></script>
   </body>
 </html>

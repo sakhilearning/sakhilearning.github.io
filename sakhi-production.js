@@ -1,6 +1,6 @@
 (function () {
   "use strict";
-  const BUILD = "2026.09.09-storybook-audio",
+  const BUILD = "2026.09.09-playful-activities",
     KEY = "sakhi.learning.state",
     OLD = [
       "sakhi.v3.state",
@@ -301,7 +301,8 @@
     timer = null,
     announceNext = false,
     answerLocked = false,
-    runId = null;
+    runId = null,
+    draggedToken = null;
   function blank() {
     return {
       build: BUILD,
@@ -312,7 +313,7 @@
       skills: {},
       sessions: [],
       rewards: [],
-      settings: { audio: true, auto: true },
+      settings: { audio: true },
       legacy: { checked: false, imports: [] },
     };
   }
@@ -439,7 +440,8 @@
   const audioCache = new Map();
   let audioRequest = null,
     audioUrl = "",
-    audioState = "ready";
+    audioState = "ready",
+    audioGeneration = 0;
   function setAudioState(state, message = "") {
     audioState = state;
     const status = $("#audioStatus");
@@ -483,9 +485,11 @@
     const text = String(x || "").trim();
     if (!S.settings.audio || !text) return false;
     stop();
+    const generation = audioGeneration;
     setAudioState("loading", "Loading Sakhi’s natural voice…");
     try {
       const blob = await fetchVoice(text, kind);
+      if (generation !== audioGeneration) return false;
       const player = $("#sakhiAudio");
       audioUrl = URL.createObjectURL(blob);
       player.src = audioUrl;
@@ -496,9 +500,11 @@
           "Audio could not play. Tap Test Sakhi voice in Parents.",
         );
       await player.play();
+      if (generation !== audioGeneration) return false;
       setAudioState("playing", "Sakhi is speaking");
       return true;
     } catch (error) {
+      if (generation !== audioGeneration) return false;
       if (error.name !== "AbortError") {
         console.error("Sakhi audio:", error);
         setAudioState(
@@ -510,6 +516,7 @@
     }
   }
   function stop() {
+    audioGeneration++;
     audioRequest?.abort();
     audioRequest = null;
     const player = $("#sakhiAudio");
@@ -658,46 +665,199 @@
     $("#activityGuide").innerHTML = art(act.d);
     $("#activityCharacter").textContent = act.c;
     $("#interactionArea").innerHTML = question(q);
-    $("#hearAgain").onclick = () => speak(q[4] || act.i);
+    $("#hearAgain").onclick = () => speak(activityNarration(q));
     $("#hintBtn").onclick = hint;
     wire(q);
     if (announceNext) {
       announceNext = false;
-      void speak(q[4] || act.i);
+      void speak(activityNarration(q));
     }
   }
+  const treasures = {
+    reading: ["Rainbow Gem", "rainbow"],
+    math: ["Royal Diamond", "diamond"],
+    logic: ["Ice Crystal", "crystal"],
+    science: ["Ocean Pearl", "pearl"],
+    language: ["Kindness Jewel", "heart"],
+    writing: ["Creativity Gem", "rainbow"],
+  };
+  function jewel(domain, extra = "") {
+    return `<span aria-hidden="true" class="treasure treasure-${treasures[domain][1]} ${extra}"></span>`;
+  }
+  function activityNarration(q) {
+    return (act.story && qi === 0 ? act.story + " " : "") + (q[4] || act.i);
+  }
   function question(q) {
-    let story = act.story
-      ? `<div class="story-strip">${safe(act.story)}</div>`
+    const story = act.story
+      ? `<div class="story-strip"><b>A little story to think about</b><p>${safe(act.story)}</p><button id="hearScene" class="soft-btn">Listen to the story</button></div>`
       : "";
-    if (q[0] === "word")
-      return `${story}<div class="question"><h2>${safe(q[1])}</h2><div class="word-answer">${sel.join(" ") || "Tap letters"}</div><div class="token-row">${q[3].map((x) => `<button class="token" data-x="${safe(x)}">${safe(x)}</button>`).join("")}</div><div class="center-row"><button class="soft-btn" id="reset">Reset</button><button class="magic-btn" id="check">Check</button></div></div>`;
-    if (q[0] === "seq")
-      return `${story}<div class="question"><h2>${safe(q[1])}</h2><div class="sequence-answer">${sel.join(" → ") || "Tap in order"}</div><div class="choice-grid">${q[3].map((x) => `<button class="choice-card" data-x="${safe(x)}">${safe(x)}</button>`).join("")}</div><div class="center-row"><button class="soft-btn" id="reset">Reset</button><button class="magic-btn" id="check">Check</button></div></div>`;
-    if (q[0] === "num")
-      return `<div class="question"><h2>${safe(q[1])}</h2><div class="math-scene"><span class="gem-row">${"💎".repeat(q[5])}</span><small>${q[5]} of ${q[6]} gems are already in the crown.</small></div><div class="choice-grid">${q[3].map((x) => `<button class="choice-card" data-a="${x}">${x}</button>`).join("")}</div></div>`;
-    return `${story}<div class="question"><h2>${safe(q[1])}</h2><div class="choice-grid">${q[3].map((x) => `<button class="choice-card" data-a="${safe(x)}">${safe(x)}</button>`).join("")}</div></div>`;
+    const banner = `<div class="mission-ribbon">${jewel(act.d)}<span>Mission ${qi + 1} of ${act.q.length} · Earn a ${treasures[act.d][0]}</span></div>`;
+    const start = `${banner}${story}<div class="question"><h2>${safe(q[0] === "word" ? "Build the word you hear" : q[1])}</h2>`;
+    const controls =
+      '<div class="center-row"><button class="soft-btn" id="reset">Start over</button><button class="magic-btn" id="check">Check my creation</button></div>';
+    const feedback =
+      '<div id="learningFeedback" class="learning-feedback" role="status"></div>';
+    if (q[0] === "word" || q[0] === "seq") {
+      const slots = q[2]
+        .map(
+          (_, index) =>
+            `<button class="magic-slot ${sel[index] !== undefined ? "filled" : ""}" data-slot="${index}" aria-label="Place ${index + 1}${sel[index] ? ": " + safe(sel[index]) + ". Tap to remove" : ": empty"}">${sel[index] === undefined ? `<span>${index + 1}</span>` : safe(sel[index])}</button>`,
+        )
+        .join("");
+      const tokens = q[3]
+        .map(
+          (value, index) =>
+            `<button class="${q[0] === "word" ? "token" : "story-token"}" data-token="${index}" ${sel.includes(value) ? "disabled" : ""}>${safe(value)}</button>`,
+        )
+        .join("");
+      return `${start}<p class="play-instruction">Drag a tile into a space, or tap a tile to place it. Tap a filled space to undo.</p><div class="magic-board ${q[0] === "seq" ? "sequence-board" : ""}" aria-label="Your creation">${slots}</div><div class="token-row">${tokens}</div>${controls}${feedback}</div>`;
+    }
+    if (q[0] === "num") {
+      const count = q[5] + sel.length;
+      return `${start}<p class="play-instruction">Drag jewels to the treasure tray, or tap to add. Tap an added jewel to return it.</p><div class="counting-tray" data-drop-tray="true" aria-label="Treasure tray"><div class="tray-jewels">${Array.from({ length: q[5] }, () => jewel("math", "fixed-jewel")).join("")}${sel.map((_, i) => `<button class="jewel-button" data-remove-jewel="${i}" aria-label="Return added jewel ${i + 1}">${jewel("math")}</button>`).join("")}</div><strong>${count} jewels in the tray · Goal: ${q[6]}</strong></div><div class="token-row">${Array.from({ length: q[6] }, (_, i) => `<button class="jewel-button" data-jewel="${i}" ${sel.includes(i) ? "disabled" : ""} aria-label="Add jewel ${i + 1}">${jewel("math")}</button>`).join("")}</div>${controls}${feedback}</div>`;
+    }
+    return `${start}<p class="play-instruction">Think it through. Choose your answer.</p><div class="choice-grid">${q[3].map((value) => `<button class="choice-card" data-a="${safe(value)}">${jewel(act.d)}<span>${safe(value)}</span></button>`).join("")}</div>${feedback}</div>`;
   }
   function wire(q) {
-    $$("[data-x]").forEach(
-      (b) =>
-        (b.onclick = () => {
-          sel.push(b.dataset.x);
-          b.disabled = true;
+    const insert = (value, slot = sel.length) => {
+      if (
+        answerLocked ||
+        sel.includes(value) ||
+        slot > sel.length ||
+        sel.length >= q[2].length
+      )
+        return;
+      sel.splice(slot, slot < sel.length ? 1 : 0, value);
+      activity();
+    };
+    const bindDrag = (button, commit) => {
+      let origin = null,
+        ghost = null,
+        moved = false;
+      button.onpointerdown = (event) => {
+        if (button.disabled || answerLocked || event.button !== 0) return;
+        origin = { x: event.clientX, y: event.clientY };
+        moved = false;
+        button.setPointerCapture(event.pointerId);
+      };
+      button.onpointermove = (event) => {
+        if (!origin) return;
+        if (
+          !moved &&
+          Math.hypot(event.clientX - origin.x, event.clientY - origin.y) < 10
+        )
+          return;
+        moved = true;
+        if (!ghost) {
+          ghost = button.cloneNode(true);
+          ghost.removeAttribute("id");
+          ghost.setAttribute("aria-hidden", "true");
+          ghost.classList.add("drag-ghost");
+          document.body.append(ghost);
+        }
+        ghost.style.left = event.clientX + "px";
+        ghost.style.top = event.clientY + "px";
+      };
+      button.onpointerup = (event) => {
+        if (!origin) return;
+        const wasDrag = moved;
+        origin = null;
+        ghost?.remove();
+        ghost = null;
+        if (wasDrag) {
+          event.preventDefault();
+          const suppressClick = (click) => {
+            click.preventDefault();
+            click.stopImmediatePropagation();
+          };
+          document.addEventListener("click", suppressClick, {
+            capture: true,
+            once: true,
+          });
+          setTimeout(
+            () => document.removeEventListener("click", suppressClick, true),
+            0,
+          );
+          draggedToken = button;
+          const target = document
+            .elementFromPoint(event.clientX, event.clientY)
+            ?.closest("[data-slot], [data-drop-tray]");
+          if (target) commit(target);
+        }
+      };
+      button.onpointercancel = () => {
+        origin = null;
+        ghost?.remove();
+        ghost = null;
+      };
+      button.addEventListener(
+        "click",
+        (event) => {
+          if (draggedToken === button) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            draggedToken = null;
+          }
+        },
+        true,
+      );
+    };
+    $$("[data-token]").forEach((button) => {
+      const value = q[3][Number(button.dataset.token)];
+      button.onclick = () => insert(value);
+      bindDrag(button, (target) => {
+        if (target.dataset.slot !== undefined)
+          insert(value, Number(target.dataset.slot));
+      });
+    });
+    $$("[data-slot]").forEach(
+      (button) =>
+        (button.onclick = () => {
+          if (answerLocked) return;
+          sel.splice(Number(button.dataset.slot), 1);
+          activity();
+        }),
+    );
+    const addJewel = (index) => {
+      if (answerLocked || sel.includes(index)) return;
+      sel.push(index);
+      activity();
+    };
+    $$("[data-jewel]").forEach((button) => {
+      const index = Number(button.dataset.jewel);
+      button.onclick = () => addJewel(index);
+      bindDrag(button, (target) => {
+        if (target.dataset.dropTray) addJewel(index);
+      });
+    });
+    $$("[data-remove-jewel]").forEach(
+      (button) =>
+        (button.onclick = () => {
+          if (answerLocked) return;
+          sel.splice(Number(button.dataset.removeJewel), 1);
           activity();
         }),
     );
     $$("[data-a]").forEach(
-      (b) => (b.onclick = () => answer(q, b.dataset.a, b)),
+      (button) => (button.onclick = () => answer(q, button.dataset.a, button)),
     );
-    let r = $("#reset"),
-      c = $("#check");
-    if (r)
-      r.onclick = () => {
+    if ($("#reset"))
+      $("#reset").onclick = () => {
+        if (answerLocked) return;
         sel = [];
         activity();
       };
-    if (c) c.onclick = () => answer(q, sel);
+    if ($("#check"))
+      $("#check").onclick = () => {
+        if ((q[0] === "word" || q[0] === "seq") && sel.length !== q[2].length) {
+          $("#learningFeedback").textContent =
+            "Fill each space before checking. You can do it one step at a time.";
+          return;
+        }
+        answer(q, q[0] === "num" ? sel.length : sel);
+      };
+    if ($("#hearScene"))
+      $("#hearScene").onclick = () => speak(act.story, "story");
   }
   function norm(x) {
     return Array.isArray(x)
@@ -708,7 +868,7 @@
     if (answerLocked) return;
     answerLocked = true;
     const activeRun = runId;
-    $$("#interactionArea button").forEach(button => button.disabled = true);
+    $$("#interactionArea button").forEach((button) => (button.disabled = true));
     let correct = norm(a) === norm(q[2]);
     if (b) b.classList.add(correct ? "correct" : "wrong");
     S.hist.push({
@@ -722,7 +882,7 @@
       skill: act.k,
       question: qi + 1,
       correct,
-      answer: a,
+      answer: Array.isArray(a) ? [...a] : a,
       expected: q[2],
     });
     let key = act.d + ":" + act.k,
@@ -738,10 +898,8 @@
       sk.correct++;
       S.stars++;
       ok++;
-      speak("Yes! You found it.");
     } else {
       S.hearts++;
-      speak("Almost. Try again slowly.");
     }
     sk.state =
       sk.attempts >= 6 && sk.correct / sk.attempts >= 0.85
@@ -752,12 +910,36 @@
     sk.last_practiced = new Date().toISOString();
     S.skills[key] = sk;
     save();
-    timer = setTimeout(() => {
+    const explanation = correct
+      ? q[0] === "word"
+        ? `You put the sounds in order to spell ${q[2].join("")}.`
+        : q[0] === "num"
+          ? `${q[5]} and ${q[2]} make ${q[6]}. You counted the missing part!`
+          : act.d === "language"
+            ? "You thought about how someone else feels. Kind choices help everyone belong."
+            : q[0] === "seq"
+              ? "You found the beginning, middle, and end. Order helps us understand."
+              : `You worked it out: ${q[2]}.`
+      : q[0] === "num"
+        ? `Your tray has ${q[5] + sel.length}. The goal is ${q[6]}. Add or return jewels and check again.`
+        : "That choice did not fit yet. Listen again, then try a different idea. Mistakes help us learn.";
+    $("#learningFeedback").innerHTML =
+      `<div class="feedback-card ${correct ? "success" : "retry"}"><b>${correct ? "Your thinking shines!" : "Let’s try another way"}</b><p>${safe(explanation)}</p><button class="magic-btn" id="continueQuestion">${correct ? "Continue the adventure" : "Try again"}</button></div>`;
+    void speak(explanation, "feedback");
+    $("#continueQuestion").onclick = () => {
       if (runId !== activeRun || view !== "activity") return;
       answerLocked = false;
+      stop();
       correct ? next() : activity();
-    }, 2200);
+    };
+    $("#learningFeedback").scrollIntoView({
+      behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "instant"
+        : "smooth",
+      block: "nearest",
+    });
   }
+
   function next() {
     sel = [];
     if (qi < act.q.length - 1) {
@@ -767,9 +949,16 @@
     } else complete();
   }
   function complete() {
-    if (S.rewards.some(reward => reward.completionId === runId)) return;
+    if (S.rewards.some((reward) => reward.completionId === runId)) return;
     S.gems++;
-    S.rewards.push({ id: id(), completionId: runId, date: D(), type: "UNICORN_GEM", reason: act.n });
+    S.rewards.push({
+      id: id(),
+      completionId: runId,
+      date: D(),
+      type: treasures[act.d][0],
+      domain: act.d,
+      reason: act.n,
+    });
     S.hist.push({
       id: id(),
       date: D(),
@@ -790,12 +979,18 @@
     save();
     $("#completionTitle").textContent = act.s + " complete!";
     $("#completionText").textContent =
-      "Progress saved. You earned a Unicorn Gem.";
+      `You earned a ${treasures[act.d][0]} by practicing ${act.k}! Your collection now has ${S.gems} treasures.`;
     $("#nextActivity").textContent = nextAct()
       ? "Next: " + th(nextAct().d)[1] + " →"
       : "Go to Rewards ⭐";
     $("#completionOverlay").classList.add("show");
-    if (S.settings.auto) timer = setTimeout(goNext, 1700);
+    $("#completionTreasure").innerHTML = jewel(act.d, "earned-treasure");
+    $("#completionOverlay").setAttribute("aria-label", act.s + " complete");
+    $("#nextActivity").focus();
+    void speak(
+      `Mission complete! You earned a ${treasures[act.d][0]}. Take a moment to enjoy your treasure.`,
+      "feedback",
+    );
   }
   function nextAct() {
     return plan.list.find(
@@ -816,18 +1011,28 @@
   function rewards() {
     theme("reading");
     $("#rewardArt").innerHTML = meadowArt();
+    $("#treasureCollection").innerHTML =
+      S.rewards
+        .slice(-12)
+        .reverse()
+        .map(
+          (reward) =>
+            `<div class="collection-item">${jewel(reward.domain || "reading")}<b>${safe(reward.domain ? reward.type : "Rainbow Gem")}</b><small>${safe(reward.reason)}</small></div>`,
+        )
+        .join("") ||
+      "<p>Your first treasure is waiting at the end of a mission.</p>";
     $("#rewardStars").textContent = S.stars;
     $("#rewardGems").textContent = S.gems;
     $("#rewardHearts").textContent = S.hearts;
     let ds = [
       ...new Set(
         S.hist
-          .filter((h) => h.date === D() && h.domain)
+          .filter((h) => h.date === D() && h.domain && h.final)
           .map((h) => th(h.domain)[2]),
       ),
     ];
     $("#rewardSummary").innerHTML = ds.length
-      ? `<h2>Today’s magical adventure is complete!</h2><p>You practiced ${ds.join(", ")}.</p>`
+      ? `<h2>Look what you practiced!</h2><p>You practiced ${ds.join(", ")}.</p>`
       : "<h2>Your Magic Collection</h2><p>Start an adventure to earn stars and gems.</p>";
   }
   function story() {
@@ -840,9 +1045,15 @@
             .map((h) => th(h.domain)[1]),
         ),
       ].join(", ") || "Rainbow Meadow";
+    const stories = [
+      `The Pearl That Wouldn’t Shine\n\nIn ${worlds}, Mina and Luna found one beautiful pearl. “Mine!” said Mina. “But we found it together,” said Luna. They both went quiet.\n\nA crab shuffled past wearing a teacup for a hat. “I ordered a crown,” he said, “but this one holds snacks!” Mina giggled. Luna did too. It felt easier to talk.\n\n“I wanted the pearl so much that I forgot to ask you,” Mina said. “What would feel fair?” They decided to take turns carrying it, then put it where everyone could enjoy it.\n\nThe pearl did not change. But the day felt brighter. Sharing did not mean Mina’s wishes did not matter. It meant Luna’s wishes mattered too.\n\nTalk together: What could you say when you and a friend both want the same toy?`,
+      `The Wobbly Bridge\n\nIn ${worlds}, a little fox watched the others cross a stepping-stone path. His paws trembled. “Come on!” called Mina. Then she noticed his face.\n\n“Would you like help, or would you like me to wait?” she asked. “Wait, please,” he said. Mina stayed beside him. Luna tried to balance a leaf on her nose. It fell off every time. “My nose is clearly not a shelf,” she announced. Everyone smiled.\n\nThe fox tried one stone. Then another. When he slipped, they helped him back to the bank and checked that he was all right. They asked a grown-up to find a safer crossing.\n\nBeing brave did not mean ignoring a worried feeling. And being a good friend did not mean rushing someone. Sometimes kindness means listening and staying close.\n\nTalk together: How can you help someone who wants to go more slowly?`,
+      `The Mixed-Up Invitation\n\nIn ${worlds}, Mina planned a picnic. She drew invitations with tiny pictures for friends who did not read yet. Luna delivered them, but accidentally gave the owl three and the rabbit none.\n\n“I thought everyone forgot me,” said Rabbit. Mina listened. “That must have felt lonely. I’m glad you told me.” Luna said, “I made a mistake. I’m sorry. Let’s fix it.”\n\nThey brought Rabbit an invitation and asked what food worked for everyone. Owl preferred seeds. Rabbit liked crunchy leaves. “I brought invisible sandwiches,” joked Luna. “Oh dear, I seem to have eaten them already!”\n\nThey made room for everyone. An apology was a beginning; helping to put things right was the next step. Friends can like different things and still belong together.\n\nTalk together: What could you do if someone was left out of a game?`,
+    ];
     $("#storyText").textContent =
-      `Once upon a gentle evening, Sakhi Unicorn carried a brave little princess across ${worlds}.\n\nThey listened for word sounds, counted sparkling gems, solved a tiny puzzle, and helped a kind friend. When something felt tricky, the princess took a slow breath and tried again.\n\nSakhi smiled because trying again is a special kind of magic. The moon rose, the stars twinkled, and every kingdom whispered, “You learned with a happy heart today.”\n\nThe little princess closed her eyes, feeling proud, calm, and ready for sweet dreams.`;
+      stories[new Date().getDate() % stories.length];
   }
+
   function parents() {
     theme("language");
     let today = S.hist.filter((h) => h.date === D());
@@ -855,35 +1066,85 @@
     $("#parentNext").textContent =
       "Use the stable journey daily, then expand activities.";
     const paths = {
-      reading: ["Letter sounds", "CVC word building", "Sentence reading", "Story comprehension"],
-      math: ["Counting and quantities", "number composition", "Addition and subtraction", "Word problems"],
-      logic: ["Matching and sorting", "multi-step patterns", "Working memory", "Reasoning"],
-      science: ["Observing and comparing", "prediction and observation", "Testing ideas", "Explaining results"],
-      language: ["Listening and vocabulary", "story sequencing and why", "Retelling", "Making inferences"],
-      writing: ["Letter formation", "spelling and labels", "Writing sentences", "Creating stories"]
+      reading: [
+        "Letter sounds",
+        "CVC word building",
+        "Sentence reading",
+        "Story comprehension",
+      ],
+      math: [
+        "Counting and quantities",
+        "number composition",
+        "Addition and subtraction",
+        "Word problems",
+      ],
+      logic: [
+        "Matching and sorting",
+        "multi-step patterns",
+        "Working memory",
+        "Reasoning",
+      ],
+      science: [
+        "Observing and comparing",
+        "prediction and observation",
+        "Testing ideas",
+        "Explaining results",
+      ],
+      language: [
+        "Listening and vocabulary",
+        "story sequencing and why",
+        "Retelling",
+        "Making inferences",
+      ],
+      writing: [
+        "Letter formation",
+        "spelling and labels",
+        "Writing sentences",
+        "Creating stories",
+      ],
     };
-    const evidence = S.hist.filter(h => !h.final && typeof h.correct === "boolean" && !h.migrated);
-    const correct = evidence.filter(h => h.correct).length;
+    const evidence = S.hist.filter(
+      (h) => !h.final && typeof h.correct === "boolean" && !h.migrated,
+    );
+    const correct = evidence.filter((h) => h.correct).length;
     // Curriculum is derived from recorded attempts, never from decorative themes.
-    $("#parentGoal").textContent = `${evidence.length} recorded answers · ${S.hist.filter(h => h.final).length} completed missions`;
-    $("#parentWhy").textContent = evidence.length ? `${Math.round(correct / evidence.length * 100)}% accuracy across recorded answers` : "Complete a mission to begin tracking learning evidence.";
-    $("#parentNext").textContent = "Review each subject below. Planned skills are shown separately from playable practice.";
-    $("#domainProgress").innerHTML = Object.entries(paths).map(([domain, skills]) => {
-      const activity = A.find(item => item.d === domain);
-      const attempts = evidence.filter(h => h.domain === domain);
-      const successes = attempts.filter(h => h.correct).length;
-      const accuracy = attempts.length ? Math.round(successes / attempts.length * 100) : 0;
-      const days = new Set(attempts.map(h => h.date)).size;
-      const secure = attempts.length >= 9 && days >= 3 && accuracy >= 85;
-      return `<details class="curriculum-domain" open><summary><span>${safe(th(domain)[2])}</span><span>${attempts.length ? accuracy + "% accuracy" : "Not assessed"}</span></summary>
+    $("#parentGoal").textContent =
+      `${evidence.length} recorded answers · ${S.hist.filter((h) => h.final).length} completed missions`;
+    $("#parentWhy").textContent = evidence.length
+      ? `${Math.round((correct / evidence.length) * 100)}% accuracy across recorded answers`
+      : "Complete a mission to begin tracking learning evidence.";
+    $("#parentNext").textContent =
+      "Review each subject below. Planned skills are shown separately from playable practice.";
+    $("#domainProgress").innerHTML = Object.entries(paths)
+      .map(([domain, skills]) => {
+        const activity = A.find((item) => item.d === domain);
+        const attempts = evidence.filter((h) => h.domain === domain);
+        const successes = attempts.filter((h) => h.correct).length;
+        const accuracy = attempts.length
+          ? Math.round((successes / attempts.length) * 100)
+          : 0;
+        const days = new Set(attempts.map((h) => h.date)).size;
+        const secure = attempts.length >= 9 && days >= 3 && accuracy >= 85;
+        return `<details class="curriculum-domain" open><summary><span>${safe(th(domain)[2])}</span><span>${attempts.length ? accuracy + "% accuracy" : "Not assessed"}</span></summary>
         <div class="curriculum-evidence"><p>${attempts.length} answers · ${days} practice days · ${secure ? "Consistent practice evidence" : "Building practice evidence"}</p><progress max="100" value="${accuracy}" aria-label="${safe(th(domain)[2])} answer accuracy"></progress></div>
-        <ol class="curriculum-path">${skills.map((skill, index) => {
-          const playable = skill === activity.k;
-          const status = playable ? (secure ? "Consistent" : attempts.length ? "Practicing" : "Ready to practice") : "Planned · not assessed";
-          return `<li><span class="curriculum-step">${index + 1}</span><div><b>${safe(skill)}</b><small>${status}</small>${playable ? `<p>${safe(activity.i)}</p><button class="soft-btn" data-practice="${domain}">Open practice</button>` : ""}</div></li>`;
-        }).join("")}</ol></details>`;
-    }).join("");
-    $$("[data-practice]").forEach(button => button.onclick = () => openDomain(button.dataset.practice));
+        <ol class="curriculum-path">${skills
+          .map((skill, index) => {
+            const playable = skill === activity.k;
+            const status = playable
+              ? secure
+                ? "Consistent"
+                : attempts.length
+                  ? "Practicing"
+                  : "Ready to practice"
+              : "Planned · not assessed";
+            return `<li><span class="curriculum-step">${index + 1}</span><div><b>${safe(skill)}</b><small>${status}</small>${playable ? `<p>${safe(activity.i)}</p><button class="soft-btn" data-practice="${domain}">Open practice</button>` : ""}</div></li>`;
+          })
+          .join("")}</ol></details>`;
+      })
+      .join("");
+    $$("[data-practice]").forEach(
+      (button) => (button.onclick = () => openDomain(button.dataset.practice)),
+    );
     $("#historyList").innerHTML =
       S.hist
         .slice(-18)
@@ -898,14 +1159,10 @@
       ? `<b>Previous history preserved.</b><small>${S.legacy.imports.length} older Sakhi store(s) backed up and migrated where recognizable.</small>`
       : "<b>Production history store ready.</b><small>No older local history found on this device.</small>";
     $("#parentSettings").innerHTML =
-      `<label><input type="checkbox" id="audio"${S.settings.audio ? " checked" : ""}> Natural voice instructions</label><div class="audio-check"><button class="soft-btn" id="testAudio">Test Sakhi voice</button><span id="audioStatus">${audioState === "error" ? "Voice needs attention" : "Natural voice ready"}</span></div><label><input type="checkbox" id="auto"${S.settings.auto ? " checked" : ""}> Auto-advance after each mission</label><button class="soft-btn" id="export">Export history backup</button>`;
+      `<label><input type="checkbox" id="audio"${S.settings.audio ? " checked" : ""}> Natural voice instructions</label><div class="audio-check"><button class="soft-btn" id="testAudio">Test Sakhi voice</button><span id="audioStatus">${audioState === "error" ? "Voice needs attention" : "Natural voice ready"}</span></div><p>Reward celebrations wait until your child chooses Continue.</p><button class="soft-btn" id="export">Export history backup</button>`;
     $("#audio").onchange = (e) => {
       S.settings.audio = e.target.checked;
       if (!S.settings.audio) stop();
-      save();
-    };
-    $("#auto").onchange = (e) => {
-      S.settings.auto = e.target.checked;
       save();
     };
     $("#testAudio").onclick = () =>
@@ -976,6 +1233,7 @@
     $("#completionClose").onclick = () => {
       clearTimeout(timer);
       $("#completionOverlay").classList.remove("show");
+      show("rewards");
     };
     $("#rewardHome").onclick = () => show("home");
     $("#bedtimeBtn").onclick = () => show("story");
@@ -986,6 +1244,22 @@
       "visibilitychange",
       () => document.hidden && stop(),
     );
+    document.addEventListener("keydown", (event) => {
+      if (
+        !$("#completionOverlay").classList.contains("show") ||
+        event.key !== "Tab"
+      )
+        return;
+      const first = $("#nextActivity"),
+        last = $("#completionClose");
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    });
     pwa();
     render();
   }
