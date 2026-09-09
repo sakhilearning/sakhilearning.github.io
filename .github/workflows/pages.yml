@@ -31,6 +31,7 @@ jobs:
           SHORT_SHA=$(echo "$GITHUB_SHA" | cut -c1-7)
           BUILD_ID="${BUILD_STAMP}-${SHORT_SHA}"
           BUILT_AT=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          export BUILD_ID BUILT_AT
           cat > build-info.js <<EOF
           window.SAKHI_BUILD_ID = "${BUILD_ID}";
           window.SAKHI_BUILD_INFO = Object.freeze({
@@ -47,11 +48,9 @@ jobs:
           from pathlib import Path
           sw = Path('sw.js')
           text = sw.read_text()
-          text = text.replace('__SAKHI_BUILD_ID__', os.environ.get('BUILD_ID', 'unknown-build'))
+          text = text.replace('__SAKHI_BUILD_ID__', os.environ['BUILD_ID'])
           sw.write_text(text)
           PY
-        env:
-          BUILD_ID: ${{ github.run_id }}-${{ github.sha }}
 
       - name: Validate application architecture
         run: |
