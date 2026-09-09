@@ -28,6 +28,8 @@ jobs:
         run: |
           node --check app.js
           node --check core-learning-services.js
+          node --check activity-contract.js
+          node --check reward-service.js
           node --check scheduler.js
           node --check interaction-engine.js
           node --check ui-hooks.js
@@ -46,6 +48,7 @@ jobs:
           node scripts/validate-audio-architecture.cjs
           node scripts/validate-child-experience.cjs
           node scripts/validate-architecture.cjs
+          node scripts/validate-runtime-stability.cjs
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
