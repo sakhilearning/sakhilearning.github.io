@@ -8,7 +8,7 @@ need(index,/build-info\.js/,'index.html must load generated build-info.js');
 need(index,/pwa-update\.js/,'index.html must load pwa-update.js');
 need(manifest,/"display"\s*:\s*"standalone"/,'manifest must remain standalone-installable');
 need(manifest,/"start_url"/,'manifest must define start_url');
-need(sw,/BUILD_ID='__SAKHI_BUILD_ID__'/,'service worker cache name must be stamped from build id');
+need(sw,/const BUILD_ID='(__SAKHI_BUILD_ID__|[^']{4,})'/,'service worker must contain a build id placeholder or stamped build id');
 need(sw,/const CACHE='sakhi-magic-learning-'\+BUILD_ID/,'service worker cache name must include build version');
 need(sw,/SKIP_WAITING[\s\S]{0,120}skipWaiting\(\)/,'service worker must handle SKIP_WAITING');
 need(sw,/clients\.claim\(\)/,'service worker activation must claim clients');
