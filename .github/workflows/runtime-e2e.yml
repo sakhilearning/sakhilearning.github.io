@@ -18,7 +18,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-      - name: Validate single stable production runtime
+      - name: Validate single production runtime
         run: |
-          node --check sakhi-production.js
           node scripts/validate-production-app.cjs
+          node tests/activities.test.cjs
+          node tests/engine.test.cjs

@@ -2,12 +2,6 @@
 name: Live ElevenLabs Audio Smoke Test
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'speech-service.js'
-      - 'supabase-config.js'
-      - '.github/workflows/audio-live-smoke.yml'
   workflow_dispatch:
 
 permissions:

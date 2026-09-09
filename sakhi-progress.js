@@ -335,12 +335,25 @@ window.SakhiProgress = (function () {
     return themeId;
   }
 
+  /* Adaptive mutates evidence and placement through evidence()/load(); it needs
+   * a way to commit, or those changes die at the next reload. */
+  function persist() {
+    persistLocal();
+    var s = load();
+    if (Cloud) Cloud.upsert('learner_profiles', [{
+      learner_id: s.learner_id, active_theme: s.profile.active_theme,
+      adaptive_state: s.placement || {},
+      domain_levels: Object.keys(s.skills).reduce(function (m, k) { m[k] = s.skills[k].difficulty_level; return m; }, {})
+    }]);
+    return s;
+  }
+
   function snapshot() { return JSON.parse(JSON.stringify(load())); }
   function reset() { state = blank(); persistLocal(); return state; }
 
   return {
     STATES: STATES,
-    load: load, snapshot: snapshot, reset: reset,
+    load: load, snapshot: snapshot, reset: reset, persist: persist,
     evidence: evidence, masteryOf: masteryOf, bandFor: bandFor,
     recompute: recompute, scheduleReview: scheduleReview, reviewDue: reviewDue,
     balances: balances, completeActivity: completeActivity,

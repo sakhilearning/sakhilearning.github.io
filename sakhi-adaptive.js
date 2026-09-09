@@ -45,7 +45,7 @@ window.SakhiAdaptive = (function () {
   function beginPlacement() {
     var s = Prog().load();
     s.placement = { complete: false, probes: [], started_at: new Date().toISOString(), domains: Object.keys(PROBE_START) };
-    Prog().load(); // ensure state object
+    Prog().persist();
     return s.placement;
   }
 
@@ -106,6 +106,9 @@ window.SakhiAdaptive = (function () {
       s.placement.complete = true;
       s.placement.completed_at = new Date().toISOString();
     }
+    /* Without this the credited prerequisites vanish on reload and the learner
+     * is sent back to the alphabet — the exact failure this module prevents. */
+    Prog().persist();
     return { passed: passed, credited: credited, placementComplete: !!s.placement.complete };
   }
 
@@ -114,6 +117,7 @@ window.SakhiAdaptive = (function () {
     if (!s.placement) beginPlacement();
     s.placement.complete = true;
     s.placement.completed_at = new Date().toISOString();
+    Prog().persist();
     return s.placement;
   }
 

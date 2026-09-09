@@ -310,11 +310,11 @@
     var cloudBox = $('#pCloud');
     clear(cloudBox);
     var LABEL = {
-      CONNECTED: ['Cloud progress: CONNECTED', 'Saving to your account.'],
-      NOT_CONNECTED: ['Cloud progress: NOT CONNECTED', 'Progress is saved on this device only. Sign in to sync across devices.'],
-      OFFLINE: ['Cloud progress: NOT CONNECTED', 'This device is offline. Work is saved here and will upload when you reconnect.'],
-      NOT_CONFIGURED: ['Cloud progress: NOT CONNECTED', 'No cloud account is set up for this build.']
-    }[cs.status] || ['Cloud progress: NOT CONNECTED', ''];
+      CONNECTED: ['CONNECTED', 'Saving to your account.'],
+      NOT_CONNECTED: ['NOT CONNECTED', 'Progress is saved on this device only. Sign in to sync across devices.'],
+      OFFLINE: ['NOT CONNECTED', 'This device is offline. Work is saved here and will upload when you reconnect.'],
+      NOT_CONFIGURED: ['NOT CONNECTED', 'No cloud account is set up for this build.']
+    }[cs.status] || ['NOT CONNECTED', ''];
     cloudBox.className = 'insight ' + (cs.status === 'CONNECTED' ? 'is-good' : 'is-low');
     cloudBox.appendChild(el('span', 'label', 'Cloud progress'));
     cloudBox.appendChild(el('b', null, LABEL[0]));

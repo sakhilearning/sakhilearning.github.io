@@ -61,6 +61,19 @@ ok('  blend_segment credited', Prog.masteryOf('reading.blend_segment') !== 'NOT_
 const readingFrontier = Cur.frontier('reading', Prog.masteryOf).map(s => s.skill_id);
 ok('letter_sounds is NOT offered again', !readingFrontier.includes('reading.letter_sounds'), readingFrontier);
 
+console.log('\n=== 1b. Placement survives a reload (regression) ===');
+/* The credits and the probe record live in state mutated through evidence()/
+ * load(); if adaptive does not commit them, they die at the next reload and the
+ * learner is sent straight back to the alphabet. Assert they reached storage. */
+const persisted = JSON.parse(store['sakhi.learner.state']);
+ok('probe is written to storage', (persisted.placement.probes || []).length === 1, persisted.placement.probes);
+ok('credited prerequisites are written to storage',
+  ['reading.letter_sounds', 'reading.short_vowels', 'reading.blend_segment']
+    .every(k => persisted.skills[k] && persisted.skills[k].mastery_state === 'MOSTLY_MASTERED'),
+  Object.keys(persisted.skills));
+ok('credits are marked as placement-derived, not taught',
+  persisted.skills['reading.letter_sounds'].placement_credited === true);
+
 console.log('\n=== 2. In-session acceleration down the literacy progression ===');
 Adapt.finishPlacement();
 let used = ['reading.cvc_mixed'];

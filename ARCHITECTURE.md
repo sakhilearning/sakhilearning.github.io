@@ -1,47 +1,70 @@
-# Sakhi Magic Learning Architecture
+# Sakhi architecture
 
-This document defines the source of truth for each major application system. Feature code must consume these services rather than redefining or wrapping global behavior.
+One owner per concern. Every file below is loaded by `index.html`; nothing else
+at the repo root is part of the running app.
 
-| Concern | Authoritative source | Public API |
+| module | owns | must not touch |
 |---|---|---|
-| Audio | `speech-service.js` | `SpeechService` |
-| Visual assets/scenes | `asset-service.js` + `ASSET_STRATEGY.md` | `AssetService` |
-| Curriculum graph | `curriculum.js` + adapter in `core-learning-services.js` | `CurriculumEngine` |
-| Mastery/review | `core-learning-services.js` | `MasteryEngine` |
-| Daily planning | `core-learning-services.js` | `LessonPlanner` |
-| Activity contract + lifecycle | `activity-contract.js` + `interaction-engine.js` | `ActivityContract`, `ActivityRenderer`, `ActivityStateMachine` |
-| Progress persistence | `persistence.js` through `progress-service.js` | `ProgressService` |
-| Rewards | `reward-service.js` | `RewardService` |
-| Parent authentication | `parent-auth-service.js` | `ParentAuthService` |
-| Learner profile | `core-learning-services.js` | `LearnerProfileService` |
-| AI content policy | `core-learning-services.js` | `AIContentService` |
-| Parent reporting UI | `adaptive-engine.js` | `AdaptiveParentUI` |
-| Family sync UI | `backend-bridge.js` | `FamilySyncUI` |
+| `supabase-config.js` | public project URL + publishable key | — |
+| `sakhi-cloud.js` | Supabase transport, auth session, connection status, offline outbox | curriculum, pedagogy |
+| `sakhi-curriculum.js` | the skill graph: domains, strands, skills, prerequisites, frontier, next-after | themes, storage |
+| `sakhi-themes.js` | worlds: palette, companion, narration copy, reward *names* | anything curricular |
+| `sakhi-content.js` | item banks per skill (data only) | logic, themes |
+| `sakhi-activities.js` | turning (skill, band, seed) into an activity | themes, storage |
+| `sakhi-progress.js` | evidence, mastery, spaced review, reward ledger, **the one completion path** | UI |
+| `sakhi-adaptive.js` | placement, acceleration, what to teach next | themes |
+| `sakhi-audio.js` | audio unlock, narration, phoneme bank, typed faults | pedagogy |
+| `sakhi-templates.js` | the seven interaction renderers | pedagogy, storage |
+| `sakhi-app.js` | views, routing, wiring | pedagogy (delegates) |
 
-## Ownership rules
+## The two invariants
 
-1. Only `speech-service.js` may select a speech provider, voice, model, fallback, playback mechanism, or cache speech.
-2. Critical phoneme pronunciation must ultimately come from a validated phoneme asset bank. Neural phoneme generation is transitional and must not be considered curriculum-verified.
-3. Only `AssetService` decides which recurring world/asset represents an activity or domain. Individual lessons must not hotlink or independently search for imagery.
-4. Character/image acquisition follows `ASSET_STRATEGY.md`: inventory first, user-provided assets first, then existing high-quality project assets, then publicly accessible imagery only where technically and legally appropriate, then generated/original supporting art.
-5. Selected imagery is referenced through stable asset IDs and provenance metadata. Remote third-party URLs are discovery inputs, not permanent runtime dependencies.
-6. Existing good parent-preferred visuals are preserved unless explicitly classified as UPGRADE, REPLACE, or BROKEN.
-7. Only `MasteryEngine` derives skill state and review timing.
-8. Only `LessonPlanner` selects the recommended daily activity sequence.
-9. `UIHooks` is the single compatibility interception layer around legacy renderer/navigation functions. Other files must subscribe to hooks rather than wrap those functions again.
-10. `ProgressService` owns synchronization. Supabase is authoritative after family authentication; browser storage is a cache/offline bridge, not the durable source of truth.
-11. `ParentAuthService` owns passcode verification, unlock state and inactivity expiry. Child-facing code never contains the passcode in plaintext.
-12. Curriculum facts, phonics mappings, arithmetic answers and prerequisite relationships come from vetted deterministic data. AI may provide story wrappers, dialogue and safe variation only after validation.
-13. New code must not introduce `fix`, `hotfix`, `override`, `patch`, or duplicate provider/service layers as architecture.
+**1. Themes are cosmetic.** A theme may change colours, the companion, narration
+wording and what a reward is *called*. It may never change which skill is
+taught, in what order, or at what difficulty.
 
-## Character and image system
+Enforced three ways: `sakhi-themes.js` rejects any theme declaring a
+curriculum-shaped key and deep-freezes the rest; `sakhi-adaptive.js` never
+imports `SakhiThemes`; and the deploy gate greps for both violations.
 
-`AssetService` owns the character library, stable IDs, category paths, educational-role associations, quality rules, fallbacks, inventory metadata and preload behavior. Character imagery is a motivation/story layer; instructional objects remain visually clean and concept-focused.
+**2. One write path.** `SakhiProgress.completeActivity()` is the only function
+that records learning. It stages attempts, evidence, mastery, review schedule,
+rewards and session state, commits locally, then queues exactly one cloud batch.
+Nothing else writes.
 
-The application may support familiar worlds and characters when suitable assets are available. Suggested recurring associations include Belle for stories/vocabulary/comprehension, Ariel for ocean science/counting/sorting, Elsa and Anna for number/pattern/spatial/winter activities, Rapunzel for creativity/sequencing, Cinderella for matching/routines/time, Mickey and Minnie for playful review, Winnie the Pooh for stories/emotions/friendship, and Luna/unicorns for phonics, reading and rewards. These associations are not permanent subject restrictions.
+## Storage
 
-The current repository is publicly accessible even though the application is intended for family use. Third-party copyrighted character imagery must therefore not be committed merely because the intended audience is private; storage must still be technically and legally appropriate.
+Supabase is the authority. `localStorage` is a read cache and an outbox, never
+the permanent record. Connection status is four-valued — `NOT_CONFIGURED`,
+`OFFLINE`, `NOT_CONNECTED`, `CONNECTED` — and only reaches `CONNECTED` after an
+authenticated request actually succeeds, so the parent view can never show a
+sync that did not happen. Queued writes carry client-generated ids and use
+merge-duplicates upsert, so replaying the outbox converges instead of
+duplicating.
 
-## Current migration status
+## Curriculum
 
-The repository is being migrated from a historically layered static app. Compatibility aliases may exist temporarily where the old renderer expects global names, but business logic must delegate to the services above. The migration is not complete until obsolete definitions have been removed and the full learner loop passes simulated and live tests.
+The graph lives in Supabase (`curriculum_*` tables, anon-readable reference
+data) at version `2026.09.08-v2`. `curriculum-snapshot.json` mirrors it so the
+app works offline and the graph is diffable in git. Mastery thresholds and
+review intervals come from each skill's own `mastery_criteria` and
+`review_policy` — pedagogy lives with the curriculum, not in the client.
+
+## Difficulty
+
+Five bands are applied on top of every template rather than duplicated per
+skill: 1 INTRO (2 choices, worked model), 2 SUPPORTED (3 choices, partial
+scaffold), 3 INDEPENDENT, 4 MIXED (4 choices, drawn across the bank),
+5 CHALLENGE (near-miss distractors). 48 skills x 5 bands = 240 distinct
+activities from 7 renderers.
+
+## Tests
+
+```bash
+npm run test:unit     # activities coverage + engine simulation
+node scripts/validate-production-app.cjs   # the deploy gate
+```
+
+The gate is regression-tested: it fails on a theme reaching into curriculum, on
+adaptive reading the theme, on a resurrected legacy file, on a prerequisite
+loop, and on a skill losing its content bank.
