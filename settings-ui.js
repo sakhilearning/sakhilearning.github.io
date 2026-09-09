@@ -15,10 +15,24 @@ function qaRows(){
   ];
   return rows.map(r=>`<tr>${r.map((x,i)=>`<${i?'td':'th'}>${esc(x)}</${i?'td':'th'}>`).join('')}<td><b class="qa-pass">PASS</b></td></tr>`).join('');
 }
+function pwaStatusFallback(){return {build:{build:window.SAKHI_BUILD_ID||'dev-local',commit:'unknown',built_at:'unknown'},install:{display:'Checking install status…'},supported:'serviceWorker' in navigator,registered:false,hasWaiting:false,updateCheckAt:null}}
+function renderPwaInfo(card){
+  const svc=window.SakhiPWAUpdateService,st=svc?.getStatus?.()||pwaStatusFallback(),build=svc?.getBuildInfo?.()||st.build||pwaStatusFallback().build,install=svc?.getInstallStatus?.()||st.install;
+  const set=(sel,text)=>{const el=card.querySelector(sel);if(el)el.textContent=text};
+  set('[data-pwa-install]',install.display||install.guidance||'Checking install status…');
+  set('[data-build-id]',build.build||'unknown');
+  set('[data-build-commit]',build.commit||'unknown');
+  set('[data-build-time]',build.built_at||'unknown');
+  set('[data-pwa-sw]',st.supported?(st.registered?'Registered; update check runs on app launch':'Supported; registering…'):'Service worker not supported on this browser');
+  set('[data-pwa-update-state]',st.hasWaiting?'A new version is ready.':'No pending update detected.');
+  const guidance=card.querySelector('[data-pwa-guidance]');
+  if(guidance)guidance.textContent=install.installed?'Installed on this device':(install.isIOS?'iPhone/iPad: Tap Share → Add to Home Screen.':install.guidance||'Use the browser install option to install Sakhi.');
+}
 function updatePreview(card){
   const preview=card.querySelector('[data-adventure-preview]');if(preview)preview.innerHTML=A.previewMarkup();
   const status=card.querySelector('[data-settings-status]');if(status)status.textContent='Saved. Changes are active now and will be used for the next activity or session.';
   const qa=card.querySelector('[data-settings-qa]');if(qa)qa.innerHTML=qaRows();
+  renderPwaInfo(card);
 }
 function render(){
   const parent=document.getElementById('parent');if(!parent)return;
@@ -37,6 +51,7 @@ function render(){
         <label class="settings-control settings-toggle"><span><b>Reduced Motion</b><small>Reduce decorative animation and transitions.</small></span><input type="checkbox" data-setting="reduced_motion"></label>
       </div>
       <div class="settings-tools"><button class="btn soft" type="button" data-open-baseline>Run Reading Baseline</button><button class="btn soft" type="button" data-open-curriculum>Open Learning Kingdom</button></div>
+      <details class="settings-dev-info" open><summary>Developer Information</summary><p data-pwa-guidance>Checking installation status…</p><div class="sakhi-pwa-grid"><div class="sakhi-pwa-box"><small>Install status</small><b data-pwa-install>Checking…</b></div><div class="sakhi-pwa-box"><small>Service worker</small><b data-pwa-sw>Checking…</b></div><div class="sakhi-pwa-box"><small>Build ID</small><b data-build-id>Checking…</b></div><div class="sakhi-pwa-box"><small>Update status</small><b data-pwa-update-state>Checking…</b></div><div class="sakhi-pwa-box"><small>Commit</small><b data-build-commit>Checking…</b></div><div class="sakhi-pwa-box"><small>Built at</small><b data-build-time>Checking…</b></div></div><div class="sakhi-pwa-actions"><button class="btn soft" type="button" data-check-updates>Check for updates</button><button class="btn soft" type="button" data-test-sound>Test Sakhi Sound</button></div></details>
       <details class="settings-qa"><summary>Settings QA</summary><div class="table-wrap"><table><thead><tr><th>Setting</th><th>Current value</th><th>Persisted?</th><th>Actual effect</th><th>Test</th></tr></thead><tbody data-settings-qa></tbody></table></div></details>`;
     const anchor=document.getElementById('familySyncCard')||parent.querySelector('.parent-lock-row');
     anchor?.after(card);
@@ -59,6 +74,8 @@ function render(){
     card.querySelector('[data-setting="audio_enabled"]').addEventListener('change',e=>{S.set('audio_enabled',e.target.checked);updatePreview(card)});
     card.querySelector('[data-setting="movement_activities"]').addEventListener('change',e=>{S.set('movement_activities',e.target.checked);updatePreview(card)});
     card.querySelector('[data-setting="reduced_motion"]').addEventListener('change',e=>{S.set('reduced_motion',e.target.checked);updatePreview(card)});
+    card.querySelector('[data-check-updates]').addEventListener('click',async()=>{await window.SakhiPWAUpdateService?.checkForUpdate?.();renderPwaInfo(card)});
+    card.querySelector('[data-test-sound]').addEventListener('click',()=>window.SpeechService?.speakCharacter?.("Hi! I'm Sakhi."));
   }
   updatePreview(card);
 }
@@ -70,6 +87,9 @@ function init(){childControlCleanup();render()}
 window.SettingsUI=Object.freeze({render,childControlCleanup});
 window.addEventListener('sakhi-setting-changed',()=>render());
 window.addEventListener('sakhi-settings-saved',()=>render());
+window.addEventListener('sakhi-pwa-update-check',()=>render());
+window.addEventListener('sakhi-pwa-update-available',()=>render());
+window.addEventListener('sakhi-pwa-registration-failed',()=>render());
 window.UIHooks?.on?.('navigate',e=>{if(e.args?.[0]==='parent')setTimeout(render,0)});
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
