@@ -1,8 +1,90 @@
-const BUILD_ID='__SAKHI_BUILD_ID__';
-const CACHE='sakhi-production-'+BUILD_ID;
-const APP_ASSETS=['./','./index.html','./manifest.json','./build-info.js','./version.json','./sakhi-production.css','./sakhi-production.js','./unicorn-icon.svg'];
-async function deleteOldCaches(){const keys=await caches.keys();await Promise.all(keys.filter(k=>k.startsWith('sakhi-')&&k!==CACHE).map(k=>caches.delete(k)));}
-self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>Promise.all(APP_ASSETS.map(asset=>cache.add(new Request(asset,{cache:'reload'})).catch(()=>null)))));});
-self.addEventListener('activate',event=>{event.waitUntil(Promise.all([deleteOldCaches(),self.clients.claim()]));});
-self.addEventListener('message',event=>{if(event.data&&event.data.type==='SKIP_WAITING')self.skipWaiting();if(event.data&&event.data.type==='SAKHI_PURGE_CACHES')event.waitUntil(deleteOldCaches());});
-self.addEventListener('fetch',event=>{const request=event.request;if(request.method!=='GET')return;const url=new URL(request.url);if(url.origin!==self.location.origin)return;const revalidate=url.pathname==='/'||url.pathname.endsWith('/index.html')||url.pathname.endsWith('/sw.js')||url.pathname.endsWith('/version.json')||url.pathname.endsWith('/manifest.json');if(revalidate){event.respondWith(fetch(new Request(request,{cache:'no-store'})).catch(()=>caches.match(request).then(r=>r||caches.match('./index.html'))));return;}event.respondWith(caches.match(request).then(cached=>cached||fetch(request).then(response=>{if(response&&response.ok&&response.type==='basic'){const copy=response.clone();caches.open(CACHE).then(cache=>cache.put(request,copy));}return response;})).catch(()=>request.destination==='document'?caches.match('./index.html'):undefined));});
+const BUILD_ID = "__SAKHI_BUILD_ID__";
+const CACHE = "sakhi-production-" + BUILD_ID;
+const APP_ASSETS = [
+  "./",
+  "./index.html",
+  "./manifest.json",
+  "./build-info.js",
+  "./version.json",
+  "./sakhi-production.css",
+  "./sakhi-production.js",
+  "./unicorn-icon.svg",
+  "./assets/scenes/rainbow-meadow.webp",
+  "./assets/scenes/story-castle.webp",
+  "./assets/scenes/royal-ballroom.webp",
+  "./assets/scenes/frozen-palace.webp",
+  "./assets/scenes/mermaid-lagoon.webp",
+  "./assets/scenes/forest-library.webp",
+  "./assets/scenes/tower-art-studio.webp",
+];
+async function deleteOldCaches() {
+  const keys = await caches.keys();
+  await Promise.all(
+    keys
+      .filter((k) => k.startsWith("sakhi-") && k !== CACHE)
+      .map((k) => caches.delete(k)),
+  );
+}
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches
+      .open(CACHE)
+      .then((cache) =>
+        Promise.all(
+          APP_ASSETS.map((asset) =>
+            cache
+              .add(new Request(asset, { cache: "reload" }))
+              .catch(() => null),
+          ),
+        ),
+      ),
+  );
+});
+self.addEventListener("activate", (event) => {
+  event.waitUntil(Promise.all([deleteOldCaches(), self.clients.claim()]));
+});
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") self.skipWaiting();
+  if (event.data && event.data.type === "SAKHI_PURGE_CACHES")
+    event.waitUntil(deleteOldCaches());
+});
+self.addEventListener("fetch", (event) => {
+  const request = event.request;
+  if (request.method !== "GET") return;
+  const url = new URL(request.url);
+  if (url.origin !== self.location.origin) return;
+  const revalidate =
+    url.pathname === "/" ||
+    url.pathname.endsWith("/index.html") ||
+    url.pathname.endsWith("/sw.js") ||
+    url.pathname.endsWith("/version.json") ||
+    url.pathname.endsWith("/manifest.json");
+  if (revalidate) {
+    event.respondWith(
+      fetch(new Request(request, { cache: "no-store" })).catch(() =>
+        caches.match(request).then((r) => r || caches.match("./index.html")),
+      ),
+    );
+    return;
+  }
+  event.respondWith(
+    caches
+      .match(request)
+      .then(
+        (cached) =>
+          cached ||
+          fetch(request).then((response) => {
+            if (response && response.ok && response.type === "basic") {
+              const copy = response.clone();
+              caches.open(CACHE).then((cache) => cache.put(request, copy));
+            }
+            return response;
+          }),
+      )
+      .catch(() =>
+        request.destination === "document"
+          ? caches.match("./index.html")
+          : undefined,
+      ),
+  );
+});
