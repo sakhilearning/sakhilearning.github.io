@@ -192,7 +192,7 @@ window.SakhiAdaptive = (function () {
     var sk = Cur().skill(pick.skill_id);
     var m = masteryOf(pick.skill_id);
     var name = sk ? sk.title : pick.skill_id;
-    if (/placement/.test(pick.reason)) return 'Checking where ' + name.toLowerCase() + ' sits, so Sakhi can start at the right level instead of the beginning.';
+    if (/placement/.test(pick.reason)) return 'Quick check on "' + name + '" so Sakhi starts at the right level instead of the beginning.';
     if (/accelerated/.test(pick.reason)) return name + ' — the previous skill was cleared with no hints, so Sakhi moved straight on.';
     if (/review/.test(pick.reason)) return name + ' — a short confirming review, then back to new work.';
     if (m === 'NOT_INTRODUCED') return name + ' — this is next in the path and the prerequisites are done.';
