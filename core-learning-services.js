@@ -65,5 +65,11 @@ const AIContentService=Object.freeze({mode:'vetted-bank-first',createWrapper:({w
 window.CurriculumEngine=CurriculumEngine;window.MasteryEngine=MasteryEngine;window.LessonPlanner=LessonPlanner;window.LearnerProfileService=LearnerProfileService;window.AIContentService=AIContentService;
 window.deriveStatus=(current,evidence)=>MasteryEngine.deriveState(current,evidence);
 window.chooseActivity=(domain,offset=0)=>LessonPlanner.choose(domain,{stateData:window.data||{},exclude:new Set(),types:new Set()});
-window.makeQuest=function(){const result=LessonPlanner.planToday(window.data||{});window.data.quest=result.activities.map(a=>a.id);window.data.questDate=window.todayKey?.()||new Date().toISOString().slice(0,10);window.data.questResults={};window.data.curriculumVersion=CurriculumEngine.version;window.data.adaptiveTargetMinutes=result.targetMinutes||20;window.persist?.(false);window.renderQuest?.();return result;};
+window.makeQuest=function(){
+  const planned=LessonPlanner.planToday(window.data||{});
+  const fitted=window.SettingsService?.fitActivities?window.SettingsService.fitActivities(planned.activities||[]):planned.activities||[];
+  const targetMinutes=window.SettingsService?.sessionMinutes?.()||planned.targetMinutes||20;
+  const result={...planned,activities:fitted,targetMinutes,settingsApplied:!!window.SettingsService};
+  window.data.quest=fitted.map(a=>a.id);window.data.questDate=window.todayKey?.()||new Date().toISOString().slice(0,10);window.data.questResults={};window.data.curriculumVersion=CurriculumEngine.version;window.data.adaptiveTargetMinutes=targetMinutes;window.data.questSettingsVersion=window.SettingsService?.version||null;window.persist?.(false);window.renderQuest?.();return result;
+};
 })();
