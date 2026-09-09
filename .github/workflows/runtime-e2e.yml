@@ -18,10 +18,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-      - name: Validate PWA update architecture
+      - name: Validate PWA and journey architecture
         run: |
           node --check pwa-update.js
+          node --check domain-theme-registry.js
+          node --check daily-journey-service.js
           node scripts/validate-pwa-update.cjs
+          node scripts/validate-daily-journey.cjs
       - run: npm install
       - run: npx playwright install --with-deps chromium webkit
       - name: Run child runtime flow on Chrome, WebKit tablet and mobile
