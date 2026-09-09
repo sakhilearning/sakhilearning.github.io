@@ -70,7 +70,7 @@
 
   function renderHome() {
     var t = theme();
-    $('#homeCompanion').innerHTML = window.SakhiArt ? SakhiArt.scene(t.id, { label: t.companion + ' in ' + t.name }) : t.icon;
+    $('#homeCompanion').innerHTML = window.SakhiArt ? SakhiArt.scene(t.id, { eager: true }) : t.icon;
     $('#homeWorld').textContent = t.name;
     $('#homeTagline').textContent = t.tagline;
     $('#homeWelcome').textContent = t.narration.welcome;
@@ -246,6 +246,8 @@
 
   function renderRewards() {
     var t = theme(), b = Prog.balances();
+    var art = $('#rewardArt');
+    if (art && window.SakhiArt) art.innerHTML = SakhiArt.rewardScene();
     $('#rewardWorld').textContent = t.icon + ' ' + t.name;
     var grid = $('#rewardGrid');
     clear(grid);
@@ -443,6 +445,7 @@
       card.appendChild(el('b', null, t.name));
       card.appendChild(el('small', null, t.tagline));
       card.appendChild(el('em', null, 'Rewards: ' + t.rewards.primary.label + ' & ' + t.rewards.badge.label));
+      card.onmouseenter = function () { window.SakhiArt && SakhiArt.prefetch(t.id); };
       card.onclick = function () {
         Prog.setTheme(t.id);
         toast(t.companion + ' is your guide now ✨');

@@ -21,7 +21,7 @@ begin
       add constraint learner_profiles_active_theme_known
       check (active_theme in (
         'unicorn_meadow','royal_castle','ice_palace',
-        'mermaid_lagoon','wayfinder_cove','butterfly_cottage'
+        'mermaid_lagoon','forest_glade','butterfly_cottage'
       ));
   end if;
 end $$;

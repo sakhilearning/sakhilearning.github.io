@@ -109,22 +109,22 @@ window.SakhiThemes = (function () {
   });
 
   register({
-    id: 'wayfinder_cove',
-    name: 'Wayfinder Cove',
-    tagline: 'Sails, stars and a brave little boat.',
-    companion: 'Wayfinder Tala',
-    icon: '⛵',
-    palette: { a: '#e0f7ef', b: '#d6ecff', c: '#ffeacc', accent: '#0f8f80', ink: '#123b38' },
-    motifs: ['sail', 'compass', 'wave', 'star', 'palm'],
+    id: 'forest_glade',
+    name: 'Enchanted Forest Library',
+    tagline: 'Old books, tall trees and a very patient owl.',
+    companion: 'Storyteller Wren',
+    icon: '\ud83e\udd89',
+    palette: { a: '#e6f7e0', b: '#e2eeff', c: '#fff0d6', accent: '#3f8f5c', ink: '#1e3a28' },
+    motifs: ['book', 'leaf', 'lantern', 'acorn', 'feather'],
     narration: {
-      welcome: 'The tide is right and the stars are out. Ready to sail?',
-      encourage: 'Every wayfinder gets turned around. Set your course again.',
-      celebrate: 'You found your way! The stars are bright tonight.'
+      welcome: 'Wren has a story open and a seat saved for you.',
+      encourage: 'Every good reader gets stuck. Take it slowly and try again.',
+      celebrate: 'Wren is hooting! That was beautifully done.'
     },
-    rewards: { primary: { key: 'courage_hearts', label: 'Courage Hearts', icon: '💛' },
-               badge: { key: 'wayfinder_gems', label: 'Wayfinder Gems', icon: '💎' } },
-    milestones: ['The sail catches wind', 'A star lines up on the horizon', 'Land comes into view'],
-    art: { ground: 'shore', sky: 'night' }
+    rewards: { primary: { key: 'courage_hearts', label: 'Courage Hearts', icon: '\ud83d\udc9b' },
+               badge: { key: 'story_gems', label: 'Story Gems', icon: '\ud83d\udc8e' } },
+    milestones: ['A lantern flickers on', 'A new book opens itself', 'The whole glade lights up'],
+    art: { ground: 'glade', sky: 'canopy' }
   });
 
   register({

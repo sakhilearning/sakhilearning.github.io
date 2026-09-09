@@ -299,6 +299,30 @@ h1,h2,h3{letter-spacing:-.02em;margin:0 0 .4em}
 .update-actions{display:flex;gap:8px;flex-shrink:0}
 .update-actions button{padding:11px 16px;min-height:48px}
 
+/* illustration: rendered scenes, cropped rather than letterboxed */
+.hero-art{display:grid;place-items:center;padding:0}
+.hero-art .sakhi-scene{width:100%;max-width:460px;aspect-ratio:4/3;height:auto;
+  object-fit:cover;border-radius:26px;display:block;
+  box-shadow:0 26px 52px rgba(70,40,100,.28);background:var(--theme-b)}
+.reward-art{max-width:520px;margin:0 auto 18px}
+.reward-art .sakhi-scene{width:100%;aspect-ratio:16/9;object-fit:cover;
+  border-radius:24px;display:block;box-shadow:0 20px 40px rgba(70,40,100,.24);background:var(--theme-b)}
+.sakhi-portrait{display:block;width:92px;height:92px;border-radius:50%;overflow:hidden;
+  box-shadow:0 10px 20px rgba(70,40,100,.24);background:var(--theme-b)}
+.sakhi-portrait img{width:100%;height:100%;object-fit:cover;display:block}
+.theme-art{margin:0 0 10px}
+
+/* update banner */
+.update-banner{position:fixed;left:16px;right:16px;bottom:calc(96px + env(safe-area-inset-bottom));z-index:210;
+  display:none;align-items:center;justify-content:space-between;gap:14px;max-width:min(680px,calc(100vw - 32px));
+  margin:0 auto;padding:14px 18px;border-radius:var(--r-md);background:#fff;border:1px solid var(--line);
+  box-shadow:0 20px 46px rgba(50,30,70,.2)}
+.update-banner.is-visible{display:flex}
+.update-banner b{display:block}
+.update-banner span{color:var(--muted);font-size:14px}
+.update-actions{display:flex;gap:8px;flex-shrink:0}
+.update-actions button{padding:11px 16px;min-height:48px}
+
 /* illustration */
 .hero-art{min-height:300px;display:grid;place-items:center;padding:4px}
 .hero-art .sakhi-scene{width:100%;max-width:380px;height:auto;
