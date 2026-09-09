@@ -1,0 +1,20 @@
+name: Sakhi runtime browser QA
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser-runtime:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm install
+      - run: npx playwright install --with-deps chromium webkit
+      - name: Run child runtime flow on Chrome, WebKit tablet and mobile
+        run: npm run test:runtime
