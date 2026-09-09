@@ -1,0 +1,1 @@
+{"name":"sakhi-magic-learning","private":true,"version":"1.0.0","scripts":{"test:runtime":"playwright test"},"devDependencies":{"@playwright/test":"1.55.0"}}
