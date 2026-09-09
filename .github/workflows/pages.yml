@@ -52,44 +52,10 @@ jobs:
           sw.write_text(text)
           PY
 
-      - name: Validate application architecture
+      - name: Validate stable production app
         run: |
-          node --check app.js
-          node --check core-learning-services.js
-          node --check settings-service.js
-          node --check adventure-service.js
-          node --check domain-theme-registry.js
-          node --check daily-journey-service.js
-          node --check settings-ui.js
-          node --check pwa-update.js
-          node --check activity-contract.js
-          node --check reward-service.js
-          node --check scheduler.js
-          node --check interaction-engine.js
-          node --check challenge-bank.js
-          node --check foundation-verification-bank.js
-          node --check adaptive-acceleration-service.js
-          node --check ui-hooks.js
-          node --check progress-service.js
-          node --check parent-auth-service.js
-          node --check asset-service.js
-          node --check curriculum.js
-          node --check persistence.js
-          node --check adaptive-engine.js
-          node --check backend-bridge.js
-          node --check kid-upgrade.js
-          node --check visuals.js
-          node --check speech-service.js
-          node --check sakhi-shell.js
-          node scripts/validate-activities.cjs
-          node scripts/validate-audio-architecture.cjs
-          node scripts/validate-child-experience.cjs
-          node scripts/validate-architecture.cjs
-          node scripts/validate-runtime-stability.cjs
-          node scripts/validate-adaptive-acceleration.cjs
-          node scripts/validate-settings-controls.cjs
-          node scripts/validate-pwa-update.cjs
-          node scripts/validate-daily-journey.cjs
+          node --check sakhi-production.js
+          node scripts/validate-production-app.cjs
 
       - name: Configure Pages
         uses: actions/configure-pages@v5

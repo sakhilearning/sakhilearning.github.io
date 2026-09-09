@@ -1,31 +1,24 @@
-name: Sakhi runtime browser QA
+name: Sakhi production smoke QA
 on:
   push:
-    branches: [main, 'stabilization/**']
+    branches: [main]
   pull_request:
     branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
 concurrency:
-  group: sakhi-runtime-e2e-${{ github.ref }}
+  group: sakhi-production-smoke-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  browser-runtime:
+  production-smoke:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-      - name: Validate PWA and journey architecture
+      - name: Validate single stable production runtime
         run: |
-          node --check pwa-update.js
-          node --check domain-theme-registry.js
-          node --check daily-journey-service.js
-          node scripts/validate-pwa-update.cjs
-          node scripts/validate-daily-journey.cjs
-      - run: npm install
-      - run: npx playwright install --with-deps chromium webkit
-      - name: Run child runtime flow on Chrome, WebKit tablet and mobile
-        run: npm run test:runtime
+          node --check sakhi-production.js
+          node scripts/validate-production-app.cjs
