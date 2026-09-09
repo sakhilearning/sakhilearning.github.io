@@ -18,6 +18,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+      - name: Validate PWA update architecture
+        run: |
+          node --check pwa-update.js
+          node scripts/validate-pwa-update.cjs
       - run: npm install
       - run: npx playwright install --with-deps chromium webkit
       - name: Run child runtime flow on Chrome, WebKit tablet and mobile
