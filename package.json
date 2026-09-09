@@ -1,1 +1,14 @@
-{"name":"sakhi-magic-learning","private":true,"version":"1.0.0","scripts":{"test:runtime":"playwright test"},"devDependencies":{"@playwright/test":"1.55.0"}}
+{
+  "name": "sakhi-magic-learning",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "test:engine": "node tests/engine.test.cjs",
+    "test:activities": "node tests/activities.test.cjs",
+    "test:unit": "node tests/activities.test.cjs && node tests/engine.test.cjs",
+    "test:runtime": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.55.0"
+  }
+}

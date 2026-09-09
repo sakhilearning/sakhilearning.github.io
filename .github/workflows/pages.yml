@@ -52,10 +52,16 @@ jobs:
           sw.write_text(text)
           PY
 
-      - name: Validate stable production app
+      - name: Validate production app
         run: |
-          node --check sakhi-production.js
+          for f in sakhi-cloud.js sakhi-curriculum.js sakhi-themes.js sakhi-content.js \
+                   sakhi-activities.js sakhi-progress.js sakhi-adaptive.js sakhi-audio.js \
+                   sakhi-templates.js sakhi-app.js sw.js; do
+            node --check "$f"
+          done
           node scripts/validate-production-app.cjs
+          node tests/activities.test.cjs
+          node tests/engine.test.cjs
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
