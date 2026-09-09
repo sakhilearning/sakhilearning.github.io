@@ -1,12 +1,14 @@
 name: Sakhi runtime browser QA
 on:
   push:
+    branches: [main, 'stabilization/**']
+  pull_request:
     branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
 concurrency:
-  group: sakhi-runtime-e2e
+  group: sakhi-runtime-e2e-${{ github.ref }}
   cancel-in-progress: true
 jobs:
   browser-runtime:
