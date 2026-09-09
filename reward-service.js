@@ -1,0 +1,11 @@
+(function(){
+'use strict';
+function ensure(){const d=window.data||{};d.rewardTransactions=d.rewardTransactions||[];d.rewardBalances=d.rewardBalances||{};return d;}
+function calc(result,activity){if(!result||!activity)return [];const out=[];if(result.completed&&result.score>0){out.push({reward_type:'MAGIC_STAR',amount:1,reason:'meaningful_activity_completion'});}return out;}
+function recalc(){const d=ensure(),b={};for(const tx of d.rewardTransactions){if(tx.status!=='SAVED')continue;b[tx.reward_type]=(b[tx.reward_type]||0)+Number(tx.amount||0);}d.rewardBalances=b;d.shinyStars=b.MAGIC_STAR||0;return b;}
+async function persistTransaction(tx){const d=ensure();const exists=d.rewardTransactions.find(x=>x.idempotency_key===tx.idempotency_key);if(exists?.status==='SAVED')return exists;if(exists&&exists.status!=='SAVED')Object.assign(exists,tx);else d.rewardTransactions.push(tx);try{const remote=await window.RainbowPersistence?.appendRewardTransaction?.(tx);tx.status='SAVED';tx.saved_at=new Date().toISOString();recalc();window.persist?.(false);window.SakhiRuntimeLog?.log('REWARD_CREATED',{activity_id:tx.activity_id,reward_type:tx.reward_type,amount:tx.amount,remote:!!remote?.remote});return tx;}catch(error){tx.status='RETRY_NEEDED';tx.error=String(error?.message||error);window.persist?.(false);window.SakhiRuntimeLog?.log('REWARD_SAVE_FAILED',{activity_id:tx.activity_id,error:tx.error});throw error;}}
+async function recordForActivity(result,activity,completionKey){const rewards=calc(result,activity);let first=null;for(let i=0;i<rewards.length;i++){const r=rewards[i],tx={transaction_id:window.RainbowPersistence?.uuid?.()||crypto.randomUUID(),idempotency_key:`${completionKey}:${r.reward_type}:${i}`,learner_id:null,session_id:result.session_id,activity_id:activity.id,reward_type:r.reward_type,amount:r.amount,reason:r.reason,created_at:new Date().toISOString(),status:'SAVING'};const saved=await persistTransaction(tx);if(!first)first=saved;}return first;}
+function balance(type='MAGIC_STAR'){return recalc()[type]||0;}
+function snapshot(){return {...recalc()};}
+window.RewardService=Object.freeze({calculateReward:calc,persistTransaction,recordForActivity,balance,snapshot,recalculate:recalc});
+})();
