@@ -2,39 +2,17 @@
 'use strict';
 const backend=window.RainbowPersistence;
 if(!backend)throw new Error('persistence.js must load before progress-service.js');
-let installed=false;
-function installLegacyBridge(){
-  if(installed)return;installed=true;
-  const basePersist=window.persist;
-  if(typeof basePersist==='function')window.persist=function(show=true){const result=basePersist(show);backend.queueSync(window.data||{});return result;};
-  const baseRecord=window.recordInteractionEvent;
-  if(typeof baseRecord==='function')window.recordInteractionEvent=function(type,extra={}){
-    const r=window.interactionRuntime;
-    const result=baseRecord(type,extra);
-    if(r&&['success','not_yet'].includes(type)){
-      const evt={event_id:backend.uuid(),type,attempts:r.attempts,hintLevel:r.hintLevel,elapsed:Math.round((Date.now()-r.startedAt)/1000),timestamp:new Date().toISOString(),...extra};
-      backend.appendAttempt(evt,r.activity).catch(e=>console.warn('Progress sync attempt',e));
-    }
-    return result;
-  };
-}
-async function boot(localState=window.data||{}){
-  const status=await backend.init();
-  if(status.remote){
-    const hydrated=await backend.hydrate(localState);
-    for(const key of Object.keys(localState))delete localState[key];Object.assign(localState,hydrated);
-    localStorage.setItem(window.STORAGE_KEY||backend.CACHE_KEY,JSON.stringify(localState));
-    await backend.syncSnapshot(localState);
-  }
-  return status;
-}
-const service=Object.freeze({
-  boot,installLegacyBridge,
-  signIn:email=>backend.signIn(email),signOut:()=>backend.signOut(),
-  sync:state=>backend.syncSnapshot(state||window.data||{}),
-  status:()=>backend.backendStatus(),
-  uuid:()=>backend.uuid(),
-  authoritativeSource:()=>backend.backendStatus().remote?'supabase':'local-cache-until-family-sign-in'
-});
+const pending=new Map();
+function now(){return new Date().toISOString();}
+function localPersist(){try{window.persist?.(false);}catch(e){console.warn('local persist',e)}}
+function ensureState(){const d=window.data||{};d.activityAttempts=d.activityAttempts||[];d.rewardTransactions=d.rewardTransactions||[];d.sessionHistory=d.sessionHistory||[];d.activeSession=d.activeSession||null;return d;}
+async function boot(localState=window.data||{}){const status=await backend.init();if(status.remote){const hydrated=await backend.hydrate(localState);for(const key of Object.keys(localState))delete localState[key];Object.assign(localState,hydrated);localStorage.setItem(window.STORAGE_KEY||backend.CACHE_KEY,JSON.stringify(localState));await backend.syncSnapshot(localState);}return status;}
+function beginLocalSession(){const d=ensureState();if(d.activeSession&&!d.activeSession.completed_at)return d.activeSession;d.activeSession={session_id:backend.uuid(),started_at:now(),completed_at:null,completed_activities:[],skills_practiced:[],reward_transaction_ids:[]};localPersist();return d.activeSession;}
+function resultKey(result){return result.completion_instance||`${result.session_id||beginLocalSession().session_id}:${result.activity_id}`;}
+async function saveAttempt(result,activity){const key=resultKey(result);if(pending.has(key))return pending.get(key);const task=(async()=>{const d=ensureState();if(d.activityAttempts.some(x=>x.completion_instance===key&&x.save_status==='SAVED'))return {saved:true,duplicate:true,key};const evt={event_id:result.attempt_id||backend.uuid(),type:result.result==='CORRECT'?'success':result.result==='INCORRECT'?'not_yet':'partial',attempts:result.attempts||1,hintLevel:result.hint_level||0,elapsed:result.elapsed_seconds||0,timestamp:result.completed_at||now(),score:result.score,learner_response:result.learner_response,completion_quality:result.completion_quality};const rec={...result,attempt_id:evt.event_id,completion_instance:key,save_status:'SAVING',updated_at:now()};d.activityAttempts.push(rec);d.activityAttempts=d.activityAttempts.slice(-300);localPersist();window.SakhiRuntimeLog?.log('ATTEMPT_SAVE_STARTED',{activity_id:activity.id,attempt_id:evt.event_id});try{const remote=backend.backendStatus().remote;let remoteResult={saved:false,remote:false};if(remote)remoteResult=await backend.appendAttempt(evt,activity);rec.save_status='SAVED';rec.saved_at=now();if(typeof window.recordEvidence==='function')window.recordEvidence(activity,result.score);const session=beginLocalSession();if(!session.completed_activities.includes(activity.id))session.completed_activities.push(activity.id);if(!session.skills_practiced.includes(result.skill_id))session.skills_practiced.push(result.skill_id);if(result.source==='quest'){d.questResults=d.questResults||{};d.questResults[activity.id]=result.score;const exists=(d.questHistory||[]).some(x=>x.completion_instance===key);if(!exists){d.questHistory=d.questHistory||[];d.questHistory.push({date:(result.completed_at||now()).slice(0,10),activityId:activity.id,score:result.score,interaction_type:activity.interaction_type,hints:result.hint_level,attempts:result.attempts,completion_instance:key});d.questHistory=d.questHistory.slice(-250);}}
+const reward=await window.RewardService?.recordForActivity?.(result,activity,key);if(reward?.transaction_id&&!session.reward_transaction_ids.includes(reward.transaction_id))session.reward_transaction_ids.push(reward.transaction_id);localPersist();await backend.syncSnapshot(d);window.SakhiRuntimeLog?.log('ATTEMPT_SAVE_SUCCESS',{activity_id:activity.id,attempt_id:evt.event_id,remote:!!remoteResult.remote});window.SakhiRuntimeLog?.log('MASTERY_UPDATED',{activity_id:activity.id,skill_id:result.skill_id,state:window.getStatus?.(activity.domain,activity.skill)});return {saved:true,remote:!!remoteResult.remote,key,reward};}catch(error){rec.save_status='RETRY_NEEDED';rec.error=String(error?.message||error);localPersist();window.SakhiRuntimeLog?.log('ATTEMPT_SAVE_FAILED',{activity_id:activity.id,error:rec.error});return {saved:false,key,error};}finally{pending.delete(key);}})();pending.set(key,task);return task;}
+async function completeSession(){const d=ensureState(),s=d.activeSession;if(!s)return {saved:false,reason:'no_session'};if(s.completed_at)return {saved:true,duplicate:true};s.completed_at=now();s.duration=Math.max(0,Math.round((new Date(s.completed_at)-new Date(s.started_at))/1000));s.rewards_earned=s.reward_transaction_ids.length;s.mastery_changes=[];d.sessionHistory.push({...s});d.sessionHistory=d.sessionHistory.slice(-60);localPersist();try{await backend.completeSession?.(s);await backend.syncSnapshot(d);return {saved:true};}catch(error){s.save_status='RETRY_NEEDED';localPersist();return {saved:false,error};}}
+async function retryPending(){const d=ensureState(),items=d.activityAttempts.filter(x=>x.save_status==='RETRY_NEEDED');for(const x of items){const a=(window.activities||[]).find(v=>v.id===x.activity_id);if(a)await saveAttempt(x,a);}return items.length;}
+const service=Object.freeze({boot,beginLocalSession,saveAttempt,completeSession,retryPending,signIn:email=>backend.signIn(email),signOut:()=>backend.signOut(),sync:state=>backend.syncSnapshot(state||window.data||{}),status:()=>backend.backendStatus(),uuid:()=>backend.uuid(),authoritativeSource:()=>backend.backendStatus().remote?'supabase':'local-cache-until-family-sign-in'});
 window.ProgressService=service;
 })();
