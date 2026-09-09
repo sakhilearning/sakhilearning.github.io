@@ -41,18 +41,6 @@ jobs:
           if "'./settings-service.js'" not in s:
               s=s.replace("'./core-learning-services.js'","'./core-learning-services.js','./settings-service.js','./adventure-service.js','./settings-ui.js','./settings-controls.css'")
           p.write_text(s)
-
-          p=Path('.github/workflows/pages.yml')
-          s=p.read_text()
-          anchor='          node --check core-learning-services.js\n'
-          if 'node --check settings-service.js' not in s:
-              s=s.replace(anchor,anchor+'          node --check settings-service.js\n          node --check adventure-service.js\n          node --check settings-ui.js\n')
-          anchor2='          node scripts/validate-adaptive-acceleration.cjs\n'
-          if 'validate-settings-controls.cjs' not in s:
-              s=s.replace(anchor2,anchor2+'          node scripts/validate-settings-controls.cjs\n')
-          p.write_text(s)
-
-          Path('.github/workflows/install-settings-controls.yml').unlink()
       - name: Validate settings/control architecture
         run: |
           node --check settings-service.js
@@ -60,10 +48,10 @@ jobs:
           node --check settings-ui.js
           node --check tests/settings-controls.spec.js
           node scripts/validate-settings-controls.cjs
-      - name: Commit settings/control wiring
+      - name: Commit application wiring
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -A
+          git add index.html sw.js
           git commit -m 'Wire real settings and adventure controls' || exit 0
           git push
