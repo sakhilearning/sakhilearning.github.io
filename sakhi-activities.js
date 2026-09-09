@@ -331,6 +331,9 @@ window.SakhiActivities = (function () {
         template: 'count', prompt: 'There are ' + have + '. How many more make ' + target + '?',
         narration: 'There are ' + have + '. How many more do you need to make ' + target + '.',
         media: { repeat: '💎', count: have, ghost: B.scaffold ? need : 0 },
+        /* A tray the child fills by dragging or tapping jewels, rather than
+         * picking a number off a card. Counting out the answer is the skill. */
+        tray: { start: have, goal: target, emoji: '💎' },
         choices: choiceSet(rng, need, [need - 1, need + 1, need + 2, target].filter(function (x) { return x > 0; }), B),
         answer: need,
         hints: ['Count up from ' + have + '.', 'Use your fingers to reach ' + target + '.', 'The answer is ' + need + '.']

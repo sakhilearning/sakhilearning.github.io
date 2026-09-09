@@ -28,6 +28,68 @@ window.SakhiTemplates = (function () {
     if (Array.isArray(a) && Array.isArray(b)) return a.length === b.length && a.every(function (x, i) { return String(x) === String(b[i]); });
     return String(a) === String(b);
   }
+  /* Drag support, ported from the single-file runtime.
+   *
+   * Drag is ADDITIVE to tap: every one of these interactions still works by
+   * tapping alone, which matters because drag is genuinely hard for a
+   * five-year-old and impossible with a switch or keyboard. A pointer that
+   * moves less than 10px is treated as a tap.
+   *
+   * `commit(target)` is called with the drop target the pointer was released
+   * over, matched by `selector`. */
+  var draggedButton = null;
+  function bindDrag(button, selector, commit) {
+    var origin = null, ghost = null, moved = false;
+
+    button.addEventListener('pointerdown', function (e) {
+      if (button.disabled || e.button !== 0) return;
+      origin = { x: e.clientX, y: e.clientY };
+      moved = false;
+      try { button.setPointerCapture(e.pointerId); } catch (err) {}
+    });
+
+    button.addEventListener('pointermove', function (e) {
+      if (!origin) return;
+      if (!moved && Math.hypot(e.clientX - origin.x, e.clientY - origin.y) < 10) return;
+      moved = true;
+      if (!ghost) {
+        ghost = button.cloneNode(true);
+        ghost.removeAttribute('id');
+        ghost.setAttribute('aria-hidden', 'true');
+        ghost.disabled = true;
+        ghost.className = button.className + ' drag-ghost';
+        document.body.appendChild(ghost);
+      }
+      ghost.style.left = e.clientX + 'px';
+      ghost.style.top = e.clientY + 'px';
+    });
+
+    button.addEventListener('pointerup', function (e) {
+      if (!origin) return;
+      var wasDrag = moved;
+      origin = null;
+      if (ghost) { ghost.remove(); ghost = null; }
+      if (!wasDrag) return;
+      e.preventDefault();
+      /* Suppress the click the browser fires after a drag, or the tap handler
+       * would place the same token twice. */
+      draggedButton = button;
+      var suppress = function (c) { c.preventDefault(); c.stopImmediatePropagation(); };
+      document.addEventListener('click', suppress, { capture: true, once: true });
+      setTimeout(function () { document.removeEventListener('click', suppress, true); }, 0);
+      var el = document.elementFromPoint(e.clientX, e.clientY);
+      var target = el && el.closest(selector);
+      if (target) commit(target);
+    });
+
+    function cancel() {
+      origin = null;
+      if (ghost) { ghost.remove(); ghost = null; }
+    }
+    button.addEventListener('pointercancel', cancel);
+    button.addEventListener('lostpointercapture', function () { if (!moved) cancel(); });
+  }
+
   /* Keep the thing the child is working on in view without yanking the page. */
   function focusStage(node) {
     if (!node || !node.scrollIntoView) return;
@@ -151,63 +213,186 @@ window.SakhiTemplates = (function () {
     };
   };
 
-  T.count = T.choice;   // same interaction, richer media block
+  /* Counting: fill the treasure tray to the goal by dragging or tapping jewels.
+   * Falls back to the choice card for count questions that have no tray (plain
+   * "how many?", addition, subtraction), where picking the number IS the task. */
+  T.count = function (container, q, opts) {
+    if (!q.tray) return T.choice(container, q, opts);
+    var stage = shell(container, q, opts);
+    var goal = q.tray.goal, start = q.tray.start, gem = q.tray.emoji || '💎';
+    var added = [];   // indices of jewels moved into the tray
 
-  /* Tap tokens in order to build a word or a sequence. */
-  function ordered(cls, joiner) {
+    var hint = el('p', 'play-instruction', 'Drag jewels into the treasure tray, or tap to add. Tap a jewel in the tray to send it back.');
+    var tray = el('div', 'counting-tray');
+    tray.dataset.dropTray = 'true';
+    tray.setAttribute('aria-label', 'Treasure tray');
+    var trayJewels = el('div', 'tray-jewels');
+    var tally = el('strong', 'tray-tally');
+    tray.appendChild(trayJewels);
+    tray.appendChild(tally);
+    var supply = el('div', 'token-row');
+    stage.appendChild(hint);
+    stage.appendChild(tray);
+    stage.appendChild(supply);
+
+    function addJewel(i) {
+      if (added.indexOf(i) !== -1 || start + added.length >= goal + 3) return;
+      added.push(i);
+      paint(); focusStage(tray);
+      opts.onProgress && opts.onProgress();
+    }
+    function removeJewel(pos) {
+      added.splice(pos, 1);
+      paint();
+      opts.onProgress && opts.onProgress();
+    }
+
+    function paint() {
+      clear(trayJewels);
+      for (var i = 0; i < start; i++) {
+        trayJewels.appendChild(el('span', 'jewel fixed-jewel', gem));
+      }
+      added.forEach(function (_, pos) {
+        var b = el('button', 'jewel-button', gem);
+        b.type = 'button';
+        b.setAttribute('aria-label', 'Return jewel ' + (pos + 1) + ' to the pile');
+        b.onclick = function () { removeJewel(pos); };
+        trayJewels.appendChild(b);
+      });
+      var total = start + added.length;
+      tally.textContent = total + (total === 1 ? ' jewel' : ' jewels') + ' in the tray  ·  Goal: ' + goal;
+      tray.classList.toggle('is-at-goal', total === goal);
+
+      clear(supply);
+      for (var j = 0; j < goal; j++) {
+        (function (index) {
+          var b = el('button', 'jewel-button', gem);
+          b.type = 'button';
+          b.dataset.jewel = String(index);
+          b.disabled = added.indexOf(index) !== -1;
+          b.setAttribute('aria-label', 'Add a jewel to the tray');
+          b.onclick = function () { addJewel(index); };
+          bindDrag(b, '[data-drop-tray]', function () { addJewel(index); });
+          supply.appendChild(b);
+        })(j);
+      }
+    }
+    paint();
+
+    return {
+      isReady: function () { return added.length > 0; },
+      check: function () {
+        var correct = added.length === (goal - start);
+        tray.classList.remove('is-correct', 'is-wrong');
+        tray.classList.add(correct ? 'is-correct' : 'is-wrong');
+        return { correct: correct, response: added.length };
+      },
+      reset: function () { added = []; tray.classList.remove('is-correct', 'is-wrong'); paint(); },
+      immediate: false
+    };
+  };
+
+  /* Build a word or order a sequence by filling slots.
+   *
+   * Two ways in, both always available: tap a tile and it drops into the next
+   * empty slot, or drag it into a specific slot. Tap a filled slot to take it
+   * back. Selection is tracked by token index, so repeated tokens (two arrows
+   * in a coding sequence, a doubled letter) stay distinct. */
+  function ordered(cls, isSequence) {
     return function (container, q, opts) {
       var stage = shell(container, q, opts);
-      var answerBox = el('div', cls + '-answer');
-      var tokenRow = el('div', cls + '-tokens');
-      stage.appendChild(answerBox);
+      var slotCount = q.answer.length;
+      var picked = [];   // token indices, in placement order
+
+      var hint = el('p', 'play-instruction',
+        'Drag a tile into a space, or tap a tile to place it. Tap a filled space to take it back.');
+      var board = el('div', 'magic-board' + (isSequence ? ' sequence-board' : ''));
+      board.setAttribute('aria-label', 'Your answer');
+      var tokenRow = el('div', 'token-row');
+      stage.appendChild(hint);
+      stage.appendChild(board);
       stage.appendChild(tokenRow);
-      var picked = [];   // indices into q.tokens, so duplicate tokens stay distinct
+
+      function firstEmpty() {
+        for (var k = 0; k < slotCount; k++) if (picked[k] == null) return k;
+        return -1;
+      }
+
+      function placeAt(tokenIndex, slotIndex) {
+        if (picked.indexOf(tokenIndex) !== -1) return;
+        /* A tap goes to the first EMPTY slot, not the end. Appending meant that
+         * after taking a tile back out of the middle, the next tap jumped over
+         * the hole it had just left. */
+        if (slotIndex == null || slotIndex >= slotCount) slotIndex = firstEmpty();
+        if (slotIndex < 0 || picked[slotIndex] != null) return;
+        while (picked.length <= slotIndex) picked.push(null);
+        picked[slotIndex] = tokenIndex;
+        paint();
+        focusStage(board);
+        opts.onProgress && opts.onProgress();
+      }
+
+      function removeAt(slotIndex) {
+        if (picked[slotIndex] == null) return;
+        /* Clear the slot in place. Splicing shifted every later tile one to the
+         * left, which silently rewrote an answer the child had already placed. */
+        picked[slotIndex] = null;
+        paint();
+        opts.onProgress && opts.onProgress();
+      }
 
       function paint() {
-        clear(answerBox);
-        if (!picked.length) {
-          answerBox.appendChild(el('span', 'placeholder', joiner === ' ' ? 'Tap the letters' : 'Tap them in order'));
-        } else {
-          picked.forEach(function (idx, pos) {
-            var chip = el('button', 'answer-chip', String(q.tokens[idx]));
-            chip.type = 'button';
-            chip.setAttribute('aria-label', 'Remove ' + q.tokens[idx]);
-            chip.onclick = function () { picked.splice(pos, 1); paint(); opts.onProgress && opts.onProgress(); };
-            answerBox.appendChild(chip);
-          });
+        clear(board);
+        for (var i = 0; i < slotCount; i++) {
+          var tokenIndex = picked[i];
+          var slot = el('button', 'magic-slot' + (tokenIndex != null ? ' filled' : ''));
+          slot.type = 'button';
+          slot.dataset.slot = String(i);
+          if (tokenIndex != null) {
+            slot.textContent = String(q.tokens[tokenIndex]);
+            slot.setAttribute('aria-label', 'Space ' + (i + 1) + ', holding ' + q.tokens[tokenIndex] + '. Tap to take it back.');
+            slot.onclick = (function (idx) { return function () { removeAt(idx); }; })(i);
+          } else {
+            slot.appendChild(el('span', null, String(i + 1)));
+            slot.setAttribute('aria-label', 'Empty space ' + (i + 1));
+          }
+          board.appendChild(slot);
         }
         clear(tokenRow);
         q.tokens.forEach(function (t, i) {
-          var b = el('button', 'token');
+          var b = el('button', 'token' + (isSequence ? ' story-token' : ''));
           b.type = 'button';
+          b.dataset.token = String(i);
           b.textContent = String(t);
           b.disabled = picked.indexOf(i) !== -1;
-          b.onclick = function () {
-            picked.push(i); paint();
-            focusStage(answerBox);
-            opts.onProgress && opts.onProgress();
-          };
+          b.onclick = function () { placeAt(i, null); };
+          bindDrag(b, '[data-slot]', function (target) {
+            placeAt(i, Number(target.dataset.slot));
+          });
           tokenRow.appendChild(b);
         });
       }
       paint();
 
       return {
-        isReady: function () { return picked.length > 0; },
+        isReady: function () { return picked.filter(function (x) { return x != null; }).length === slotCount; },
         check: function () {
-          var response = picked.map(function (i) { return q.tokens[i]; });
+          var response = [];
+          for (var i = 0; i < slotCount; i++) {
+            response.push(picked[i] == null ? null : q.tokens[picked[i]]);
+          }
           var correct = same(response, q.answer);
-          answerBox.classList.remove('is-correct', 'is-wrong');
-          answerBox.classList.add(correct ? 'is-correct' : 'is-wrong');
+          board.classList.remove('is-correct', 'is-wrong');
+          board.classList.add(correct ? 'is-correct' : 'is-wrong');
           return { correct: correct, response: response };
         },
-        reset: function () { picked = []; answerBox.classList.remove('is-correct', 'is-wrong'); paint(); },
+        reset: function () { picked = []; board.classList.remove('is-correct', 'is-wrong'); paint(); },
         immediate: false
       };
     };
   }
-  T.build = ordered('build', ' ');
-  T.sequence = ordered('sequence', ' → ');
+  T.build = ordered('build', false);
+  T.sequence = ordered('sequence', true);
 
   /* Tap an item, then tap the bucket it belongs in. No drag: reliable on touch
    * and usable by a five-year-old on the first try. */

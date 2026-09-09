@@ -332,3 +332,47 @@ h1,h2,h3{letter-spacing:-.02em;margin:0 0 .4em}
   filter:drop-shadow(0 10px 18px rgba(70,40,100,.22))}
 .activity-companion{width:64px;height:64px;flex:0 0 auto}
 .activity-companion .sakhi-portrait{width:100%;height:100%;display:block}
+
+/* ---- slot board + drag, ported from the single-file runtime ---- */
+.play-instruction{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margin:0 0 14px}
+.magic-board{display:flex;justify-content:center;flex-wrap:wrap;gap:12px;padding:22px;margin:0 0 20px;
+  border:2px solid var(--line);border-radius:var(--r-lg);
+  background:color-mix(in srgb,var(--theme-b) 45%,#fff);box-shadow:inset 0 4px 14px rgba(110,71,131,.1);
+  transition:background .16s ease,border-color .16s ease}
+.magic-slot{width:92px;min-height:92px;display:grid;place-items:center;
+  border:3px dashed color-mix(in srgb,var(--theme-accent) 45%,#fff);border-radius:18px;background:#fffaf3;
+  color:var(--theme-ink);font-size:34px;font-weight:900;padding:6px}
+.magic-slot>span{opacity:.4;font-size:18px}
+.magic-slot.filled{border-style:solid;border-color:var(--theme-accent);
+  background:color-mix(in srgb,var(--theme-c) 60%,#fff)}
+.sequence-board .magic-slot{width:min(260px,100%);min-height:64px;font-size:17px;line-height:1.3;padding:14px}
+.magic-board.is-correct{background:#ecffef;border-color:#57c47a}
+.magic-board.is-wrong{background:#fff1f5;border-color:#ef8fa9;animation:shake .22s}
+.story-token{max-width:280px;font-size:16px;line-height:1.3;padding:14px 16px}
+[data-token],[data-jewel]{touch-action:none;user-select:none;-webkit-user-select:none}
+.drag-ghost{position:fixed;z-index:500;pointer-events:none;opacity:.85;
+  transform:translate(-50%,-50%) scale(1.08);box-shadow:0 14px 28px rgba(60,35,90,.35)}
+
+/* ---- counting tray ---- */
+.counting-tray{display:grid;gap:12px;justify-items:center;padding:22px;margin:0 0 18px;
+  border:3px dashed color-mix(in srgb,var(--theme-accent) 45%,#fff);border-radius:var(--r-lg);
+  background:color-mix(in srgb,var(--theme-c) 45%,#fff);min-height:132px;
+  transition:background .16s ease,border-color .16s ease}
+.counting-tray.is-at-goal{border-style:solid;border-color:#57c47a;background:#f2fff5}
+.counting-tray.is-correct{border-color:#57c47a;background:#ecffef}
+.counting-tray.is-wrong{border-color:#ef8fa9;background:#fff1f5;animation:shake .22s}
+.tray-jewels{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;min-height:52px;align-items:center}
+.tray-tally{font-weight:900;color:var(--theme-ink);font-size:15px}
+.jewel{font-size:38px;line-height:1}
+.fixed-jewel{opacity:.85}
+.jewel-button{min-width:var(--tap);min-height:var(--tap);border-radius:18px;border:3px solid var(--line);
+  background:#fff;font-size:34px;line-height:1;box-shadow:0 6px 14px rgba(60,40,80,.07)}
+.jewel-button:disabled{opacity:.25}
+.tray-jewels .jewel-button{border-style:dashed;background:transparent;box-shadow:none;
+  min-width:auto;min-height:auto;padding:2px}
+
+@media(max-width:960px){
+  .magic-board{padding:14px;gap:8px}
+  .magic-slot{width:74px;min-height:74px;font-size:28px}
+  .sequence-board .magic-slot{width:100%}
+}

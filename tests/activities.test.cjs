@@ -47,6 +47,19 @@ for (const sk of skills) for (let band = 1; band <= 5; band++) for (const seed o
     }
   });
 }
+// compose questions must carry tray data, or the counting template silently
+// falls back to a multiple-choice card and the counting-out skill is lost
+for (let band = 1; band <= 5; band++) {
+  const a = A.generate('math.compose_to_10', band, 'tray');
+  const withTray = a.questions.filter(q => q.tray);
+  if (!withTray.length) P(`math.compose_to_10 band ${band}: no question carries tray data`);
+  withTray.forEach(q => {
+    if (typeof q.tray.start !== 'number' || typeof q.tray.goal !== 'number') P('tray missing start/goal');
+    if (q.tray.goal - q.tray.start !== q.answer) P(`tray goal-start (${q.tray.goal - q.tray.start}) disagrees with answer (${q.answer})`);
+    if (q.tray.start >= q.tray.goal) P('tray start is not below goal');
+  });
+}
+
 if (JSON.stringify(A.generate('reading.cvc_mixed', 3, 'x')) !== JSON.stringify(A.generate('reading.cvc_mixed', 3, 'x'))) P('generator is not deterministic');
 if (JSON.stringify(A.generate('reading.cvc_mixed', 3, 'x')) === JSON.stringify(A.generate('reading.cvc_mixed', 3, 'y'))) P('seed does not change output');
 
