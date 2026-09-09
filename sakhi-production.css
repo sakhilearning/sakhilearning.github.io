@@ -249,7 +249,7 @@ h1,h2,h3{letter-spacing:-.02em;margin:0 0 .4em}
   z-index:200;background:#35234f;color:#fff;padding:13px 18px;border-radius:999px;opacity:0;transition:.2s;
   max-width:min(420px,calc(100vw - 32px));text-align:center}
 .toast.is-visible{opacity:1;transform:translateX(-50%)}
-.audio-fault{position:fixed;left:50%;bottom:calc(170px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);
+.audio-fault{position:fixed;left:50%;bottom:calc(196px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);
   z-index:200;display:none;background:#fff;border:1px solid #f0c9d6;border-left:6px solid #e2738f;
   border-radius:var(--r-md);padding:14px 18px;max-width:min(460px,calc(100vw - 32px));
   box-shadow:0 18px 40px rgba(60,30,60,.2);text-align:left}
@@ -269,6 +269,9 @@ h1,h2,h3{letter-spacing:-.02em;margin:0 0 .4em}
 @media(max-width:960px){
   .nav{display:none}
   .bottom-nav{display:grid}
+  /* a tablet is wide enough for three cards in one row; 2+1 reads as a mistake */
+  .choice-grid[data-count="3"]{grid-template-columns:repeat(3,1fr)}
+  .choice-card{font-size:23px;min-height:100px}
   .hero{grid-template-columns:1fr;padding:26px;text-align:center}
   .hero-art{order:-1}
   .view-activity{margin:-20px -18px 0}
