@@ -1,0 +1,38 @@
+const fs=require('fs');
+const read=f=>fs.existsSync(f)?fs.readFileSync(f,'utf8'):'';
+const fail=[];
+const index=read('index.html'),theme=read('domain-theme-registry.js'),journey=read('daily-journey-service.js'),css=read('daily-journey.css'),sw=read('sw.js');
+function need(src,pattern,msg){if(!pattern.test(src))fail.push(msg)}
+need(index,/daily-journey\.css/,'index.html must load daily-journey.css');
+need(index,/domain-theme-registry\.js[\s\S]*core-learning-services\.js/,'domain theme registry must load before core learning services');
+need(index,/pwa-update\.js[\s\S]*daily-journey-service\.js/,'daily journey service must load after runtime/PWA services');
+need(index,/Start Today’s Adventure/,'home must use Start Today’s Adventure copy');
+need(index,/Home → Today’s Adventure → Activities → Rewards → Optional Bedtime Story/,'home must describe the continuous journey');
+need(index,/data-go="quest">✨ Adventure/,'child navigation must use Adventure');
+need(index,/data-go="learn">🏰 Kingdoms/,'child navigation must use Kingdoms');
+if(/data-go="baseline"/.test(index.match(/<nav class="nav"[\s\S]*?<\/nav>/)?.[0]||''))fail.push('desktop child nav must not expose baseline');
+if(/data-go="baseline"/.test(index.match(/<nav class="bottom"[\s\S]*?<\/nav>/)?.[0]||''))fail.push('mobile child nav must not expose baseline');
+for(const phrase of ['Unicorn Reading Meadow','Royal Math Quest','Ice Princess Pattern Play','Mermaid Science Lab','Forest Story Adventure','Pixie Writing Garden'])need(theme,new RegExp(phrase.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')),`theme registry missing ${phrase}`);
+for(const field of ['theme_id','display_name','domain','background','accent','secondary_accent','guide_character','hero_asset','reward_style','button_style'])need(theme,new RegExp(field),`theme registry missing ${field}`);
+need(journey,/window\.DailyJourneyService=Object\.freeze/,'DailyJourneyService must be exported as the journey owner');
+need(journey,/function startAdventure\(/,'DailyJourneyService must start the daily adventure');
+need(journey,/function renderTrail\(/,'DailyJourneyService must render a visual trail');
+need(journey,/function launchCurrent\(/,'DailyJourneyService must launch the first/current activity');
+need(journey,/function decorateActivity\(/,'DailyJourneyService must decorate activity pages');
+need(journey,/function showAdventureComplete\(/,'DailyJourneyService must open reward celebration');
+need(journey,/function showStory\(/,'DailyJourneyService must offer optional bedtime story');
+need(journey,/showAdventureComplete\(\)/,'final activity must route to the reward celebration');
+need(journey,/Home → Adventure → Rewards → Story|Home → Today’s Adventure → Activities → Rewards/,'journey copy must describe a continuous path');
+need(journey,/heroMarkup/,'major child screens must receive scalable theme art');
+need(journey,/Start First Activity/,'trail must provide a clear start button');
+need(journey,/Bedtime Story/,'reward celebration must include Bedtime Story');
+need(css,/\.daily-adventure-trail/,'daily journey CSS missing visual trail');
+need(css,/\.journey-activity-page/,'daily journey CSS missing full-page activity styling');
+need(css,/\.journey-celebration-full/,'daily journey CSS missing full-screen celebration styling');
+need(css,/min-height:280px/,'activity page must allocate a large interaction area');
+need(sw,/daily-journey\.css/,'service worker must cache daily journey CSS');
+need(sw,/domain-theme-registry\.js/,'service worker must cache theme registry');
+need(sw,/daily-journey-service\.js/,'service worker must cache daily journey service');
+if(/new duplicate activity system|duplicate reward system/i.test(journey))fail.push('journey service must not describe duplicate systems');
+if(fail.length){console.error('Daily journey validation failed:\n- '+fail.join('\n- '));process.exit(1)}
+console.log('Daily journey validation passed: one continuous themed adventure path, full-page activities, reward celebration, bedtime story option, and child navigation are wired.');
