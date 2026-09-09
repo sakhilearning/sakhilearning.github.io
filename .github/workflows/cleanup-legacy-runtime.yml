@@ -1,0 +1,60 @@
+name: One-time legacy runtime cleanup
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/cleanup-legacy-runtime.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remove duplicate app runtime owners
+        shell: python
+        run: |
+          from pathlib import Path
+          p=Path('app.js');s=p.read_text()
+          s=s.replace('let data=loadData();\nlet currentActivity=null;','let data=loadData();\nwindow.data=data;window.activities=activities;window.STORAGE_KEY=STORAGE_KEY;\nlet currentActivity=null;')
+          a=s.index('function deriveStatus(current,arr){')
+          b=s.index('function domainById(id)',a)
+          s=s[:a]+'''function deriveStatus(current,arr){\n  if(!window.MasteryEngine)throw new Error('MasteryEngine is not ready');\n  return window.MasteryEngine.deriveState(current,arr);\n}\n'''+s[b:]
+          a=s.index('function chooseActivity(domain,offset=0){')
+          b=s.index('function renderQuest(){',a)
+          s=s[:a]+'''function chooseActivity(domain,offset=0){return window.LessonPlanner?.choose(domain,{stateData:data,exclude:new Set(),types:new Set()})||null;}\nfunction makeQuest(){return window.makeQuest?.();}\nfunction ensureQuest(){if(data.quest&&data.questDate===todayKey())renderQuest();else setTimeout(()=>window.makeQuest?.(),0);}\nfunction refreshQuest(){window.makeQuest?.();toast();}\n'''+s[b:]
+          # Remove legacy quest activity runtime between renderQuest and renderDomains.
+          a=s.index('function runActivity(id){')
+          b=s.index('function renderDomains(){',a)
+          s=s[:a]+s[b:]
+          # Remove legacy learning activity runtime, preserving helpers after it.
+          a=s.index('function runLearningActivity(id){')
+          b=s.index('function slug(s){',a)
+          s=s[:a]+s[b:]
+          # Modernize renderer metadata.
+          s=s.replace("${domainById(a.domain).title} · ${a.minutes} min","${domainById(a.domain).title} · ${a.estimated_minutes||a.minutes||3} min")
+          s=s.replace("${a.objective}</em>","${a.learning_objective||a.objective||''}</em>")
+          s=s.replace("<p>${a.objective}</p><small>${a.minutes} min · ${a.skill}</small>","<p>${a.learning_objective||a.objective||''}</p><small>${a.estimated_minutes||a.minutes||3} min · ${a.skill}</small>")
+          # Reward UI is read-only and derived from transactions; no child/parent button mutates rewards.
+          a=s.index('function renderRewards(){')
+          b=s.index('function renderNextFocus(){',a)
+          s=s[:a]+'''function renderRewards(){const h=document.getElementById('rewardGrid');if(!h)return;const tx=(data.rewardTransactions||[]).filter(x=>x.status==='SAVED'),balances={};tx.forEach(x=>balances[x.reward_type]=(balances[x.reward_type]||0)+Number(x.amount||0));const labels={MAGIC_STAR:['⭐','Magic Stars'],UNICORN_GEM:['💎','Unicorn Gems'],COURAGE_HEART:['💛','Courage Hearts'],PRINCESS_KEY:['🗝️','Princess Keys'],READING_SPARK:['📖','Reading Sparks'],MATH_CRYSTAL:['🔮','Math Crystals'],SCIENCE_STAR:['🔬','Science Stars']};h.innerHTML=Object.entries(labels).map(([k,[icon,label]])=>`<div class="reward ${balances[k]>0?'earned':''}"><span class="emoji">${icon}</span><b>${label}</b><small>${balances[k]||0}</small></div>`).join('');}\n'''+s[b:]
+          # Stats reward number uses the same transaction-derived balance.
+          old="document.getElementById('rewardStat').textContent=Object.values(data.rewards).filter(Boolean).length;"
+          new="document.getElementById('rewardStat').textContent=(data.rewardTransactions||[]).filter(x=>x.status==='SAVED'&&x.reward_type==='MAGIC_STAR').reduce((n,x)=>n+Number(x.amount||0),0);"
+          if old in s:s=s.replace(old,new)
+          p.write_text(s)
+      - name: Validate no duplicate runtime
+        run: |
+          node --check app.js
+          if grep -q "function completeActivity" app.js; then echo 'legacy completion still present'; exit 1; fi
+          if grep -q "function runActivity" app.js; then echo 'legacy quest runtime still present'; exit 1; fi
+          if grep -q "function runLearningActivity" app.js; then echo 'legacy learn runtime still present'; exit 1; fi
+          if grep -q "data.rewards\['reward'" app.js; then echo 'legacy reward mutation still present'; exit 1; fi
+      - name: Commit cleanup
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app.js
+          git commit -m "Remove duplicate legacy activity and reward runtime"
+          git push
