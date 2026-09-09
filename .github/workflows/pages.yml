@@ -58,6 +58,8 @@ jobs:
           node --check core-learning-services.js
           node --check settings-service.js
           node --check adventure-service.js
+          node --check domain-theme-registry.js
+          node --check daily-journey-service.js
           node --check settings-ui.js
           node --check pwa-update.js
           node --check activity-contract.js
@@ -87,6 +89,7 @@ jobs:
           node scripts/validate-adaptive-acceleration.cjs
           node scripts/validate-settings-controls.cjs
           node scripts/validate-pwa-update.cjs
+          node scripts/validate-daily-journey.cjs
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
