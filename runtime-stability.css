@@ -1,0 +1,19 @@
+/* Authoritative runtime layout for child activities. Decorative layers stay below interaction content. */
+:root{--z-background:0;--z-scene:10;--z-activity:20;--z-controls:30;--z-feedback:40}
+.runner.active{display:block;overflow:visible;min-height:0;max-height:none;position:relative}
+.child-mission{display:grid;grid-template-rows:auto auto minmax(280px,auto) auto;gap:12px;width:min(100%,820px);max-width:820px;margin-inline:auto;overflow:visible;position:relative}
+.activity-top{position:relative;z-index:var(--z-controls);display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center}
+.activity-top .character-avatar{width:68px;height:68px;margin:0}.activity-top-copy small,.activity-top-copy b{display:block}.activity-top-copy b{font-size:clamp(18px,3vw,26px);line-height:1.15}.activity-hear{min-width:120px}
+.activity-progress{grid-column:1/-1;display:flex;justify-content:center;gap:6px;font-size:22px}.activity-progress span{opacity:.35}.activity-progress .filled{opacity:1}
+.activity-instruction{position:relative;z-index:var(--z-controls);font-size:clamp(24px,4vw,38px);font-weight:950;line-height:1.08;text-align:center;margin:0;padding:4px 8px}
+.activity-center{position:relative;z-index:var(--z-activity);display:block;min-width:0;width:100%;min-height:280px;overflow:visible;border-radius:24px;padding:10px;background:rgba(255,255,255,.34)}
+#interactionMount{display:block;visibility:visible;opacity:1;position:relative;z-index:var(--z-activity);min-width:0;width:100%;min-height:240px;overflow:visible}
+.activity-bottom{position:relative;z-index:var(--z-controls);display:flex;justify-content:center;gap:10px;flex-wrap:wrap}.activity-bottom .child-tool{min-width:120px}
+.structured-hint,.structured-feedback{position:relative;z-index:var(--z-feedback)}
+.runtime-error{display:grid;place-items:center;gap:12px;min-height:280px;text-align:center;padding:24px;border-radius:24px;background:#fff8ed}.runtime-error b{font-size:24px}.runtime-error button{min-height:58px;border:0;border-radius:18px;padding:0 22px;font-weight:900;background:#8e58df;color:white}
+.runtime-saving{opacity:.75;pointer-events:none}.runtime-celebration{display:grid;justify-items:center;gap:4px;padding:14px;border-radius:20px;background:#fff8dc}.runtime-celebration .reward-pop{font-size:22px;font-weight:950;color:#7c5a0a}
+.trace-stage{display:grid;gap:10px;justify-items:center}.trace-glyph{font-size:clamp(70px,14vw,130px);line-height:.8;font-weight:950;color:#e8def4;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:var(--z-scene)}.trace-wrap{position:relative;width:min(100%,680px);min-height:300px;margin:0 auto;padding:8px;border-radius:22px;background:#fff;overflow:visible}.trace-wrap canvas{display:block;width:100%;height:auto;min-height:280px;touch-action:none;position:relative;z-index:var(--z-activity)}
+.runtime-debug{display:none}
+body[data-sakhi-debug="1"] .runtime-debug{display:block;position:fixed;right:8px;bottom:8px;z-index:100;background:#241b31;color:white;max-width:360px;max-height:42vh;overflow:auto;padding:10px;border-radius:12px;font:12px/1.35 ui-monospace,monospace}
+@media(max-width:700px){.child-mission{grid-template-rows:auto auto minmax(300px,auto) auto}.activity-top{grid-template-columns:56px 1fr}.activity-top .character-avatar{width:56px;height:56px;font-size:36px}.activity-hear{grid-column:1/-1;width:100%}.activity-center{min-height:300px;padding:6px}#interactionMount{min-height:270px}.trace-wrap{min-height:310px}.trace-wrap canvas{min-height:290px}}
+@media(orientation:landscape) and (max-height:620px){.activity-instruction{font-size:24px}.activity-center{min-height:240px}.trace-wrap,.trace-wrap canvas{min-height:230px}}
