@@ -70,7 +70,7 @@
 
   function renderHome() {
     var t = theme();
-    $('#homeCompanion').textContent = t.icon;
+    $('#homeCompanion').innerHTML = window.SakhiArt ? SakhiArt.scene(t.id, { label: t.companion + ' in ' + t.name }) : t.icon;
     $('#homeWorld').textContent = t.name;
     $('#homeTagline').textContent = t.tagline;
     $('#homeWelcome').textContent = t.narration.welcome;
@@ -437,7 +437,9 @@
       var card = el('button', 'theme-card' + (t.id === activeId ? ' is-active' : ''));
       card.type = 'button';
       card.style.background = 'linear-gradient(135deg,' + t.palette.a + ',' + t.palette.b + ',' + t.palette.c + ')';
-      card.appendChild(el('div', 'theme-icon', t.icon));
+      var art = el('div', 'theme-art');
+      art.innerHTML = window.SakhiArt ? SakhiArt.portrait(t.id, t.companion) : t.icon;
+      card.appendChild(art);
       card.appendChild(el('b', null, t.name));
       card.appendChild(el('small', null, t.tagline));
       card.appendChild(el('em', null, 'Rewards: ' + t.rewards.primary.label + ' & ' + t.rewards.badge.label));

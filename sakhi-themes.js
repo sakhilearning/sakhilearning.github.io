@@ -57,7 +57,7 @@ window.SakhiThemes = (function () {
     tagline: 'Gowns, gems and a grand staircase.',
     companion: 'Princess Amara',
     icon: '👑',
-    palette: { a: '#fff2fb', b: '#f4e7ff', c: '#fff4c7', accent: '#a65dde', ink: '#3b2350' },
+    palette: { a: '#ffe6f6', b: '#f3dcff', c: '#fff0cf', accent: '#a83fe0', ink: '#3d2050' },
     motifs: ['crown', 'gem', 'staircase', 'chandelier', 'rose'],
     narration: {
       welcome: 'Welcome back to the castle. The ballroom is ready for you.',
@@ -76,7 +76,7 @@ window.SakhiThemes = (function () {
     tagline: 'Snowflakes, frost and a quiet blue sky.',
     companion: 'Frost Princess Neve',
     icon: '❄️',
-    palette: { a: '#eaf8ff', b: '#e0f2ff', c: '#f0e9ff', accent: '#54a9e8', ink: '#263d55' },
+    palette: { a: '#ddf2ff', b: '#e2e9ff', c: '#f2e6ff', accent: '#2f9fe0', ink: '#1e3550' },
     motifs: ['snowflake', 'icicle', 'aurora', 'crystal', 'pine'],
     narration: {
       welcome: 'The palace gates are frosted open. Step inside.',
@@ -95,7 +95,7 @@ window.SakhiThemes = (function () {
     tagline: 'Coral gardens, bubbles and a curious seal.',
     companion: 'Coral the Mermaid',
     icon: '🧜‍♀️',
-    palette: { a: '#e4ffff', b: '#d7f6ff', c: '#ffe8f3', accent: '#25b7c8', ink: '#12414a' },
+    palette: { a: '#d2f8ff', b: '#c2f2f5', c: '#ffe2f0', accent: '#0fb3ad', ink: '#0e3f47' },
     motifs: ['shell', 'bubble', 'coral', 'starfish', 'kelp'],
     narration: {
       welcome: 'Coral is waiting by the reef. Swim down and say hello.',
@@ -114,7 +114,7 @@ window.SakhiThemes = (function () {
     tagline: 'Sails, stars and a brave little boat.',
     companion: 'Wayfinder Tala',
     icon: '⛵',
-    palette: { a: '#eafff4', b: '#e0f4ff', c: '#fff2d8', accent: '#1f9e8c', ink: '#173f3c' },
+    palette: { a: '#e0f7ef', b: '#d6ecff', c: '#ffeacc', accent: '#0f8f80', ink: '#123b38' },
     motifs: ['sail', 'compass', 'wave', 'star', 'palm'],
     narration: {
       welcome: 'The tide is right and the stars are out. Ready to sail?',
@@ -133,7 +133,7 @@ window.SakhiThemes = (function () {
     tagline: 'Candles, courtyards and a house full of colour.',
     companion: 'Lantern Fairy Mira',
     icon: '🦋',
-    palette: { a: '#fff3ec', b: '#ffe9f6', c: '#eaffe9', accent: '#e2734f', ink: '#4a2c26' },
+    palette: { a: '#ffe6d6', b: '#ffd9ea', c: '#eef7d6', accent: '#e0603a', ink: '#46281f' },
     motifs: ['butterfly', 'candle', 'tile', 'vine', 'lantern'],
     narration: {
       welcome: 'The cottage doors are open and the candles are lit.',
@@ -152,7 +152,7 @@ window.SakhiThemes = (function () {
     tagline: 'Rainbows, clouds and a very soft mane.',
     companion: 'Sakhi the Unicorn',
     icon: '🦄',
-    palette: { a: '#fff0fb', b: '#eee3ff', c: '#ddf7ff', accent: '#f04ca6', ink: '#3d2450' },
+    palette: { a: '#ffe4f7', b: '#e9dcff', c: '#d6f0ff', accent: '#ff4fa8', ink: '#3a1f56' },
     motifs: ['rainbow', 'cloud', 'star', 'flower', 'horn'],
     narration: {
       welcome: 'Sakhi is grazing by the rainbow. She saved you a spot.',

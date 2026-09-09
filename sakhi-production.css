@@ -298,3 +298,13 @@ h1,h2,h3{letter-spacing:-.02em;margin:0 0 .4em}
 .update-banner span{color:var(--muted);font-size:14px}
 .update-actions{display:flex;gap:8px;flex-shrink:0}
 .update-actions button{padding:11px 16px;min-height:48px}
+
+/* illustration */
+.hero-art{min-height:300px;display:grid;place-items:center;padding:4px}
+.hero-art .sakhi-scene{width:100%;max-width:380px;height:auto;
+  filter:drop-shadow(0 26px 44px rgba(86,48,120,.28))}
+.theme-art{margin:-8px -8px 6px}
+.theme-art .sakhi-portrait{width:96px;height:96px;display:block;
+  filter:drop-shadow(0 10px 18px rgba(70,40,100,.22))}
+.activity-companion{width:64px;height:64px;flex:0 0 auto}
+.activity-companion .sakhi-portrait{width:100%;height:100%;display:block}

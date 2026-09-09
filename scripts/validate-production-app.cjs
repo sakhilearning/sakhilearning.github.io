@@ -17,7 +17,7 @@ const manifest = read('manifest.json');
 const MODULES = [
   'supabase-config.js', 'sakhi-cloud.js', 'sakhi-curriculum.js', 'sakhi-themes.js',
   'sakhi-content.js', 'sakhi-activities.js', 'sakhi-progress.js', 'sakhi-adaptive.js',
-  'sakhi-audio.js', 'sakhi-templates.js', 'sakhi-app.js'
+  'sakhi-audio.js', 'sakhi-art.js', 'sakhi-templates.js', 'sakhi-app.js'
 ];
 MODULES.forEach(m => { if (!index.includes(m)) fail(`index.html does not load ${m}`); });
 if (!index.includes('sakhi-production.css')) fail('index.html does not load the stylesheet');
