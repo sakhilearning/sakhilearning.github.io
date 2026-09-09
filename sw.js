@@ -1,6 +1,6 @@
 const BUILD_ID='__SAKHI_BUILD_ID__';
 const CACHE='sakhi-production-'+BUILD_ID;
-const APP_ASSETS=['./','./index.html','./manifest.json','./build-info.js','./version.json','./sakhi-production.css','./sakhi-production.js','./unicorn-icon.svg'];
+const APP_ASSETS=['./','./index.html','./manifest.json','./build-info.js','./version.json','./sakhi-production.css','./sakhi-production.js','./unicorn-icon.svg','./icon-180.png','./icon-192.png','./icon-512.png'];
 async function deleteOldCaches(){const keys=await caches.keys();await Promise.all(keys.filter(k=>k.startsWith('sakhi-')&&k!==CACHE).map(k=>caches.delete(k)));}
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>Promise.all(APP_ASSETS.map(asset=>cache.add(new Request(asset,{cache:'reload'})).catch(()=>null)))));});
 self.addEventListener('activate',event=>{event.waitUntil(Promise.all([deleteOldCaches(),self.clients.claim()]));});
