@@ -1,0 +1,22 @@
+const fs=require('fs');
+const errors=[];
+const read=f=>fs.existsSync(f)?fs.readFileSync(f,'utf8'):'';
+const bank=read('challenge-bank.js');
+const adaptive=read('adaptive-acceleration-service.js');
+const parent=read('adaptive-engine.js');
+const persistence=read('persistence.js');
+const index=read('index.html');
+const adds=(bank.match(/add\(\{/g)||[]).length;
+if(adds<20)errors.push(`challenge bank too small: ${adds}`);
+for(const token of ["phase:'mixed'","phase:'challenge'","phase:'transfer'","difficulty:5","skill_id:'reading.cvc_decode.mixed'","skill_id:'math.number_bonds'","skill_id:'logic.coding_sequences'"])if(!bank.includes(token))errors.push(`challenge bank missing ${token}`);
+for(const token of ['guessing','fluent','strongNow','challengeMisses','compressedSkills','replanAfterSave','extend_session','TARGET_MINUTES=20','learningVelocity','nextReadySkills','recentContent'])if(!adaptive.includes(token))errors.push(`adaptive engine missing ${token}`);
+if(!adaptive.includes("mode=m.guessing?'verify'"))errors.push('fast inaccurate behavior must not advance; verify mode missing');
+if(!adaptive.includes("m.challengeMisses>=2"))errors.push('two-challenge-miss scaffold rule missing');
+if(!adaptive.includes("p.compressedSkills[skillId]"))errors.push('compressed review evidence missing');
+if(!adaptive.includes("window.addEventListener('sakhi-runtime-event'"))errors.push('within-session replanning hook missing');
+for(const token of ['Current challenge:','Ready next:','Stretch:','Compressed review'])if(!parent.includes(token))errors.push(`parent readiness UI missing ${token}`);
+for(const token of ['adaptive_state','domain_levels','learning_velocity','challenge_mode','independent_success','completion_quality'])if(!persistence.includes(token))errors.push(`persistence missing ${token}`);
+if(!index.includes('challenge-bank.js')||!index.includes('adaptive-acceleration-service.js'))errors.push('adaptive scripts are not loaded');
+if(/gifted|genius|elite/i.test(bank+adaptive+parent))errors.push('child intelligence/ranking labels are forbidden');
+if(errors.length){console.error('Adaptive acceleration validation failed:\n- '+errors.join('\n- '));process.exit(1)}
+console.log(`Adaptive acceleration valid: ${adds} vetted higher-demand activities plus within-session progression, compression, guessing detection, challenge fallback, and domain-specific readiness.`);
