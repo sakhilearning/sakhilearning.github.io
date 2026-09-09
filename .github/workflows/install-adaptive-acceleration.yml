@@ -1,0 +1,54 @@
+name: One-time adaptive acceleration install
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/install-adaptive-acceleration.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Wire adaptive runtime and validation
+        shell: python
+        run: |
+          from pathlib import Path
+          p=Path('index.html'); s=p.read_text()
+          marker='<script src="./interaction-engine.js"></script>'
+          insert=marker+'\n<script src="./challenge-bank.js"></script>\n<script src="./adaptive-acceleration-service.js"></script>'
+          if 'challenge-bank.js' not in s: s=s.replace(marker,insert)
+          p.write_text(s)
+
+          p=Path('sw.js'); s=p.read_text()
+          import re
+          s=re.sub(r"const CACHE='sakhi-magic-learning-v\\d+';","const CACHE='sakhi-magic-learning-v20';",s)
+          if "'./challenge-bank.js'" not in s:
+              s=s.replace("'./interaction-engine.js'","'./interaction-engine.js','./challenge-bank.js','./adaptive-acceleration-service.js'")
+          p.write_text(s)
+
+          p=Path('.github/workflows/pages.yml'); s=p.read_text()
+          anchor='          node --check interaction-engine.js\n'
+          extra='          node --check interaction-engine.js\n          node --check challenge-bank.js\n          node --check adaptive-acceleration-service.js\n'
+          if 'node --check challenge-bank.js' not in s: s=s.replace(anchor,extra)
+          anchor2='          node scripts/validate-runtime-stability.cjs\n'
+          if 'validate-adaptive-acceleration.cjs' not in s: s=s.replace(anchor2,anchor2+'          node scripts/validate-adaptive-acceleration.cjs\n')
+          p.write_text(s)
+
+          Path('.github/workflows/install-adaptive-acceleration.yml').unlink()
+      - name: Validate syntax
+        run: |
+          node --check challenge-bank.js
+          node --check adaptive-acceleration-service.js
+          node --check core-learning-services.js
+          node --check persistence.js
+          node --check adaptive-engine.js
+      - name: Commit adaptive wiring
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Wire adaptive acceleration runtime' || exit 0
+          git push
