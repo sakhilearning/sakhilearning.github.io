@@ -287,3 +287,14 @@ h1,h2,h3{letter-spacing:-.02em;margin:0 0 .4em}
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
 }
+
+/* update banner */
+.update-banner{position:fixed;left:16px;right:16px;bottom:calc(96px + env(safe-area-inset-bottom));z-index:210;
+  display:none;align-items:center;justify-content:space-between;gap:14px;max-width:min(680px,calc(100vw - 32px));
+  margin:0 auto;padding:14px 18px;border-radius:var(--r-md);background:#fff;border:1px solid var(--line);
+  box-shadow:0 20px 46px rgba(50,30,70,.2)}
+.update-banner.is-visible{display:flex}
+.update-banner b{display:block}
+.update-banner span{color:var(--muted);font-size:14px}
+.update-actions{display:flex;gap:8px;flex-shrink:0}
+.update-actions button{padding:11px 16px;min-height:48px}

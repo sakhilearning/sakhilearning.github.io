@@ -450,6 +450,36 @@
     });
   }
 
+  /* ---------- offline + updates ---------- */
+
+  /* Registration needs a secure context, so this is a no-op over plain http on a
+   * LAN address. That is correct rather than broken: the app still runs, it just
+   * has no offline cache until it is served from https or localhost. */
+  function registerServiceWorker() {
+    if (!('serviceWorker' in navigator)) return;
+    navigator.serviceWorker.register('./sw.js').then(function (reg) {
+      function offerUpdate() {
+        var banner = $('#updateBanner');
+        banner.classList.add('is-visible');
+        $('#updateNow').onclick = function () {
+          if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+          location.reload();
+        };
+        $('#updateLater').onclick = function () { banner.classList.remove('is-visible'); };
+      }
+      if (reg.waiting) offerUpdate();
+      reg.addEventListener('updatefound', function () {
+        var incoming = reg.installing;
+        if (!incoming) return;
+        incoming.addEventListener('statechange', function () {
+          /* Only an update, not the very first install. */
+          if (incoming.state === 'installed' && navigator.serviceWorker.controller) offerUpdate();
+        });
+      });
+      setInterval(function () { reg.update().catch(function () {}); }, 30 * 60 * 1000);
+    }).catch(function (e) { console.warn('[Sakhi] service worker not registered:', e.message); });
+  }
+
   /* ---------- boot ---------- */
 
   async function boot() {
@@ -471,6 +501,7 @@
     $('#modalClose').onclick = function () { $('#modal').classList.remove('is-visible'); };
     $('#modal').onclick = function (e) { if (e.target === $('#modal')) $('#modal').classList.remove('is-visible'); };
 
+    registerServiceWorker();
     Audio.onFault(showAudioFault);
     document.addEventListener('visibilitychange', function () { if (document.hidden) Audio.stopAll(); });
     if (Cloud) { Cloud.probe(); Cloud.onChange(function () { if (view === 'parent') renderParent(); }); }

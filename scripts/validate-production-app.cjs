@@ -117,6 +117,13 @@ if (!progress.includes('function completeActivity')) fail('sakhi-progress.js has
 const writers = (progress.match(/Cloud\.upsert\(/g) || []).length;
 if (!writers) fail('sakhi-progress.js never queues a cloud write');
 
+/* ---- 6b. the service worker must actually be registered ---- */
+const app = read('sakhi-app.js');
+if (!/navigator\.serviceWorker\.register\(/.test(app)) {
+  fail('nothing registers sw.js — the app ships a service worker it never installs');
+}
+if (!index.includes('updateBanner')) fail('index.html has no update banner for the service worker flow');
+
 /* ---- 7. service worker ships the real file list ---- */
 MODULES.concat(['sakhi-production.css', 'curriculum-snapshot.json']).forEach(m => {
   if (!sw.includes(m)) fail(`service worker does not cache ${m}`);
