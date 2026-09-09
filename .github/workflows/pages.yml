@@ -24,6 +24,35 @@ jobs:
       - name: Checkout Sakhi
         uses: actions/checkout@v4
 
+      - name: Stamp PWA build metadata
+        shell: bash
+        run: |
+          BUILD_STAMP=$(date -u +"%Y.%m.%d.%H%M")
+          SHORT_SHA=$(echo "$GITHUB_SHA" | cut -c1-7)
+          BUILD_ID="${BUILD_STAMP}-${SHORT_SHA}"
+          BUILT_AT=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          cat > build-info.js <<EOF
+          window.SAKHI_BUILD_ID = "${BUILD_ID}";
+          window.SAKHI_BUILD_INFO = Object.freeze({
+            build: "${BUILD_ID}",
+            commit: "${GITHUB_SHA}",
+            built_at: "${BUILT_AT}"
+          });
+          EOF
+          cat > version.json <<EOF
+          {"build":"${BUILD_ID}","commit":"${GITHUB_SHA}","built_at":"${BUILT_AT}"}
+          EOF
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          sw = Path('sw.js')
+          text = sw.read_text()
+          text = text.replace('__SAKHI_BUILD_ID__', os.environ.get('BUILD_ID', 'unknown-build'))
+          sw.write_text(text)
+          PY
+        env:
+          BUILD_ID: ${{ github.run_id }}-${{ github.sha }}
+
       - name: Validate application architecture
         run: |
           node --check app.js
@@ -31,6 +60,7 @@ jobs:
           node --check settings-service.js
           node --check adventure-service.js
           node --check settings-ui.js
+          node --check pwa-update.js
           node --check activity-contract.js
           node --check reward-service.js
           node --check scheduler.js
@@ -57,6 +87,7 @@ jobs:
           node scripts/validate-runtime-stability.cjs
           node scripts/validate-adaptive-acceleration.cjs
           node scripts/validate-settings-controls.cjs
+          node scripts/validate-pwa-update.cjs
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
