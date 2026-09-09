@@ -28,6 +28,9 @@ jobs:
         run: |
           node --check app.js
           node --check core-learning-services.js
+          node --check settings-service.js
+          node --check adventure-service.js
+          node --check settings-ui.js
           node --check activity-contract.js
           node --check reward-service.js
           node --check scheduler.js
@@ -53,6 +56,7 @@ jobs:
           node scripts/validate-architecture.cjs
           node scripts/validate-runtime-stability.cjs
           node scripts/validate-adaptive-acceleration.cjs
+          node scripts/validate-settings-controls.cjs
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
