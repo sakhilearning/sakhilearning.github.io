@@ -18,6 +18,7 @@
 <link rel="stylesheet" href="./sakhi-shell.css" />
 <link rel="stylesheet" href="./settings-controls.css" />
 <link rel="stylesheet" href="./pwa-update.css" />
+<link rel="stylesheet" href="./daily-journey.css" />
 </head>
 <body data-theme="unicorn">
 <main class="shell">
@@ -36,8 +37,8 @@
       </select></label>
     </div>
     <h1><span class="rainbow">Sakhi</span><br/>Magic Learning</h1>
-    <p>A magical, personalized learning adventure that grows with your child.</p>
-    <div class="row"><button class="btn primary" onclick="go('quest')">🌈 Start My Adventure</button></div>
+    <p><b>Hi, Princess!</b><br/>Ready for today’s magic?</p>
+    <div class="row"><button class="btn primary" onclick="startSakhiDailyAdventure?.()||go('quest')">🌈 Start Today’s Adventure</button><span class="badge kid">About 20 min</span></div>
   </div>
   <div class="hero-visual"><div class="hero-art" id="heroArt" aria-hidden="true">🦄</div></div>
 </section>
@@ -45,32 +46,31 @@
 <div class="stats">
   <div class="stat"><b id="baseStat">0/33</b><span>Reading baseline</span></div>
   <div class="stat"><b id="masteredStat">0</b><span>Skills mastered</span></div>
-  <div class="stat"><b id="questStat">0/5</b><span>Today's quest</span></div>
+  <div class="stat"><b id="questStat">0/5</b><span>Today's adventure</span></div>
   <div class="stat"><b id="rewardStat">0</b><span>Magic rewards</span></div>
 </div>
 
 <nav class="nav" aria-label="Main navigation">
   <button data-go="home" class="active">🏠 Home</button>
-  <button data-go="quest">✨ Today's Quest</button>
-  <button data-go="learn">🗺️ Learn</button>
-  <button data-go="baseline">🔎 Reading Baseline</button>
+  <button data-go="quest">✨ Adventure</button>
+  <button data-go="learn">🏰 Kingdoms</button>
   <button data-go="parent">🔒 Parents</button>
   <button data-go="rewards">🌟 Rewards</button>
 </nav>
 
 <section id="home" class="view active">
-  <div class="section-title"><h2>Today's learning balance</h2><p>15–25 minutes · 2–7 minutes per activity</p></div>
+  <div class="section-title"><h2>Today's learning balance</h2><p>Home → Today’s Adventure → Activities → Rewards → Optional Bedtime Story</p></div>
   <div class="grid">
-    <div class="card featured"><span class="badge kid">✨ Child Zone</span><h3>Five interactive missions</h3><p>Each daily quest contains <b>two literacy experiences</b>, <b>math</b>, one <b>rotating thinking/knowledge domain</b>, and one <b>movement, creativity, or self-management mission</b>. The quest aims for at least three different interaction formats.</p><button class="btn primary" onclick="go('quest')">Open Today's Quest</button></div>
+    <div class="card featured"><span class="badge kid">✨ Child Zone</span><h3>One magical adventure</h3><p>Sakhi guides one activity at a time. Reading, math, thinking, discovery, writing and rewards flow together without bouncing back to a dashboard.</p><button class="btn primary" onclick="startSakhiDailyAdventure?.()||go('quest')">Start Today’s Adventure</button></div>
     <div class="card"><span class="badge adult">🧑 Adult Zone</span><h3>Keep the challenge productive</h3><p>A normal practice activity should feel doable but require thought. If repeated failure starts, reduce choices, slow down, model one example, or use physical objects—then remove the help gradually.</p><div class="tip warn">Difficulty rises because performance shows readiness—not simply because another week passed.</div></div>
   </div>
-  <div class="section-title"><h2>Core priorities</h2><p>Literacy and mathematics appear most often.</p></div>
+  <div class="section-title"><h2>Learning Kingdoms</h2><p>Theme changes by domain so each skill feels memorable.</p></div>
   <div class="priority-grid">
-    <button class="priority literacy" onclick="openDomain('reading')"><span>📖</span><b>Phonics & Reading</b><small>Sounds → decoding → fluency → comprehension</small></button>
-    <button class="priority math" onclick="openDomain('math')"><span>🔢</span><b>Mathematical Thinking</b><small>Quantity → composition → operations → reasoning</small></button>
-    <button class="priority language" onclick="openDomain('language')"><span>💬</span><b>Language & Comprehension</b><small>Explain, retell, predict, compare, infer</small></button>
+    <button class="priority literacy" onclick="openDomain('reading')"><span>🦄</span><b>Unicorn Reading Meadow</b><small>Sounds → words → stories</small></button>
+    <button class="priority math" onclick="openDomain('math')"><span>👑</span><b>Royal Math Quest</b><small>Jewels, crowns, parts and totals</small></button>
+    <button class="priority language" onclick="openDomain('language')"><span>🌳</span><b>Forest Story Adventure</b><small>Retell, predict, explain, infer</small></button>
   </div>
-  <div class="section-title"><h2>Story worlds your child recognizes</h2><p>Use familiar princess and fairy scenes to boost attention, vocabulary, and imagination.</p></div>
+  <div class="section-title"><h2>Story worlds your child recognizes</h2><p>Use unicorn, princess, fairy, mermaid and forest themes to support—not replace—the learning task.</p></div>
   <div id="themeGallery" class="scene-gallery"></div>
   <div class="section-title"><h2>Learning principles built into the app</h2><p>No bogus learning.</p></div>
   <div class="grid thirds">
@@ -81,14 +81,14 @@
 </section>
 
 <section id="quest" class="view">
-  <div class="section-title"><h2>✨ Today's Magical Quest</h2><p id="questDate"></p></div>
-  <div class="card quest-intro"><div><span class="badge kid">Child-facing missions</span><h3 id="questTitle">Sakhi's Learning Trail</h3><p id="questSummary">Sakhi adjusts the adventure as you learn. Tap 🔊 Hear Again whenever you want the instruction again.</p></div><button class="btn soft" onclick="refreshQuest()">↻ New Mix</button></div>
+  <div class="section-title"><h2>✨ Today’s Adventure</h2><p id="questDate"></p></div>
+  <div class="card quest-intro"><div><span class="badge kid">Visual Trail</span><h3 id="questTitle">Sakhi's Learning Trail</h3><p id="questSummary">Sakhi opens the next activity automatically and saves progress before moving on.</p></div><button class="btn soft" onclick="refreshQuest()">↻ New Mix</button></div>
   <div id="questCards" class="quest-list"></div>
   <div id="activityRunner" class="card runner"></div>
 </section>
 
 <section id="learn" class="view">
-  <div class="section-title"><h2>🗺️ Learning Kingdom</h2><p>Tap a domain to see skills and purposeful activities.</p></div>
+  <div class="section-title"><h2>🏰 Learning Kingdoms</h2><p>Parent-visible curriculum map and practice access.</p></div>
   <div id="domainGrid" class="domain-grid"></div>
   <div id="domainDetail" class="domain-detail"></div>
 </section>
@@ -125,7 +125,7 @@
 </section>
 
 <section id="rewards" class="view">
-  <div class="section-title"><h2>✨ Shiny Star Reward Map</h2><p>Reward effort, thinking, persistence, improvement, and independence.</p></div>
+  <div class="section-title"><h2>🌟 Rewards</h2><p>Reward effort, thinking, persistence, improvement, and independence.</p></div>
   <div class="card"><div id="rewardGrid" class="reward-grid"></div></div>
   <div class="grid space-top"><div class="card"><h3>Praise learning behaviors</h3><div class="say">“You kept trying when the puzzle was tricky.”</div><div class="say">“You checked your work before you answered.”</div><div class="say">“You explained how you figured it out.”</div></div><div class="card"><h3>Do not reward only correctness</h3><p>Magic rewards can recognize careful listening, useful strategies, asking for help, flexible thinking, persistence, and doing something more independently than before.</p></div></div>
 </section>
@@ -133,7 +133,7 @@
 <div class="footer">✨ Sakhi Magic Learning · No ads · Family progress can sync securely across devices</div>
 </main>
 <nav class="bottom" aria-label="Mobile navigation">
-  <button data-go="home" class="active"><span>🏠</span>Home</button><button data-go="quest"><span>✨</span>Quest</button><button data-go="learn"><span>🗺️</span>Learn</button><button data-go="baseline"><span>🔎</span>Read</button><button data-go="parent"><span>🔒</span>Parents</button><button data-go="rewards"><span>🌟</span>Rewards</button>
+  <button data-go="home" class="active"><span>🏠</span>Home</button><button data-go="quest"><span>✨</span>Adventure</button><button data-go="learn"><span>🏰</span>Kingdoms</button><button data-go="parent"><span>🔒</span>Parents</button><button data-go="rewards"><span>🌟</span>Rewards</button>
 </nav>
 <div class="toast" id="toast">Saved ✨</div>
 <script src="./build-info.js"></script>
@@ -146,6 +146,7 @@
 <script src="./app.js"></script>
 <script src="./settings-service.js"></script>
 <script src="./adventure-service.js"></script>
+<script src="./domain-theme-registry.js"></script>
 <script src="./core-learning-services.js"></script>
 <script src="./activity-contract.js"></script>
 <script src="./reward-service.js"></script>
@@ -165,5 +166,6 @@
 <script src="./sakhi-shell.js"></script>
 <script src="./settings-ui.js"></script>
 <script src="./pwa-update.js"></script>
+<script src="./daily-journey-service.js"></script>
 </body>
 </html>
