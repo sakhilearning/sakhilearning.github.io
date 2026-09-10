@@ -1,26 +1,28 @@
 /* Sakhi audio.
  *
- * Phase 8. Rules this module enforces:
- *   - The AudioContext is created and resumed from the child's FIRST tap on
- *     "Start Adventure", never lazily mid-activity, so nothing is swallowed by
- *     autoplay policy.
- *   - Narration for the current activity is preloaded; the next activity's audio
- *     is prefetched in the background.
- *   - "Hear again" replays from the local cache, never re-fetching.
- *   - Every route change stops all playback immediately, so two narrations can
- *     never overlap.
- *   - Faults are typed, not generic: blocked / silent / network / missing asset
- *     / unsupported. The UI can then say something true.
+ * The voice is ElevenLabs, reached through the `sakhi-tts` Supabase edge
+ * function. Browser speech synthesis is a FALLBACK ONLY, for when the provider
+ * is unreachable or the device is offline — it is noticeably robotic and is not
+ * what this app should sound like to a child.
  *
- * Phase 7 note: isolated phonemes must come from the validated local bank, never
- * from TTS — a TTS engine says "tuh" for /t/, which actively teaches the wrong
- * thing. `phonemeReport()` names exactly which recordings are still missing, and
- * `playPhoneme` refuses to substitute speech synthesis for one.
+ * Rules this module enforces:
+ *   - The audio element and AudioContext are primed inside the child's FIRST tap
+ *     on "Start Adventure", so nothing is swallowed by autoplay policy.
+ *   - Narration is fetched once per (profile, kind, text) and cached as a blob.
+ *     "Hear again" replays that blob; it never re-synthesises or re-downloads.
+ *   - The current activity's narration is warmed ahead of time and the next
+ *     activity's is prefetched, because a cold provider call costs about a
+ *     second and a five-year-old will not wait for it.
+ *   - Every route change stops playback, so two narrations cannot overlap.
+ *   - Faults are typed, never generic.
+ *
+ * Isolated phonemes must come from the validated local bank, never from any TTS:
+ * an engine says "tuh" for /t/, which teaches the wrong sound. `playPhoneme`
+ * refuses to substitute.
  */
 window.SakhiAudio = (function () {
   'use strict';
 
-  /* The phonemes the curriculum actually needs. `file` null = not yet recorded. */
   var PHONEMES = {
     m: 'phoneme_m', s: 'phoneme_s', t: 'phoneme_t', p: 'phoneme_p', n: 'phoneme_n',
     k: 'phoneme_k', b: 'phoneme_b', d: 'phoneme_d', g: 'phoneme_g', f: 'phoneme_f',
@@ -31,71 +33,73 @@ window.SakhiAudio = (function () {
   };
   var PHONEME_DIR = './assets/audio/phonemes/';
   var PHONEME_EXT = '.ogg';
-
-  /* Which recordings actually exist on disk right now. Anything not listed here
-   * is missing and must NOT be faked with speech synthesis. */
   var PHONEMES_PRESENT = ['t', 'p'];
 
-  function AudioFault(kind, message, cause) {
-    var e = new Error(message);
-    e.name = 'AudioFault'; e.kind = kind; e.cause = cause;
-    return e;
-  }
   var FAULT = {
-    UNSUPPORTED: 'UNSUPPORTED',       // browser has no speech/audio API at all
-    BLOCKED: 'BLOCKED',               // autoplay policy: needs a user gesture
-    SILENT: 'SILENT',                 // started but produced nothing (device muted / silent switch)
-    NETWORK: 'NETWORK',               // provider or fetch failed
-    MISSING_ASSET: 'MISSING_ASSET',   // the recording does not exist
-    DISABLED: 'DISABLED'              // the parent turned audio off
+    UNSUPPORTED: 'UNSUPPORTED',
+    BLOCKED: 'BLOCKED',
+    SILENT: 'SILENT',
+    NETWORK: 'NETWORK',
+    MISSING_ASSET: 'MISSING_ASSET',
+    DISABLED: 'DISABLED'
   };
 
-  var ctx = null;
-  var unlocked = false;
-  var enabled = true;
-  var cache = {};              // url -> { buffer } | { failed: kind }
+  var ctx = null, unlocked = false, enabled = true;
+  var player = null;                 // the one HTMLAudioElement, primed on first tap
+  var blobCache = {}, inflight = {}; // narration blobs, keyed profile|kind|text
+  var phonemeCache = {};
   var activeSources = [];
-  var listeners = [];
-  var lastFault = null;
+  var listeners = [], lastFault = null, lastRequest = null;
+  var voice = 'elevenlabs';          // or 'fallback' once the provider has failed
 
+  function cfg() { return window.RAINBOW_CONFIG || {}; }
   function onFault(fn) { listeners.push(fn); return function () { listeners = listeners.filter(function (f) { return f !== fn; }); }; }
   function raise(kind, message, cause) {
-    var f = AudioFault(kind, message, cause);
-    lastFault = f;
-    listeners.forEach(function (fn) { try { fn(f); } catch (e) {} });
-    return f;
+    var e = new Error(message); e.name = 'AudioFault'; e.kind = kind; e.cause = cause;
+    lastFault = e;
+    listeners.forEach(function (fn) { try { fn(e); } catch (err) {} });
+    return e;
   }
 
   function supported() {
-    return typeof window !== 'undefined' &&
-      !!(window.AudioContext || window.webkitAudioContext) &&
-      ('speechSynthesis' in window);
+    return typeof window !== 'undefined' && typeof Audio !== 'undefined';
   }
 
-  /* Call this from the FIRST real user gesture. Creating and resuming the
-   * context here is what makes every later playback work on iPad. */
+  /* Read narration the way a person would. Without this the provider literally
+   * reads out the slashes in "/m/". */
+  function normalise(text) {
+    var s = String(text == null ? '' : text).trim();
+    if (!s) return '';
+    s = s.replace(/\/([a-z]{1,2})\//gi, function (_, p) { return 'the ' + p.toLowerCase() + ' sound'; });
+    return s.replace(/\s+/g, ' ');
+  }
+
+  /* Call from the FIRST real user gesture. Priming a muted play() here is what
+   * makes every later playback work on iPad. */
   function unlock() {
     if (unlocked) return Promise.resolve(true);
     if (!supported()) { raise(FAULT.UNSUPPORTED, 'This browser cannot play Sakhi audio.'); return Promise.resolve(false); }
     try {
+      player = player || new Audio();
+      player.preload = 'auto';
+      player.playsInline = true;
       var AC = window.AudioContext || window.webkitAudioContext;
-      ctx = ctx || new AC();
-      /* A zero-volume blip inside the gesture is what actually unlocks iOS. */
-      var buf = ctx.createBuffer(1, 1, 22050);
-      var src = ctx.createBufferSource();
-      src.buffer = buf; src.connect(ctx.destination); src.start(0);
+      if (AC) { ctx = ctx || new AC(); if (ctx.resume) ctx.resume().catch(function () {}); }
       if ('speechSynthesis' in window) {
-        var u = new SpeechSynthesisUtterance(' ');
-        u.volume = 0;
-        speechSynthesis.speak(u);
+        var u = new SpeechSynthesisUtterance(' '); u.volume = 0;
+        try { speechSynthesis.speak(u); } catch (e) {}
       }
-      return ctx.resume().then(function () {
-        unlocked = ctx.state === 'running';
-        if (!unlocked) raise(FAULT.BLOCKED, 'Audio is waiting for a tap before it can play.');
-        return unlocked;
+      var silent = new Audio('data:audio/mp3;base64,//uQZAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAACAAACcQCA');
+      silent.muted = true;
+      return silent.play().then(function () {
+        silent.pause(); unlocked = true; return true;
       }).catch(function (e) {
-        raise(FAULT.BLOCKED, 'The browser blocked audio until the screen is tapped.', e);
-        return false;
+        if (e && e.name === 'NotAllowedError') {
+          raise(FAULT.BLOCKED, 'Audio is waiting for a tap before it can play.');
+          return false;
+        }
+        unlocked = true;   // some browsers reject the data URI but allow real audio
+        return true;
       });
     } catch (e) {
       raise(FAULT.UNSUPPORTED, 'Audio could not start on this device.', e);
@@ -106,148 +110,186 @@ window.SakhiAudio = (function () {
   function setEnabled(v) { enabled = !!v; if (!enabled) stopAll(); }
   function isEnabled() { return enabled; }
   function isUnlocked() { return unlocked; }
+  function voiceInUse() { return voice; }
 
-  /* Stop everything, right now. Called on every route change. */
   function stopAll() {
     try { if ('speechSynthesis' in window) speechSynthesis.cancel(); } catch (e) {}
+    if (player) { try { player.pause(); player.currentTime = 0; } catch (e) {} }
     activeSources.forEach(function (s) { try { s.stop(0); } catch (e) {} });
     activeSources = [];
   }
 
-  /* ---- narration ---------------------------------------------------------- */
+  /* ---- ElevenLabs narration ------------------------------------------------ */
 
-  var lastNarration = null;
+  function key(text, kind, profile) { return profile + '|' + kind + '|' + text; }
 
-  /* Speak instructional text. Text narration may use speech synthesis; isolated
-   * phonemes may not (see playPhoneme). */
-  function speak(text, opts) {
-    opts = opts || {};
-    if (!enabled) return Promise.reject(raise(FAULT.DISABLED, 'Audio is switched off in Parent settings.'));
+  function fetchVoice(text, kind, profile) {
+    var c = cfg();
+    if (!c.ttsEndpoint || !c.supabaseAnonKey) {
+      return Promise.reject(raise(FAULT.NETWORK, 'The Sakhi voice is not configured in this build.'));
+    }
+    var k = key(text, kind, profile);
+    if (blobCache[k]) return Promise.resolve(blobCache[k]);
+    if (inflight[k]) return inflight[k];
+
+    var task = fetch(c.ttsEndpoint, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'apikey': c.supabaseAnonKey,
+        'x-client-info': 'sakhi-magic-learning/7'
+      },
+      body: JSON.stringify({ text: text, kind: kind, profile: profile })
+    }).then(function (r) {
+      if (!r.ok) throw raise(FAULT.NETWORK, 'The Sakhi voice service answered ' + r.status + '.');
+      var type = r.headers.get('content-type') || '';
+      if (type.indexOf('audio/') === -1) throw raise(FAULT.NETWORK, 'The voice service returned ' + (type || 'an unknown type') + '.');
+      return r.blob();
+    }).then(function (blob) {
+      /* A few bytes of "audio" is an error page with the wrong header. */
+      if (blob.size < 500) throw raise(FAULT.NETWORK, 'The voice service returned too little audio.');
+      blobCache[k] = blob;
+      return blob;
+    }).catch(function (e) {
+      if (e && e.name === 'AudioFault') throw e;
+      throw raise(FAULT.NETWORK, 'Could not reach the Sakhi voice service.', e);
+    });
+
+    inflight[k] = task;
+    task.catch(function () {}).then(function () { delete inflight[k]; });
+    return task;
+  }
+
+  function playBlob(blob) {
+    stopAll();
+    var url = URL.createObjectURL(blob);
+    player = player || new Audio();
+    player.playsInline = true;
+    player.src = url;
+    return player.play().then(function () {
+      return new Promise(function (resolve) {
+        player.onended = function () { URL.revokeObjectURL(url); resolve(true); };
+        player.onerror = function () { URL.revokeObjectURL(url); resolve(false); };
+      });
+    }).catch(function (e) {
+      URL.revokeObjectURL(url);
+      throw raise(e && e.name === 'NotAllowedError' ? FAULT.BLOCKED : FAULT.SILENT,
+        e && e.name === 'NotAllowedError'
+          ? 'Audio needs one tap on the screen before it can play.'
+          : 'The voice started but nothing was heard — check the volume and the side switch.', e);
+    });
+  }
+
+  /* Browser speech synthesis. Only reached when the provider fails. */
+  function fallbackSpeak(text) {
     if (!('speechSynthesis' in window)) return Promise.reject(raise(FAULT.UNSUPPORTED, 'This browser has no speech support.'));
     stopAll();
-    lastNarration = text;
     return new Promise(function (resolve, reject) {
-      var u = new SpeechSynthesisUtterance(String(text));
-      u.rate = opts.rate || 0.9;
-      u.pitch = opts.pitch || 1.1;
+      var u = new SpeechSynthesisUtterance(text);
+      u.rate = 0.9; u.pitch = 1.1;
       var started = false;
       u.onstart = function () { started = true; };
       u.onend = function () { resolve(true); };
       u.onerror = function (e) {
-        /* 'interrupted'/'canceled' are our own stopAll, not a fault. */
         if (e && (e.error === 'interrupted' || e.error === 'canceled')) return resolve(false);
         reject(raise(FAULT.NETWORK, 'The voice could not be played.', e));
       };
       speechSynthesis.speak(u);
-      /* If nothing ever starts, the output is almost certainly muted or blocked.
-       * Reporting that specifically beats a generic "audio error". */
       setTimeout(function () {
-        if (!started) {
-          reject(raise(unlocked ? FAULT.SILENT : FAULT.BLOCKED,
-            unlocked ? 'The voice started but nothing was heard — check the device volume and the silent switch.'
-                     : 'Audio needs one tap on the screen before it can play.'));
-        }
+        if (!started) reject(raise(unlocked ? FAULT.SILENT : FAULT.BLOCKED,
+          unlocked ? 'The voice started but nothing was heard — check the volume and the side switch.'
+                   : 'Audio needs one tap on the screen before it can play.'));
       }, 1200);
     });
   }
 
-  /* "Hear again" must never re-fetch or re-synthesise from scratch. */
+  function speak(text, opts) {
+    opts = opts || {};
+    if (!enabled) return Promise.reject(raise(FAULT.DISABLED, 'Audio is switched off in Parent settings.'));
+    var clean = normalise(text);
+    if (!clean) return Promise.resolve(false);
+    var kind = opts.kind || 'instruction', profile = opts.profile || 'sakhi';
+    lastRequest = { text: clean, kind: kind, profile: profile };
+
+    return fetchVoice(clean, kind, profile).then(function (blob) {
+      voice = 'elevenlabs';
+      return playBlob(blob);
+    }).catch(function (e) {
+      /* Autoplay blocking is not a provider problem; do not downgrade the voice. */
+      if (e && e.kind === FAULT.BLOCKED) throw e;
+      voice = 'fallback';
+      return fallbackSpeak(clean);
+    });
+  }
+
+  /* "Hear again" replays the cached blob — no refetch, no re-synthesis. */
   function repeat() {
-    if (lastNarration == null) return Promise.resolve(false);
-    return speak(lastNarration);
+    if (!lastRequest) return Promise.resolve(false);
+    if (lastRequest.phoneme) return playPhoneme(lastRequest.phoneme);
+    var k = key(lastRequest.text, lastRequest.kind, lastRequest.profile);
+    if (blobCache[k]) return playBlob(blobCache[k]).catch(function () { return fallbackSpeak(lastRequest.text); });
+    return speak(lastRequest.text, lastRequest);
   }
 
-  /* ---- phoneme bank ------------------------------------------------------- */
+  /* ---- phoneme bank -------------------------------------------------------- */
 
-  function phonemeUrl(sym) {
-    var base = PHONEMES[sym];
-    return base ? PHONEME_DIR + base + PHONEME_EXT : null;
-  }
+  function phonemeUrl(sym) { var b = PHONEMES[sym]; return b ? PHONEME_DIR + b + PHONEME_EXT : null; }
   function hasPhoneme(sym) { return PHONEMES_PRESENT.indexOf(sym) !== -1; }
 
-  /* What is still missing, for the parent view and for CI. */
   function phonemeReport() {
     var all = Object.keys(PHONEMES);
-    var present = all.filter(hasPhoneme);
     var missing = all.filter(function (s) { return !hasPhoneme(s); });
     return {
-      required: all.length, present: present.length, missing: missing,
+      required: all.length, present: all.length - missing.length, missing: missing,
       complete: missing.length === 0,
       note: missing.length
         ? missing.length + ' of ' + all.length + ' phoneme recordings are missing. Isolated sounds are disabled for these; ' +
-          'speech synthesis is deliberately NOT substituted because it adds a schwa ("tuh" for /t/).'
+          'the Sakhi voice is deliberately NOT substituted, because a TTS engine adds a schwa ("tuh" for /t/).'
         : 'All required phonemes are present.'
     };
   }
 
-  async function fetchBuffer(url) {
-    if (cache[url]) {
-      if (cache[url].failed) throw raise(cache[url].failed, 'This sound is unavailable.');
-      return cache[url].buffer;
-    }
-    if (!ctx) { await unlock(); }
-    if (!ctx) throw raise(FAULT.UNSUPPORTED, 'Audio is not available on this device.');
-    var res;
-    try { res = await fetch(url); }
-    catch (e) { cache[url] = { failed: FAULT.NETWORK }; throw raise(FAULT.NETWORK, 'Could not download the sound.', e); }
-    if (!res.ok) { cache[url] = { failed: FAULT.MISSING_ASSET }; throw raise(FAULT.MISSING_ASSET, 'That recording is not in the app yet.'); }
-    var bytes = await res.arrayBuffer();
-    var buffer = await ctx.decodeAudioData(bytes).catch(function (e) {
-      cache[url] = { failed: FAULT.MISSING_ASSET };
-      throw raise(FAULT.MISSING_ASSET, 'That recording could not be decoded.', e);
-    });
-    cache[url] = { buffer: buffer };
-    return buffer;
-  }
-
-  /* Isolated phoneme playback. Refuses to fall back to speech synthesis. */
-  async function playPhoneme(sym) {
-    if (!enabled) throw raise(FAULT.DISABLED, 'Audio is switched off in Parent settings.');
-    if (!PHONEMES[sym]) throw raise(FAULT.MISSING_ASSET, 'Unknown sound "' + sym + '".');
+  function playPhoneme(sym) {
+    if (!enabled) return Promise.reject(raise(FAULT.DISABLED, 'Audio is switched off in Parent settings.'));
+    if (!PHONEMES[sym]) return Promise.reject(raise(FAULT.MISSING_ASSET, 'Unknown sound "' + sym + '".'));
     if (!hasPhoneme(sym)) {
-      throw raise(FAULT.MISSING_ASSET,
+      return Promise.reject(raise(FAULT.MISSING_ASSET,
         'The pure /' + sym + '/ recording has not been added yet. Sakhi will not use a computer voice for a single sound, ' +
-        'because it would say "' + sym + 'uh" and teach the wrong thing.');
+        'because it would say "' + sym + 'uh" and teach the wrong thing.'));
     }
-    var buf = await fetchBuffer(phonemeUrl(sym));
-    stopAll();
-    var src = ctx.createBufferSource();
-    src.buffer = buf; src.connect(ctx.destination);
-    activeSources.push(src);
-    src.start(0);
-    return new Promise(function (resolve) { src.onended = function () { resolve(true); }; });
+    lastRequest = { phoneme: sym };
+    var url = phonemeUrl(sym);
+    if (phonemeCache[url]) return playBlob(phonemeCache[url]);
+    return fetch(url).then(function (r) {
+      if (!r.ok) throw raise(FAULT.MISSING_ASSET, 'That recording is not in the app yet.');
+      return r.blob();
+    }).then(function (b) { phonemeCache[url] = b; return playBlob(b); });
   }
 
   /* ---- preload / prefetch -------------------------------------------------- */
 
-  /* Warm whatever the given activity will need. Narration is speech-synthesised
-   * so there is nothing to download; phoneme assets are fetched and decoded. */
+  /* Warm every narration line in an activity. A cold provider call is about a
+   * second; warmed, playback starts immediately. */
   function preloadActivity(activity) {
     if (!activity || !enabled) return Promise.resolve({ warmed: 0 });
-    var syms = [];
-    activity.questions.forEach(function (q) {
-      var m = String(q.narration || '').match(/\/(\w{1,2})\//g) || [];
-      m.forEach(function (x) { var s = x.replace(/\//g, ''); if (PHONEMES[s] && hasPhoneme(s) && syms.indexOf(s) === -1) syms.push(s); });
-    });
-    return Promise.all(syms.map(function (s) {
-      return fetchBuffer(phonemeUrl(s)).catch(function () { return null; });
-    })).then(function (r) { return { warmed: r.filter(Boolean).length, symbols: syms }; });
+    var lines = activity.questions.map(function (q) { return normalise(q.narration); }).filter(Boolean);
+    return Promise.all(lines.map(function (l) {
+      return fetchVoice(l, 'instruction', 'sakhi').then(function () { return true; }, function () { return false; });
+    })).then(function (r) { return { warmed: r.filter(Boolean).length, of: lines.length }; });
   }
 
-  /* Fire-and-forget warm of the NEXT activity while the child works on this one. */
   function prefetchActivity(activity) {
     if (!activity) return;
-    if ('requestIdleCallback' in window) requestIdleCallback(function () { preloadActivity(activity); });
-    else setTimeout(function () { preloadActivity(activity); }, 800);
+    var run = function () { preloadActivity(activity); };
+    if ('requestIdleCallback' in window) requestIdleCallback(run); else setTimeout(run, 800);
   }
 
-  /* Human-readable, cause-specific message for the UI. Never generic. */
   function describe(fault) {
     if (!fault) return null;
     switch (fault.kind) {
       case FAULT.BLOCKED: return { title: 'Tap once to turn on sound', body: 'Your browser waits for a tap before it plays audio.', action: 'Tap anywhere' };
       case FAULT.SILENT: return { title: 'Sound is on, but nothing is coming out', body: 'Check the volume and the side switch on the iPad.', action: 'Check volume' };
-      case FAULT.NETWORK: return { title: 'The voice could not load', body: 'Sakhi could not reach the voice service. Reading still works without it.', action: 'Try again' };
+      case FAULT.NETWORK: return { title: 'Sakhi’s voice could not load', body: 'Using the backup voice for now. Reading still works.', action: 'Try again' };
       case FAULT.MISSING_ASSET: return { title: 'That sound is not in the app yet', body: fault.message, action: null };
       case FAULT.DISABLED: return { title: 'Audio is off', body: 'A grown-up switched audio off in Parent settings.', action: 'Open Parent settings' };
       case FAULT.UNSUPPORTED: return { title: 'This browser cannot play Sakhi audio', body: 'Try Safari or Chrome.', action: null };
@@ -255,14 +297,23 @@ window.SakhiAudio = (function () {
     }
   }
 
+  function status() {
+    return {
+      voice: voice, unlocked: unlocked, enabled: enabled,
+      configured: !!(cfg().ttsEndpoint && cfg().supabaseAnonKey),
+      cachedLines: Object.keys(blobCache).length,
+      phonemes: phonemeReport()
+    };
+  }
+
   return {
     FAULT: FAULT, PHONEMES: PHONEMES,
     supported: supported, unlock: unlock, isUnlocked: isUnlocked,
     setEnabled: setEnabled, isEnabled: isEnabled,
-    speak: speak, repeat: repeat, stopAll: stopAll,
+    speak: speak, repeat: repeat, stopAll: stopAll, normalise: normalise,
     playPhoneme: playPhoneme, hasPhoneme: hasPhoneme, phonemeReport: phonemeReport,
     preloadActivity: preloadActivity, prefetchActivity: prefetchActivity,
-    onFault: onFault, describe: describe,
+    onFault: onFault, describe: describe, status: status, voiceInUse: voiceInUse,
     lastFault: function () { return lastFault; }
   };
 })();

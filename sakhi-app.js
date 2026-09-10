@@ -145,7 +145,6 @@
     $('#activitySkill').textContent = current.skill_title;
     $('#activityBand').textContent = 'Level ' + current.band + ' · ' + current.band_name;
     $('#activityProgress').textContent = (qIndex + 1) + ' of ' + current.questions.length;
-    $('#activityWhy').textContent = Adapt.explain(current._pick);
     $('#companionLine').textContent = t.companion + ': ' + t.narration.encourage;
 
     hintLevel = current.support.hintUpFront ? 1 : 0;
@@ -343,13 +342,22 @@
       hist.appendChild(li);
     });
 
-    /* phoneme audit — Phase 7 status, stated plainly */
-    var rep = Audio.phonemeReport();
+    /* Which voice is actually playing, and the phoneme audit. The voice line is
+     * here because a silent downgrade to robotic browser speech is exactly the
+     * kind of regression nobody notices until a child is listening to it. */
+    var st = Audio.status();
     var pa = $('#pAudio');
     clear(pa);
-    pa.className = 'insight ' + (rep.complete ? 'is-good' : 'is-low');
-    pa.appendChild(el('b', null, 'Phoneme recordings: ' + rep.present + ' of ' + rep.required));
-    pa.appendChild(el('small', null, rep.note));
+    var usingReal = st.voice === 'elevenlabs' && st.configured;
+    pa.className = 'insight ' + (usingReal && st.phonemes.complete ? 'is-good' : (usingReal ? 'is-ok' : 'is-low'));
+    pa.appendChild(el('span', 'label', 'Voice'));
+    pa.appendChild(el('b', null, usingReal ? 'Sakhi’s ElevenLabs voice' : 'Backup browser voice'));
+    pa.appendChild(el('small', null, usingReal
+      ? (st.cachedLines + ' line(s) cached for instant replay.')
+      : (st.configured ? 'The voice service could not be reached, so the robotic backup is in use.'
+                       : 'No voice service is configured in this build.')));
+    pa.appendChild(el('small', null,
+      'Phoneme recordings: ' + st.phonemes.present + ' of ' + st.phonemes.required + '. ' + st.phonemes.note));
 
     /* settings */
     var set = $('#pSettings');
