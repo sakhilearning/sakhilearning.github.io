@@ -50,6 +50,19 @@ window.SakhiActivities = (function () {
   }
   function sample(rng, arr, n) { return shuffle(rng, arr).slice(0, n); }
   function uniq(a) { return a.filter(function (x, i) { return a.indexOf(x) === i; }); }
+  function byItem(items, name) { return items.filter(function (x) { return x.item === name; })[0]; }
+  function tokenMeta(items) {
+    return items.reduce(function (m, x) {
+      m[x.item] = {
+        label: x.item,
+        emoji: x.emoji,
+        image: x.image || null,
+        alt: x.alt || x.item,
+        caption: x.caption || ''
+      };
+      return m;
+    }, {});
+  }
 
   /* Build a choice set of exactly B.choices options containing `answer`.
    * `pool` supplies distractors; `near` supplies deliberately close ones. */
@@ -496,16 +509,25 @@ window.SakhiActivities = (function () {
       };
     },
     float: function (rng, bank, B) {
-      var n = B.band >= 4 ? 3 : 2;
-      var f = sample(rng, bank.filter(function (x) { return x.a === 'float'; }), n);
-      var s = sample(rng, bank.filter(function (x) { return x.a === 'sink'; }), n);
+      var n = B.band <= 2 ? 1 : (B.band >= 4 ? 3 : 2);
+      var floats = bank.filter(function (x) { return x.a === 'float'; });
+      var sinks = bank.filter(function (x) { return x.a === 'sink'; });
+      var leaf = byItem(bank, 'leaf'), rock = byItem(bank, 'rock');
+      var f = B.band <= 2 && leaf
+        ? [leaf].concat(sample(rng, floats.filter(function (x) { return x.item !== 'leaf'; }), n - 1))
+        : sample(rng, floats, n);
+      var s = B.band <= 2 && rock
+        ? [rock].concat(sample(rng, sinks.filter(function (x) { return x.item !== 'rock'; }), n - 1))
+        : sample(rng, sinks, n);
+      var items = f.concat(s);
       return {
         template: 'sort', prompt: 'Will it float or sink?',
         narration: 'Sort them. Will it float or will it sink.',
         buckets: [{ id: 'float', label: 'Floats' }, { id: 'sink', label: 'Sinks' }],
-        tokens: shuffle(rng, f.concat(s).map(function (x) { return x.emoji + ' ' + x.item; })),
-        answer: f.concat(s).reduce(function (m, x) { m[x.emoji + ' ' + x.item] = x.a; return m; }, {}),
-        hints: ['Heavy things usually sink.', 'Light things usually float.', 'Think about a leaf and a rock.']
+        tokens: shuffle(rng, items.map(function (x) { return x.item; })),
+        tokenVisuals: tokenMeta(items),
+        answer: items.reduce(function (m, x) { m[x.item] = x.a; return m; }, {}),
+        hints: ['Look at each real object.', 'A leaf usually stays on top. A rock usually goes down.', 'Put leaf with floats and rock with sinks.']
       };
     },
     magnet: function (rng, bank, B) {

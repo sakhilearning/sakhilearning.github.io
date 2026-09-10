@@ -97,6 +97,34 @@ window.SakhiTemplates = (function () {
     catch (e) { node.scrollIntoView(false); }
   }
 
+  function objectInfo(q, token) {
+    var m = q.tokenVisuals && q.tokenVisuals[String(token)];
+    if (!m) return { label: String(token), alt: String(token) };
+    return {
+      label: m.label || String(token),
+      emoji: m.emoji || '',
+      image: m.image || '',
+      alt: m.alt || m.label || String(token),
+      caption: m.caption || ''
+    };
+  }
+
+  function appendObject(node, info) {
+    if (info.image) {
+      var img = document.createElement('img');
+      img.className = 'object-img';
+      img.src = info.image;
+      img.alt = info.alt || info.label;
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      node.appendChild(img);
+    } else if (info.emoji) {
+      node.appendChild(el('span', 'object-emoji', info.emoji));
+    }
+    node.appendChild(el('span', 'object-label', info.label));
+    if (info.caption) node.appendChild(el('small', 'object-caption', info.caption));
+  }
+
   /* Media block shared by every template: picture / passage / worked model. */
   function renderMedia(q) {
     var m = q.media;
@@ -106,6 +134,18 @@ window.SakhiTemplates = (function () {
       var p = el('div', 'q-passage', m.passage);
       if (m.listenOnly) p.classList.add('is-listen-only');
       wrap.appendChild(p);
+    }
+    if (m.image) {
+      var fig = document.createElement('figure');
+      fig.className = 'q-picture';
+      var img = document.createElement('img');
+      img.src = m.image;
+      img.alt = m.alt || m.caption || q.prompt;
+      img.decoding = 'async';
+      img.loading = 'lazy';
+      fig.appendChild(img);
+      if (m.caption) fig.appendChild(el('figcaption', null, m.caption));
+      wrap.appendChild(fig);
     }
     if (m.emoji) {
       var e = el('div', 'q-emoji', m.emoji);
@@ -425,8 +465,11 @@ window.SakhiTemplates = (function () {
       clear(tray);
       q.tokens.forEach(function (t) {
         if (placed[t]) return;
-        var b = el('button', 'token sort-token');
-        b.type = 'button'; b.textContent = String(t);
+        var info = objectInfo(q, t);
+        var b = el('button', 'token sort-token object-token');
+        b.type = 'button';
+        b.setAttribute('aria-label', info.label);
+        appendObject(b, info);
         if (selected === t) b.classList.add('is-selected');
         b.onclick = function () { selected = (selected === t ? null : t); paint(); focusStage(buckets); opts.onProgress && opts.onProgress(); };
         tray.appendChild(b);
@@ -439,8 +482,10 @@ window.SakhiTemplates = (function () {
         var items = el('div', 'sort-bucket-items');
         Object.keys(placed).forEach(function (t) {
           if (placed[t] !== bk.id) return;
-          var chip = el('button', 'answer-chip', String(t));
+          var chip = el('button', 'answer-chip object-token placed-object');
           chip.type = 'button';
+          chip.setAttribute('aria-label', 'Move ' + objectInfo(q, t).label + ' back');
+          appendObject(chip, objectInfo(q, t));
           chip.onclick = function () { delete placed[t]; paint(); opts.onProgress && opts.onProgress(); };
           items.appendChild(chip);
         });

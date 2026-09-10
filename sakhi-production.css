@@ -85,10 +85,11 @@ h1,h2,h3{letter-spacing:-.02em;margin:0 0 .4em}
 .crumb small{display:block;font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .crumb b{display:block;font-size:19px;color:var(--theme-ink)}
 .crumb em{display:block;font-style:normal;font-size:12px;font-weight:800;color:var(--theme-accent)}
-.activity-body{max-width:900px;margin:0 auto;padding:20px 18px}
+.activity-body{max-width:980px;margin:0 auto;padding:26px 18px 38px}
 .why{background:rgba(255,255,255,.7);border-radius:var(--r-sm);padding:10px 14px;font-size:14px;color:var(--muted);margin:0 0 16px}
-.interaction{background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:var(--r-lg);
-  padding:26px;min-height:320px;box-shadow:0 18px 40px rgba(78,50,105,.09)}
+.interaction{background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(255,250,255,.9));
+  border:1px solid rgba(255,255,255,.8);border-radius:var(--r-lg);
+  padding:28px;min-height:320px;box-shadow:0 22px 56px rgba(41,27,61,.18),inset 0 1px 0 rgba(255,255,255,.9)}
 .activity-tools{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:18px}
 .companion-line{margin-top:16px;text-align:center;color:var(--muted);font-weight:700}
 .hint-box{display:grid;gap:8px;margin-top:14px}
@@ -99,6 +100,11 @@ h1,h2,h3{letter-spacing:-.02em;margin:0 0 .4em}
 .q-prompt{font-size:clamp(22px,3.4vw,32px);text-align:center;margin:0;color:var(--theme-ink)}
 .q-hear{flex:0 0 auto;width:52px;height:52px;border-radius:50%;border:1px solid var(--line);background:#fff;font-size:24px}
 .q-media{text-align:center;margin-bottom:18px}
+.q-picture{margin:0 auto 12px;max-width:min(520px,100%);border-radius:22px;overflow:hidden;
+  background:#fff;border:1px solid rgba(255,255,255,.85);box-shadow:0 18px 42px rgba(47,34,72,.16)}
+.q-picture img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover}
+.q-picture figcaption{margin:0;padding:10px 14px;font-weight:900;color:var(--theme-ink);
+  background:linear-gradient(90deg,rgba(255,255,255,.94),color-mix(in srgb,var(--theme-b) 40%,#fff))}
 .q-passage{background:#fffdf4;border:1px solid #f0e3b8;border-radius:var(--r-md);padding:16px 18px;
   font-size:18px;line-height:1.6;text-align:left}
 .q-passage.is-listen-only{filter:blur(5px);user-select:none}
@@ -149,16 +155,26 @@ h1,h2,h3{letter-spacing:-.02em;margin:0 0 .4em}
 .sequence-tokens .token{font-size:18px}
 
 /* ---------- sort ---------- */
-.sort-tray{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;min-height:80px;margin-bottom:18px;
-  padding:12px;border-radius:var(--r-md);background:rgba(255,255,255,.6);border:2px dashed var(--line)}
+.sort-tray{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;min-height:104px;margin-bottom:18px;
+  padding:14px;border-radius:var(--r-md);background:rgba(255,255,255,.72);border:2px dashed color-mix(in srgb,var(--theme-accent) 42%,var(--line))}
 .sort-token.is-selected{border-color:var(--theme-accent);transform:scale(1.06)}
 .sort-buckets{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
-.sort-bucket{min-height:150px;border-radius:var(--r-lg);border:3px dashed var(--line);background:#fff;padding:14px;cursor:pointer}
+.sort-bucket{min-height:170px;border-radius:var(--r-lg);border:3px dashed var(--line);
+  background:linear-gradient(180deg,#fff,color-mix(in srgb,var(--theme-b) 18%,#fff));padding:14px;cursor:pointer}
 .sort-bucket:hover{border-color:var(--theme-accent)}
 .sort-bucket-label{font-weight:900;color:var(--theme-ink);margin-bottom:10px;text-align:center}
 .sort-bucket-items{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
 .sort-buckets.is-correct .sort-bucket{border-color:#57c47a;background:#f6fff8}
 .sort-buckets.is-wrong .sort-bucket{border-color:#ef8fa9}
+.object-token{display:grid;justify-items:center;align-content:start;gap:7px;white-space:normal;text-align:center}
+.object-token .object-img{width:min(156px,34vw);aspect-ratio:1;border-radius:18px;object-fit:cover;
+  border:2px solid rgba(255,255,255,.95);box-shadow:0 10px 22px rgba(38,24,55,.16)}
+.object-token .object-emoji{font-size:40px;line-height:1}
+.object-token .object-label{font-size:20px;font-weight:900;color:var(--theme-ink);text-transform:capitalize}
+.object-token .object-caption{display:block;max-width:168px;font-size:12px;line-height:1.25;color:var(--muted);font-weight:800}
+.placed-object .object-img{width:min(118px,28vw)}
+.placed-object .object-label{font-size:16px}
+.placed-object .object-caption{display:none}
 
 /* ---------- match ---------- */
 .match-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}

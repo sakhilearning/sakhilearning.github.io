@@ -138,9 +138,28 @@ window.SakhiContent = (function () {
     { animal: 'monkey', emoji: '🐒', home: 'jungle', homeEmoji: '🌴' }
   ];
   var FLOAT_SINK = [
-    { item: 'leaf', emoji: '🍃', a: 'float' }, { item: 'rock', emoji: '🪨', a: 'sink' },
-    { item: 'cork', emoji: '🪵', a: 'float' }, { item: 'coin', emoji: '🪙', a: 'sink' },
-    { item: 'apple', emoji: '🍎', a: 'float' }, { item: 'spoon', emoji: '🥄', a: 'sink' }
+    {
+      item: 'leaf', emoji: '🍃', a: 'float',
+      image: './assets/learning/leaf-water.webp',
+      alt: 'A green leaf floating on clear water',
+      caption: 'A leaf rests on top of the water.'
+    },
+    {
+      item: 'rock', emoji: '🪨', a: 'sink',
+      image: './assets/learning/rock-water.webp',
+      alt: 'A gray rock sinking under clear water',
+      caption: 'A rock goes down under the water.'
+    },
+    {
+      item: 'shell', emoji: '🐚', a: 'sink',
+      image: './assets/learning/shell-water.webp',
+      alt: 'A seashell resting on the sandy bottom under water',
+      caption: 'A shell can settle on the sand below.'
+    },
+    { item: 'cork', emoji: '🪵', a: 'float' },
+    { item: 'coin', emoji: '🪙', a: 'sink' },
+    { item: 'apple', emoji: '🍎', a: 'float' },
+    { item: 'spoon', emoji: '🥄', a: 'sink' }
   ];
   var MAGNETS = [
     { item: 'paperclip', emoji: '📎', a: 'sticks' }, { item: 'key', emoji: '🔑', a: 'sticks' },

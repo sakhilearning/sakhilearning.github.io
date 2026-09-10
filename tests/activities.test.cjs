@@ -60,6 +60,17 @@ for (let band = 1; band <= 5; band++) {
   });
 }
 
+const floatStarter = A.generate('science.float_sink', 1, 'visuals').questions.find(q => q.template === 'sort');
+if (!floatStarter) P('science.float_sink starter: no sort question generated');
+else {
+  if (!floatStarter.tokens.includes('leaf')) P('science.float_sink starter: leaf token missing');
+  if (!floatStarter.tokens.includes('rock')) P('science.float_sink starter: rock token missing');
+  if (floatStarter.answer.leaf !== 'float') P('science.float_sink starter: leaf does not map to float');
+  if (floatStarter.answer.rock !== 'sink') P('science.float_sink starter: rock does not map to sink');
+  if (!floatStarter.tokenVisuals?.leaf?.image?.includes('leaf-water.webp')) P('science.float_sink starter: leaf image missing');
+  if (!floatStarter.tokenVisuals?.rock?.image?.includes('rock-water.webp')) P('science.float_sink starter: rock image missing');
+}
+
 if (JSON.stringify(A.generate('reading.cvc_mixed', 3, 'x')) !== JSON.stringify(A.generate('reading.cvc_mixed', 3, 'x'))) P('generator is not deterministic');
 if (JSON.stringify(A.generate('reading.cvc_mixed', 3, 'x')) === JSON.stringify(A.generate('reading.cvc_mixed', 3, 'y'))) P('seed does not change output');
 
