@@ -132,20 +132,32 @@ window.SakhiAudio = (function () {
     if (blobCache[k]) return Promise.resolve(blobCache[k]);
     if (inflight[k]) return inflight[k];
 
-    var task = fetch(c.ttsEndpoint, {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-        'apikey': c.supabaseAnonKey,
-        'x-client-info': 'sakhi-magic-learning/7'
-      },
-      body: JSON.stringify({ text: text, kind: kind, profile: profile })
-    }).then(function (r) {
-      if (!r.ok) throw raise(FAULT.NETWORK, 'The Sakhi voice service answered ' + r.status + '.');
-      var type = r.headers.get('content-type') || '';
-      if (type.indexOf('audio/') === -1) throw raise(FAULT.NETWORK, 'The voice service returned ' + (type || 'an unknown type') + '.');
-      return r.blob();
-    }).then(function (blob) {
+    /* The edge function returns 502 under concurrent cold load, so a single
+     * retry after a short pause turns a dropped line into a warmed one. */
+    var TRANSIENT = [429, 500, 502, 503, 504];
+    function attempt(triesLeft) {
+      return fetch(c.ttsEndpoint, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'apikey': c.supabaseAnonKey,
+          'x-client-info': 'sakhi-magic-learning/7'
+        },
+        body: JSON.stringify({ text: text, kind: kind, profile: profile })
+      }).then(function (r) {
+        if (!r.ok) {
+          if (triesLeft > 0 && TRANSIENT.indexOf(r.status) !== -1) {
+            return new Promise(function (res) { setTimeout(res, 600); }).then(function () { return attempt(triesLeft - 1); });
+          }
+          throw raise(FAULT.NETWORK, 'The Sakhi voice service answered ' + r.status + '.');
+        }
+        var type = r.headers.get('content-type') || '';
+        if (type.indexOf('audio/') === -1) throw raise(FAULT.NETWORK, 'The voice service returned ' + (type || 'an unknown type') + '.');
+        return r.blob();
+      });
+    }
+
+    var task = attempt(2).then(function (blob) {
       /* A few bytes of "audio" is an error page with the wrong header. */
       if (blob.size < 500) throw raise(FAULT.NETWORK, 'The voice service returned too little audio.');
       blobCache[k] = blob;
@@ -273,9 +285,27 @@ window.SakhiAudio = (function () {
   function preloadActivity(activity) {
     if (!activity || !enabled) return Promise.resolve({ warmed: 0 });
     var lines = activity.questions.map(function (q) { return normalise(q.narration); }).filter(Boolean);
-    return Promise.all(lines.map(function (l) {
-      return fetchVoice(l, 'instruction', 'sakhi').then(function () { return true; }, function () { return false; });
-    })).then(function (r) { return { warmed: r.filter(Boolean).length, of: lines.length }; });
+    if (!lines.length) return Promise.resolve({ warmed: 0, of: 0 });
+
+    /* One at a time. Firing all three at once reliably drew a 502 for one of
+     * them, and the child would then hear the robotic fallback mid-activity.
+     * The first line is awaited because it is the one about to be spoken; the
+     * rest queue up behind it while she is answering. */
+    function chain(rest) {
+      return rest.reduce(function (p, l) {
+        return p.then(function (n) {
+          return fetchVoice(l, 'instruction', 'sakhi').then(function () { return n + 1; }, function () { return n; });
+        });
+      }, Promise.resolve(0));
+    }
+
+    return fetchVoice(lines[0], 'instruction', 'sakhi').then(function () {
+      chain(lines.slice(1));
+      return { warmed: 1, of: lines.length, rest: 'warming' };
+    }, function () {
+      chain(lines.slice(1));
+      return { warmed: 0, of: lines.length, rest: 'warming' };
+    });
   }
 
   function prefetchActivity(activity) {
