@@ -162,18 +162,35 @@ window.SakhiTemplates = (function () {
     return wrap.childNodes.length ? wrap : null;
   }
 
+  /* What to DO, in words a five-year-old can act on. Shown on every question and
+   * spoken with the prompt, because "Which word says map?" tells her what the
+   * question is but not what to touch. */
+  var ACTION = {
+    choice:   'Tap the right one.',
+    count:    'Tap the right number.',
+    build:    'Tap or drag the letters to build the word.',
+    sequence: 'Put them in the right order.',
+    sort:     'Tap something, then tap the box it belongs in.',
+    match:    'Tap one on the left, then tap its partner on the right.',
+    trace:    'Trace the letter with your finger.'
+  };
+  function actionFor(q) {
+    if (q.template === 'count' && q.tray) return 'Add jewels until the tray reaches the goal.';
+    return ACTION[q.template] || 'Choose your answer.';
+  }
+
   function shell(container, q, opts) {
     clear(container);
     var head = el('div', 'q-head');
-    var prompt = el('h2', 'q-prompt', q.prompt);
-    head.appendChild(prompt);
+    head.appendChild(el('h2', 'q-prompt', q.prompt));
     var hear = el('button', 'q-hear');
     hear.type = 'button';
-    hear.setAttribute('aria-label', 'Hear the question again');
+    hear.setAttribute('aria-label', 'Hear it again');
     hear.textContent = '🔊';
     hear.onclick = function () { opts.onHear && opts.onHear(); };
     head.appendChild(hear);
     container.appendChild(head);
+    container.appendChild(el('p', 'q-action', actionFor(q)));
     var media = renderMedia(q);
     if (media) container.appendChild(media);
     var stage = el('div', 'q-stage');
@@ -222,7 +239,7 @@ window.SakhiTemplates = (function () {
     var goal = q.tray.goal, start = q.tray.start, gem = q.tray.emoji || '💎';
     var added = [];   // indices of jewels moved into the tray
 
-    var hint = el('p', 'play-instruction', 'Drag jewels into the treasure tray, or tap to add. Tap a jewel in the tray to send it back.');
+    var hint = el('p', 'play-instruction', 'Tap a jewel in the tray to send it back.');
     var tray = el('div', 'counting-tray');
     tray.dataset.dropTray = 'true';
     tray.setAttribute('aria-label', 'Treasure tray');
@@ -304,8 +321,7 @@ window.SakhiTemplates = (function () {
       var slotCount = q.answer.length;
       var picked = [];   // token indices, in placement order
 
-      var hint = el('p', 'play-instruction',
-        'Drag a tile into a space, or tap a tile to place it. Tap a filled space to take it back.');
+      var hint = el('p', 'play-instruction', 'Tap a filled space to take a tile back.');
       var board = el('div', 'magic-board' + (isSequence ? ' sequence-board' : ''));
       board.setAttribute('aria-label', 'Your answer');
       var tokenRow = el('div', 'token-row');
@@ -572,5 +588,5 @@ window.SakhiTemplates = (function () {
     return fn(container, q, opts || {});
   }
 
-  return { render: render, templates: Object.keys(T), focusStage: focusStage };
+  return { render: render, templates: Object.keys(T), focusStage: focusStage, actionFor: actionFor };
 })();

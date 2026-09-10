@@ -249,11 +249,11 @@ h1,h2,h3{letter-spacing:-.02em;margin:0 0 .4em}
   z-index:200;background:#35234f;color:#fff;padding:13px 18px;border-radius:999px;opacity:0;transition:.2s;
   max-width:min(420px,calc(100vw - 32px));text-align:center}
 .toast.is-visible{opacity:1;transform:translateX(-50%)}
-.audio-fault{position:fixed;left:50%;bottom:calc(196px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);
+.audio-fault{position:fixed;left:50%;top:calc(84px + env(safe-area-inset-top));transform:translateX(-50%) translateY(-12px);
   z-index:200;display:none;background:#fff;border:1px solid #f0c9d6;border-left:6px solid #e2738f;
   border-radius:var(--r-md);padding:14px 18px;max-width:min(460px,calc(100vw - 32px));
   box-shadow:0 18px 40px rgba(60,30,60,.2);text-align:left}
-.audio-fault.is-visible{display:block;opacity:1;transform:translateX(-50%)}
+.audio-fault.is-visible{display:block;opacity:1;transform:translateX(-50%) translateY(0)}
 .audio-fault b{display:block;margin-bottom:4px}
 .audio-fault span{color:var(--muted);font-size:14px}
 
@@ -376,3 +376,39 @@ h1,h2,h3{letter-spacing:-.02em;margin:0 0 .4em}
   .magic-slot{width:74px;min-height:74px;font-size:28px}
   .sequence-board .magic-slot{width:100%}
 }
+
+/* ---- the world, present during the exercise ---- */
+.view-activity{position:relative;isolation:isolate}
+.view-activity::before{
+  content:"";position:absolute;inset:0;z-index:-1;
+  background-image:var(--activity-scene);background-size:cover;background-position:center;
+  opacity:.3;filter:saturate(1.15)}
+.view-activity::after{
+  content:"";position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(180deg,
+    color-mix(in srgb,var(--theme-a) 80%,transparent),
+    color-mix(in srgb,#fff 90%,transparent) 42%,
+    color-mix(in srgb,var(--theme-c) 80%,transparent))}
+
+/* what to do, right under the question */
+.q-action{margin:0 0 18px;text-align:center;font-weight:800;font-size:17px;
+  color:var(--theme-ink);background:color-mix(in srgb,var(--theme-b) 40%,#fff);
+  border-radius:999px;padding:10px 18px;display:inline-block;
+  position:relative;left:50%;transform:translateX(-50%)}
+
+/* the companion, so a world is a character and not just a colour */
+.companion{display:flex;align-items:center;gap:14px;margin-top:18px;
+  background:rgba(255,255,255,.9);border:1px solid var(--line);border-radius:var(--r-lg);
+  padding:12px 16px;box-shadow:0 10px 24px rgba(78,50,105,.08)}
+.companion-face{flex:0 0 auto}
+.companion-face .sakhi-portrait{width:64px;height:64px}
+.companion-say{min-width:0}
+.companion-say b{display:block;color:var(--theme-ink);font-size:14px}
+.companion-say span{color:var(--muted);font-weight:700;font-size:15px}
+
+/* replay is the one control she will reach for most */
+.btn-hear{display:inline-flex;align-items:center;gap:9px;border:0;border-radius:var(--r-md);
+  padding:15px 22px;min-height:var(--tap);font-weight:900;font-size:17px;color:#fff;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--theme-accent) 70%,#6a4fd0),var(--theme-accent));
+  box-shadow:0 12px 24px color-mix(in srgb,var(--theme-accent) 30%,transparent)}
+.btn-hear:hover{transform:translateY(-1px)}

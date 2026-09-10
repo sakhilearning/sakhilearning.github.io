@@ -103,8 +103,11 @@
     qIndex = 0; answers = []; hintLevel = 0; tries = 0;
     upcoming = null;
     show('activity');
-    await Audio.preloadActivity(current);          // Phase 8: activity 1 preloaded
+    /* Speak immediately. Waiting on the warm-up left the child looking at a
+     * silent screen for over a second; speak() shares the in-flight fetch, so
+     * this is the same request, just not gated behind it. */
     speakQuestion();
+    Audio.preloadActivity(current);
     prefetchNext(pick);
   }
 
@@ -120,7 +123,11 @@
   function q() { return current.questions[qIndex]; }
 
   function speakQuestion() {
-    Audio.speak(q().narration).catch(function (f) { showAudioFault(f); });
+    var question = q();
+    var line = question.narration;
+    /* At the scaffolded bands, say what to do as well as what the question is. */
+    if (current.band <= 2 && Tpl.actionFor) line += ' ' + Tpl.actionFor(question);
+    Audio.speak(line).catch(function (f) { showAudioFault(f); });
   }
 
   var faultsShown = {};
@@ -145,7 +152,13 @@
     $('#activitySkill').textContent = current.skill_title;
     $('#activityBand').textContent = 'Level ' + current.band + ' · ' + current.band_name;
     $('#activityProgress').textContent = (qIndex + 1) + ' of ' + current.questions.length;
-    $('#companionLine').textContent = t.companion + ': ' + t.narration.encourage;
+    /* The world was only visible on the home screen; the exercise itself looked
+     * like a generic worksheet. Dress it. */
+    document.querySelector('.view-activity').style.setProperty('--activity-scene', 'url("' + SakhiArt.src(t.id) + '")');
+    var guide = $('#activityGuide');
+    if (guide) guide.innerHTML = SakhiArt.portrait(t.id, t.companion);
+    $('#companionName').textContent = t.companion;
+    say('ready');
 
     hintLevel = current.support.hintUpFront ? 1 : 0;
     tries = 0;
@@ -160,6 +173,17 @@
     $('#checkBtn').hidden = !!controller.immediate;
     $('#checkBtn').disabled = !controller.isReady();
     $('#resetBtn').hidden = !!controller.immediate;
+  }
+
+  /* What the companion is saying right now. It must not open with a correction. */
+  function say(mood) {
+    var t = theme(), line;
+    if (mood === 'wrong') line = t.narration.encourage;
+    else if (mood === 'right') line = t.narration.celebrate;
+    else line = t.narration.welcome;
+    var node = $('#companionLine');
+    if (node) node.textContent = line;
+    return line;
   }
 
   function renderHint() {
@@ -182,11 +206,12 @@
 
   function grade(correct, response) {
     tries++;
+    say(correct ? 'right' : 'wrong');
     if (!correct && tries < 2) {
       /* One free retry with a hint before it counts against her. */
       if (hintLevel < (q().hints || []).length) { hintLevel++; renderHint(); }
       Audio.speak(theme().narration.encourage).catch(function () {});
-      setTimeout(function () { controller.reset(); $('#checkBtn').disabled = true; }, 900);
+      setTimeout(function () { controller.reset(); $('#checkBtn').disabled = true; }, 700);
       return;
     }
     answers.push({
@@ -197,7 +222,7 @@
     setTimeout(function () {
       if (qIndex < current.questions.length - 1) { qIndex++; renderActivity(); speakQuestion(); }
       else finishActivity();
-    }, 1000);
+    }, correct ? 700 : 1100);
   }
 
   function finishActivity() {
