@@ -1,0 +1,4191 @@
+{
+  "version": "2026.09.11-v3-rc1",
+  "weeks": [
+    {
+      "week": 1,
+      "theme": "Build confidence, independence, and joyful practice",
+      "days": [
+        {
+          "day": 1,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.print_concepts",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.count_sequence",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.prewriting_strokes",
+              "minutes": 5
+            },
+            {
+              "domain": "language",
+              "skill_id": "language.listening",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 2,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.print_concepts",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.count_sequence",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.prewriting_strokes",
+              "minutes": 5
+            },
+            {
+              "domain": "science",
+              "skill_id": "science.observe",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 3,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.letter_names_upper",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.numerals_0_20",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.name",
+              "minutes": 5
+            },
+            {
+              "domain": "logic",
+              "skill_id": "logic.classify",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 4,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.letter_names_upper",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.numerals_0_20",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.name",
+              "minutes": 5
+            },
+            {
+              "domain": "wellbeing",
+              "skill_id": "wellbeing.emotions",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 5,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.letter_names_lower",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.write_numerals",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.uppercase",
+              "minutes": 5
+            },
+            {
+              "domain": "creative",
+              "skill_id": "creative.fine_motor",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        }
+      ]
+    },
+    {
+      "week": 2,
+      "theme": "Build confidence, independence, and joyful practice",
+      "days": [
+        {
+          "day": 1,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.letter_names_lower",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.write_numerals",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.uppercase",
+              "minutes": 5
+            },
+            {
+              "domain": "language",
+              "skill_id": "language.vocabulary",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 2,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.letter_names_lower",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.write_numerals",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.uppercase",
+              "minutes": 5
+            },
+            {
+              "domain": "science",
+              "skill_id": "science.habitats",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 3,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.rhyme",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.cardinality_20",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.lowercase",
+              "minutes": 5
+            },
+            {
+              "domain": "logic",
+              "skill_id": "logic.patterns",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 4,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.rhyme",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.cardinality_20",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.lowercase",
+              "minutes": 5
+            },
+            {
+              "domain": "wellbeing",
+              "skill_id": "wellbeing.friendship",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 5,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.syllables",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.subitize",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.numerals",
+              "minutes": 5
+            },
+            {
+              "domain": "creative",
+              "skill_id": "creative.art",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        }
+      ]
+    },
+    {
+      "week": 3,
+      "theme": "Build confidence, independence, and joyful practice",
+      "days": [
+        {
+          "day": 1,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.syllables",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.subitize",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.numerals",
+              "minutes": 5
+            },
+            {
+              "domain": "language",
+              "skill_id": "language.questions",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 2,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.syllables",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.subitize",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.numerals",
+              "minutes": 5
+            },
+            {
+              "domain": "science",
+              "skill_id": "science.plants",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 3,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.initial_sounds",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.compare",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.cvc_words",
+              "minutes": 5
+            },
+            {
+              "domain": "logic",
+              "skill_id": "logic.sequence",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 4,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.initial_sounds",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.compare",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.cvc_words",
+              "minutes": 5
+            },
+            {
+              "domain": "wellbeing",
+              "skill_id": "wellbeing.routines",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 5,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.final_sounds",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.compose_5",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.dictation",
+              "minutes": 5
+            },
+            {
+              "domain": "creative",
+              "skill_id": "creative.music_movement",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        }
+      ]
+    },
+    {
+      "week": 4,
+      "theme": "Build confidence, independence, and joyful practice",
+      "days": [
+        {
+          "day": 1,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.final_sounds",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.compose_5",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.dictation",
+              "minutes": 5
+            },
+            {
+              "domain": "language",
+              "skill_id": "language.sequence",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 2,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.final_sounds",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.compose_5",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.dictation",
+              "minutes": 5
+            },
+            {
+              "domain": "science",
+              "skill_id": "science.weather",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 3,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.oral_blending",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.compose_to_10",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.labels",
+              "minutes": 5
+            },
+            {
+              "domain": "logic",
+              "skill_id": "logic.spatial",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 4,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.oral_blending",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.compose_to_10",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.labels",
+              "minutes": 5
+            },
+            {
+              "domain": "wellbeing",
+              "skill_id": "wellbeing.safety",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 5,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.oral_segmenting",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.addition_5",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.captions",
+              "minutes": 5
+            },
+            {
+              "domain": "creative",
+              "skill_id": "creative.imaginative_play",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        }
+      ]
+    },
+    {
+      "week": 5,
+      "theme": "Build confidence, independence, and joyful practice",
+      "days": [
+        {
+          "day": 1,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.oral_segmenting",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.addition_5",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.captions",
+              "minutes": 5
+            },
+            {
+              "domain": "language",
+              "skill_id": "language.retell",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 2,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.oral_segmenting",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.addition_5",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.captions",
+              "minutes": 5
+            },
+            {
+              "domain": "science",
+              "skill_id": "science.materials",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 3,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.letter_sounds",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.subtraction_5",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.conventions",
+              "minutes": 5
+            },
+            {
+              "domain": "logic",
+              "skill_id": "logic.memory",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 4,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.letter_sounds",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.subtraction_5",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.conventions",
+              "minutes": 5
+            },
+            {
+              "domain": "wellbeing",
+              "skill_id": "wellbeing.safety",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 5,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.short_vowels",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.addition",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.sentence",
+              "minutes": 5
+            },
+            {
+              "domain": "creative",
+              "skill_id": "creative.imaginative_play",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        }
+      ]
+    },
+    {
+      "week": 6,
+      "theme": "Build confidence, independence, and joyful practice",
+      "days": [
+        {
+          "day": 1,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.short_vowels",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.addition",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.sentence",
+              "minutes": 5
+            },
+            {
+              "domain": "language",
+              "skill_id": "language.prediction",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 2,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.short_vowels",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.addition",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.sentence",
+              "minutes": 5
+            },
+            {
+              "domain": "science",
+              "skill_id": "science.float_sink",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 3,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.cvc_mixed",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.subtraction",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "logic",
+              "skill_id": "logic.deduction",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 4,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.cvc_mixed",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.subtraction",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "wellbeing",
+              "skill_id": "wellbeing.safety",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 5,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.cvc_encode",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.number_bonds",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "creative",
+              "skill_id": "creative.imaginative_play",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        }
+      ]
+    },
+    {
+      "week": 7,
+      "theme": "Build confidence, independence, and joyful practice",
+      "days": [
+        {
+          "day": 1,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.cvc_encode",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.number_bonds",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "language",
+              "skill_id": "language.cause_effect",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 2,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.cvc_encode",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.number_bonds",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "science",
+              "skill_id": "science.magnets",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 3,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.digraphs",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.teen_numbers",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "logic",
+              "skill_id": "logic.coding",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 4,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.digraphs",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.teen_numbers",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "wellbeing",
+              "skill_id": "wellbeing.safety",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 5,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.blends",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.patterns",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "creative",
+              "skill_id": "creative.imaginative_play",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        }
+      ]
+    },
+    {
+      "week": 8,
+      "theme": "Build confidence, independence, and joyful practice",
+      "days": [
+        {
+          "day": 1,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.blends",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.patterns",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "language",
+              "skill_id": "language.inference",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 2,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.blends",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.patterns",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "science",
+              "skill_id": "science.light_sound",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 3,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.high_frequency",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.measurement",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "logic",
+              "skill_id": "logic.flexibility",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 4,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.high_frequency",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.measurement",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "wellbeing",
+              "skill_id": "wellbeing.safety",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 5,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.sentences",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.geometry",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "creative",
+              "skill_id": "creative.imaginative_play",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        }
+      ]
+    },
+    {
+      "week": 9,
+      "theme": "Build confidence, independence, and joyful practice",
+      "days": [
+        {
+          "day": 1,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.sentences",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.geometry",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "language",
+              "skill_id": "language.main_idea",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 2,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.sentences",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.geometry",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "science",
+              "skill_id": "science.earth_space",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 3,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.stories",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "logic",
+              "skill_id": "logic.flexibility",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 4,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.stories",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "wellbeing",
+              "skill_id": "wellbeing.safety",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 5,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.fluency",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "creative",
+              "skill_id": "creative.imaginative_play",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        }
+      ]
+    },
+    {
+      "week": 10,
+      "theme": "Build confidence, independence, and joyful practice",
+      "days": [
+        {
+          "day": 1,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.fluency",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "language",
+              "skill_id": "language.conversation",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 2,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.fluency",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "science",
+              "skill_id": "science.earth_space",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 3,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "logic",
+              "skill_id": "logic.flexibility",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 4,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "wellbeing",
+              "skill_id": "wellbeing.safety",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 5,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "creative",
+              "skill_id": "creative.imaginative_play",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        }
+      ]
+    },
+    {
+      "week": 11,
+      "theme": "Build confidence, independence, and joyful practice",
+      "days": [
+        {
+          "day": 1,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "language",
+              "skill_id": "language.conversation",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 2,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "science",
+              "skill_id": "science.earth_space",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 3,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "logic",
+              "skill_id": "logic.flexibility",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 4,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "wellbeing",
+              "skill_id": "wellbeing.safety",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 5,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "creative",
+              "skill_id": "creative.imaginative_play",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        }
+      ]
+    },
+    {
+      "week": 12,
+      "theme": "Build confidence, independence, and joyful practice",
+      "days": [
+        {
+          "day": 1,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "language",
+              "skill_id": "language.conversation",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 2,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "science",
+              "skill_id": "science.earth_space",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 3,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "logic",
+              "skill_id": "logic.flexibility",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 4,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "wellbeing",
+              "skill_id": "wellbeing.safety",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 5,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "creative",
+              "skill_id": "creative.imaginative_play",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        }
+      ]
+    },
+    {
+      "week": 13,
+      "theme": "Build confidence, independence, and joyful practice",
+      "days": [
+        {
+          "day": 1,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "language",
+              "skill_id": "language.conversation",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 2,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "science",
+              "skill_id": "science.earth_space",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 3,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "logic",
+              "skill_id": "logic.flexibility",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 4,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "wellbeing",
+              "skill_id": "wellbeing.safety",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 5,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "creative",
+              "skill_id": "creative.imaginative_play",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        }
+      ]
+    },
+    {
+      "week": 14,
+      "theme": "Build confidence, independence, and joyful practice",
+      "days": [
+        {
+          "day": 1,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "language",
+              "skill_id": "language.conversation",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 2,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "science",
+              "skill_id": "science.earth_space",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 3,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "logic",
+              "skill_id": "logic.flexibility",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 4,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "wellbeing",
+              "skill_id": "wellbeing.safety",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 5,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "creative",
+              "skill_id": "creative.imaginative_play",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        }
+      ]
+    },
+    {
+      "week": 15,
+      "theme": "Build confidence, independence, and joyful practice",
+      "days": [
+        {
+          "day": 1,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "language",
+              "skill_id": "language.conversation",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 2,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "science",
+              "skill_id": "science.earth_space",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 3,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "logic",
+              "skill_id": "logic.flexibility",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 4,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "wellbeing",
+              "skill_id": "wellbeing.safety",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 5,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "creative",
+              "skill_id": "creative.imaginative_play",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        }
+      ]
+    },
+    {
+      "week": 16,
+      "theme": "Build confidence, independence, and joyful practice",
+      "days": [
+        {
+          "day": 1,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "language",
+              "skill_id": "language.conversation",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 2,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "science",
+              "skill_id": "science.earth_space",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 3,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "logic",
+              "skill_id": "logic.flexibility",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 4,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "wellbeing",
+              "skill_id": "wellbeing.safety",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 5,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "creative",
+              "skill_id": "creative.imaginative_play",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        }
+      ]
+    },
+    {
+      "week": 17,
+      "theme": "Build confidence, independence, and joyful practice",
+      "days": [
+        {
+          "day": 1,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "language",
+              "skill_id": "language.conversation",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 2,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "science",
+              "skill_id": "science.earth_space",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 3,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "logic",
+              "skill_id": "logic.flexibility",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 4,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "wellbeing",
+              "skill_id": "wellbeing.safety",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 5,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "creative",
+              "skill_id": "creative.imaginative_play",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        }
+      ]
+    },
+    {
+      "week": 18,
+      "theme": "Build confidence, independence, and joyful practice",
+      "days": [
+        {
+          "day": 1,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "language",
+              "skill_id": "language.conversation",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 2,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "science",
+              "skill_id": "science.earth_space",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 3,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "logic",
+              "skill_id": "logic.flexibility",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 4,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "wellbeing",
+              "skill_id": "wellbeing.safety",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 5,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "creative",
+              "skill_id": "creative.imaginative_play",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        }
+      ]
+    },
+    {
+      "week": 19,
+      "theme": "Build confidence, independence, and joyful practice",
+      "days": [
+        {
+          "day": 1,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "language",
+              "skill_id": "language.conversation",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 2,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "science",
+              "skill_id": "science.earth_space",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 3,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "logic",
+              "skill_id": "logic.flexibility",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 4,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "wellbeing",
+              "skill_id": "wellbeing.safety",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 5,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "creative",
+              "skill_id": "creative.imaginative_play",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        }
+      ]
+    },
+    {
+      "week": 20,
+      "theme": "Build confidence, independence, and joyful practice",
+      "days": [
+        {
+          "day": 1,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "language",
+              "skill_id": "language.conversation",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 2,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "science",
+              "skill_id": "science.earth_space",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 3,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "logic",
+              "skill_id": "logic.flexibility",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 4,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "wellbeing",
+              "skill_id": "wellbeing.safety",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 5,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "creative",
+              "skill_id": "creative.imaginative_play",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        }
+      ]
+    },
+    {
+      "week": 21,
+      "theme": "Build confidence, independence, and joyful practice",
+      "days": [
+        {
+          "day": 1,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "language",
+              "skill_id": "language.conversation",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 2,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "science",
+              "skill_id": "science.earth_space",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 3,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "logic",
+              "skill_id": "logic.flexibility",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 4,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "wellbeing",
+              "skill_id": "wellbeing.safety",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 5,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "creative",
+              "skill_id": "creative.imaginative_play",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        }
+      ]
+    },
+    {
+      "week": 22,
+      "theme": "Build confidence, independence, and joyful practice",
+      "days": [
+        {
+          "day": 1,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "language",
+              "skill_id": "language.conversation",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 2,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "science",
+              "skill_id": "science.earth_space",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 3,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "logic",
+              "skill_id": "logic.flexibility",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 4,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "wellbeing",
+              "skill_id": "wellbeing.safety",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 5,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "creative",
+              "skill_id": "creative.imaginative_play",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        }
+      ]
+    },
+    {
+      "week": 23,
+      "theme": "Build confidence, independence, and joyful practice",
+      "days": [
+        {
+          "day": 1,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "language",
+              "skill_id": "language.conversation",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 2,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "science",
+              "skill_id": "science.earth_space",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 3,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "logic",
+              "skill_id": "logic.flexibility",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 4,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "wellbeing",
+              "skill_id": "wellbeing.safety",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 5,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "creative",
+              "skill_id": "creative.imaginative_play",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        }
+      ]
+    },
+    {
+      "week": 24,
+      "theme": "Build confidence, independence, and joyful practice",
+      "days": [
+        {
+          "day": 1,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "language",
+              "skill_id": "language.conversation",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 2,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "science",
+              "skill_id": "science.earth_space",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 3,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "logic",
+              "skill_id": "logic.flexibility",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 4,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "wellbeing",
+              "skill_id": "wellbeing.safety",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 5,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "creative",
+              "skill_id": "creative.imaginative_play",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        }
+      ]
+    },
+    {
+      "week": 25,
+      "theme": "Build confidence, independence, and joyful practice",
+      "days": [
+        {
+          "day": 1,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "language",
+              "skill_id": "language.conversation",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 2,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "science",
+              "skill_id": "science.earth_space",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 3,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "logic",
+              "skill_id": "logic.flexibility",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 4,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "wellbeing",
+              "skill_id": "wellbeing.safety",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 5,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "creative",
+              "skill_id": "creative.imaginative_play",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        }
+      ]
+    },
+    {
+      "week": 26,
+      "theme": "Build confidence, independence, and joyful practice",
+      "days": [
+        {
+          "day": 1,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "language",
+              "skill_id": "language.conversation",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 2,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "science",
+              "skill_id": "science.earth_space",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 3,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "logic",
+              "skill_id": "logic.flexibility",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 4,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "wellbeing",
+              "skill_id": "wellbeing.safety",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        },
+        {
+          "day": 5,
+          "total_minutes": 30,
+          "missions": [
+            {
+              "domain": "reading",
+              "skill_id": "reading.advanced",
+              "minutes": 6
+            },
+            {
+              "domain": "math",
+              "skill_id": "math.data",
+              "minutes": 6
+            },
+            {
+              "domain": "writing",
+              "skill_id": "writing.story",
+              "minutes": 5
+            },
+            {
+              "domain": "creative",
+              "skill_id": "creative.imaginative_play",
+              "minutes": 6
+            }
+          ],
+          "offscreen": {
+            "minutes": 5,
+            "type": "movement_pencil_hands_on"
+          },
+          "celebration_minutes": 2
+        }
+      ]
+    }
+  ]
+}

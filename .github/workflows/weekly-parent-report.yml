@@ -1,0 +1,30 @@
+name: Sakhi Weekly Parent Report
+
+on:
+  schedule:
+    # Sunday 23:00 UTC. Adjust if you want a different delivery window.
+    - cron: '0 23 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  send-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger protected Supabase weekly report function
+        env:
+          REPORT_URL: ${{ secrets.SAKHI_WEEKLY_REPORT_URL }}
+          CRON_SECRET: ${{ secrets.SAKHI_WEEKLY_REPORT_CRON_SECRET }}
+        run: |
+          set -euo pipefail
+          if [ -z "$REPORT_URL" ] || [ -z "$CRON_SECRET" ]; then
+            echo 'Weekly parent email is not configured yet; skipping scheduled delivery.'
+            exit 0
+          fi
+          curl --fail-with-body --silent --show-error \
+            --request POST "$REPORT_URL" \
+            --header "x-sakhi-cron-secret: $CRON_SECRET" \
+            --header 'content-type: application/json' \
+            --data '{}'
