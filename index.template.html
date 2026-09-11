@@ -7,11 +7,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Sakhi Learning Trails">
-<meta name="sakhi-build" content="3.0.0-rc6">
+<meta name="sakhi-build" content="3.0.0-rc7">
 <meta name="description" content="Sakhi Learning Trails — a magical Kindergarten learning adventure.">
 <title>Sakhi Learning Trails</title>
-<link rel="manifest" href="./manifest.json?v=3.0.0-rc6">
-<link rel="apple-touch-icon" href="./icon-180.png?v=3.0.0-rc6">
+<link rel="manifest" href="./manifest.json?v=3.0.0-rc7">
+<link rel="apple-touch-icon" href="./icon-180.png?v=3.0.0-rc7">
 <style>
 html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,sans-serif;background:#fff9fd;color:#402d5f}*{box-sizing:border-box}.boot-fallback{max-width:680px;margin:18vh auto 0;padding:28px;border-radius:24px;background:#fff;box-shadow:0 18px 60px rgba(70,37,97,.15);text-align:center}.boot-fallback button{min-height:48px;padding:10px 18px;border:0;border-radius:14px;background:#7c4dff;color:#fff;font-weight:800}.boot-fallback[hidden]{display:none}
 </style>
@@ -59,7 +59,7 @@ html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,sans-seri
   </section>
   <section class="view" data-view="map"><div class="section-title"><small>YOUR ADVENTURE MAP</small><h1>Learning Trails</h1><p>Every subject has its own magical world. Keep learning to travel farther.</p></div><div id="mapGrid" class="map-grid"></div></section>
   <section class="view" data-view="rewards"><div class="section-title"><small>TREASURE ROOM</small><h1>Your Magic Collection</h1><p>Practice, persistence, and brave tries make the kingdom glow.</p></div><div class="big-reward"><span>⭐</span><b id="rewardTotal">0</b><small>Trail Stars</small></div><div id="rewardRecent" class="reward-recent"></div></section>
-  <section class="view" data-view="parent"><div class="section-title parent-title"><small>GROWN-UP VIEW</small><h1>Parent Dashboard</h1><p>Evidence you can understand — no mystery learning score.</p></div><div id="parentGate" class="parent-gate"><h2>Parent check</h2><p>To keep little hands out of settings, answer this:</p><label>What is 7 + 4?</label><input id="gateAnswer" inputmode="numeric"><button class="primary" id="gateBtn">Open Parent Dashboard</button></div><div id="parentBody" hidden></div></section>
+  <section class="view" data-view="parent"><div class="section-title parent-title"><small>GROWN-UP VIEW</small><h1>Parent Dashboard</h1><p>Evidence you can understand — no mystery learning score.</p></div><div id="parentGate" class="parent-gate"><h2>Parent check</h2><p>Enter the 6-digit parent passcode to continue.</p><label for="gateAnswer">Parent passcode</label><input id="gateAnswer" type="password" inputmode="numeric" autocomplete="current-password" maxlength="6"><button class="primary" id="gateBtn">Unlock Parent Dashboard</button></div><div id="parentBody" hidden></div></section>
 </main>
 <nav class="bottom-nav" aria-label="Main navigation"><button data-nav="home" class="active">⌂<span>Home</span></button><button data-nav="map">⌘<span>Trails</span></button><button data-nav="rewards">✦<span>Treasures</span></button><button data-nav="parent">♡<span>Parents</span></button></nav>
 <div class="overlay" id="celebrate"><div class="celebrate-card"><small>A treasure, just for you</small><div class="celebrate-icon" id="celebrateIcon">✨</div><h2 id="celebrateTitle">Wonderful work!</h2><p id="celebrateBody"></p><b class="celebrate-reward" id="celebrateReward">✦ 3 trail stars earned</b><button class="primary huge" id="continueBtn">Next little adventure →</button></div></div>
@@ -81,7 +81,7 @@ window.__SAKHI_BOOTED=false;
 setTimeout(function(){
   if(window.__SAKHI_BOOTED)return;
   var box=document.getElementById('bootFallback');
-  if(box){box.hidden=false;var d=box.querySelector('[data-boot-detail]');if(d&&!d.textContent)d.textContent='Build '+(window.SAKHI_BUILD_ID||'3.0.0-rc6')+' did not initialize.';}
+  if(box){box.hidden=false;var d=box.querySelector('[data-boot-detail]');if(d&&!d.textContent)d.textContent='Build '+(window.SAKHI_BUILD_ID||'3.0.0-rc7')+' did not initialize.';}
 },3500);
 </script>
 </body>
