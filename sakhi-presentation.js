@@ -24,11 +24,22 @@ function logicArt(id){return hills('#b8e69f','#72cc8f')+'<g transform="translate
 function wellbeingArt(id){return hills('#c8eba6','#8fd18f')+'<g class="art-sway"><g transform="translate(640 160)"><path d="M0 120 V44" stroke="#4e9c68" stroke-width="9"/><circle cx="0" cy="38" r="34" fill="#ff88b7"/><circle cx="-31" cy="52" r="24" fill="#ffb1cf"/><circle cx="31" cy="52" r="24" fill="#ffb1cf"/><circle cx="0" cy="55" r="13" fill="#ffd36e"/></g><g transform="translate(800 130)"><path d="M0 145 V60" stroke="#4e9c68" stroke-width="9"/><circle cx="0" cy="50" r="32" fill="#a789ef"/><circle cx="-29" cy="64" r="23" fill="#c4afff"/><circle cx="29" cy="64" r="23" fill="#c4afff"/><circle cx="0" cy="66" r="12" fill="#ffd36e"/></g></g><g transform="translate(160 116)" class="art-pulse"><path d="M70 142 C-14 87 1 10 70 52 C139 10 154 87 70 142Z" fill="#fff" opacity=".9"/><path d="M70 122 C12 82 25 30 70 60 C115 30 128 82 70 122Z" fill="#ff7eae"/></g>';}
 function creativeArt(id){return '<path d="M0 296 C170 270 360 330 520 292 C700 250 830 315 1000 280 V360 H0Z" fill="#6c55b8" opacity=".62"/><g transform="translate(585 98)" class="art-float"><path d="M0 180 L45 40 L90 180" fill="none" stroke="#ffd36e" stroke-width="14" stroke-linecap="round"/><path d="M120 180 L170 18 L220 180" fill="none" stroke="#ff87b8" stroke-width="14" stroke-linecap="round"/><path d="M240 180 L290 58 L340 180" fill="none" stroke="#74d8ff" stroke-width="14" stroke-linecap="round"/></g><g fill="#fff" class="art-pulse"><path d="M155 92 l12 26 28 3-21 19 6 28-25-14-25 14 6-28-21-19 28-3Z"/><path d="M340 145 l9 18 20 2-15 14 4 20-18-10-18 10 4-20-15-14 20-2Z"/></g>';}
 var ART={reading:readingArt,math:mathArt,writing:writingArt,language:languageArt,science:scienceArt,logic:logicArt,wellbeing:wellbeingArt,creative:creativeArt};
-function scene(domain,progress){
-  var t=SakhiTrails.get(domain),p=t.palette,ch=SakhiTrails.chapter(domain,progress),id='s'+Math.random().toString(36).slice(2,8),icon=window.SAKHI_ICON_DATA||'./icon-192.png';
+var SCENE_MEDIA={
+  home:{src:'./assets/theme-media/generated/home-unicorn-storytime.webp',position:'center 49%'},
+  reading:{src:'./assets/theme-media/generated/reading-enchanted-library.webp',position:'center 50%'},
+  math:{src:'./assets/theme-media/generated/math-ice-gems.webp',position:'center 55%'},
+  writing:{src:'./assets/theme-media/generated/writing-rainbow-storybook.webp',position:'center 34%'},
+  language:{src:'./assets/theme-media/generated/language-golden-ballroom.webp',position:'center 54%'},
+  science:{src:'./assets/theme-media/generated/science-mermaid-lagoon.webp',position:'center 50%'},
+  logic:{src:'./assets/theme-media/generated/logic-crystal-number-palace.webp',position:'center 32%'},
+  wellbeing:{src:'./assets/theme-media/generated/wellbeing-enchanted-forest.webp',position:'center 50%'},
+  creative:{src:'./assets/theme-media/generated/creative-tower-art-studio.webp',position:'center 52%'}
+};
+function scene(domain,progress,variant){
+  var t=SakhiTrails.get(domain),p=t.palette,ch=SakhiTrails.chapter(domain,progress),id='s'+Math.random().toString(36).slice(2,8),media=variant==='home'?SCENE_MEDIA.home:SCENE_MEDIA[domain];
+  var artwork=media?'<img class="world-art" src="'+media.src+'" alt="" aria-hidden="true" decoding="async" loading="'+(variant==='home'?'eager':'lazy')+'" style="object-position:'+media.position+'">':'<svg class="world-art" viewBox="0 0 1000 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true">'+defs(id,p[0],p[1],p[2])+'<rect width="1000" height="360" fill="url(#sky'+id+')"/>'+clouds()+(ART[domain]||readingArt)(id)+'</svg>';
   return '<div class="scene-card scene-'+esc(domain)+'" style="--a:'+p[0]+';--b:'+p[1]+';--c:'+p[2]+'">'+
-    '<svg class="world-art" viewBox="0 0 1000 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true">'+defs(id,p[0],p[1],p[2])+'<rect width="1000" height="360" fill="url(#sky'+id+')"/>'+clouds()+(ART[domain]||readingArt)(id)+'</svg>'+
-    '<div class="scene-vignette"></div><div class="scene-companion"><span class="companion-glow"></span><img src="'+icon+'" alt="'+esc(t.companion)+'"></div>'+
+    artwork+'<div class="scene-vignette"></div>'+
     '<div class="scene-copy"><small>NOW EXPLORING</small><b>'+esc(t.name)+'</b><span>'+esc(ch)+' · '+pct(progress)+'% explored</span></div>'+
     '<div class="scene-path" aria-label="Five trail landmarks">'+[0,1,2,3,4].map(function(i){var active=Math.floor(pct(progress)/20)>=i;return '<i class="'+(active?'reached':'')+'"></i>';}).join('')+'</div></div>';
 }

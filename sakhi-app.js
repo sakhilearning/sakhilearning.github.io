@@ -11,7 +11,7 @@ function renderStats(){var n=$('#starStat');if(n)n.textContent='⭐ '+Prog.stars
 function trailCard(d){var p=Prog.domainProgress(d.domain_id),t=Trails.get(d.domain_id);return '<article class="trail-card"><div class="mini-scene">'+Pres.scene(d.domain_id,p)+'</div><div class="trail-card-copy"><h3>'+t.icon+' '+t.name+'</h3><p class="muted">'+d.title+' · '+Trails.chapter(d.domain_id,p)+'</p><div class="meter" aria-label="'+p+' percent explored"><i style="width:'+p+'%"></i></div><small>'+p+'% explored</small></div></article>';}
 function renderHome(){
   setWorld(null);plan=Plan.build();
-  $('#homeHero').innerHTML=Pres.scene('reading',Prog.domainProgress('reading'));
+  $('#homeHero').innerHTML=Pres.scene('reading',Prog.domainProgress('reading'),'home');
   $('#todayTitle').textContent='Day '+plan.program_day+' · '+plan.missions.length+' magical missions';
   var names=plan.missions.map(function(m){var s=Cur.skill(m.pick.skill_id);return s?s.title:m.pick.skill_id;});
   $('#todaySummary').textContent=names.join(' • ')+' • one hands-on mission';
@@ -77,7 +77,7 @@ function bootFailure(e){
   console.error('[Sakhi boot failed]',e);window.__SAKHI_BOOT_ERROR=String(e&&e.message||e);var box=$('#bootFallback');if(box){box.hidden=false;var detail=box.querySelector('[data-boot-detail]');if(detail)detail.textContent='Build '+(window.SAKHI_BUILD_ID||'unknown')+' · '+window.__SAKHI_BOOT_ERROR;}
 }
 async function boot(){
-  try{await Cur.load();Prog.load();Audio.setEnabled(Prog.load().settings.voice!==false);bind();renderHome();renderStats();window.__SAKHI_BOOTED=true;document.documentElement.classList.add('sakhi-ready');if(Cloud&&Cloud.probe)Cloud.probe().catch(function(e){console.warn('Cloud probe',e.message);});if('serviceWorker'in navigator&&location.protocol!=='file:'){navigator.serviceWorker.register('./sw.js?v=3.0.0-rc3',{updateViaCache:'none'}).then(function(r){r.update().catch(function(){});}).catch(function(e){console.warn('SW',e.message);});}}
+  try{await Cur.load();Prog.load();Audio.setEnabled(Prog.load().settings.voice!==false);bind();renderHome();renderStats();window.__SAKHI_BOOTED=true;document.documentElement.classList.add('sakhi-ready');if(Cloud&&Cloud.probe)Cloud.probe().catch(function(e){console.warn('Cloud probe',e.message);});if('serviceWorker'in navigator&&location.protocol!=='file:'){navigator.serviceWorker.register('./sw.js?v=3.0.0-rc4',{updateViaCache:'none'}).then(function(r){r.update().catch(function(){});}).catch(function(e){console.warn('SW',e.message);});}}
   catch(e){bootFailure(e);}
 }
 window.SakhiApp={boot:boot,show:show};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();

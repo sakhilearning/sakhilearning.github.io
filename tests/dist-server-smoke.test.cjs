@@ -63,13 +63,18 @@ function get(base, route) {
   try {
     const routes = [
       ['/', 'text/html'],
-      ['/sakhi-production.css', 'text/css'],
-      ['/sakhi-app.js', 'text/javascript'],
-      ['/sakhi-audio.js', 'text/javascript'],
       ['/sw.js', 'text/javascript'],
-      ['/assets/theme-media/public/meadow-bart-cc0.jpg', 'image/jpeg'],
-      ['/assets/theme-media/public/underwater-scribe-cc0.png', 'image/png'],
-      ['/assets/theme-media/public/neuschwanstein-wikimedia.jpg', 'image/jpeg']
+      ['/manifest.json', 'application/json'],
+      ['/assets/theme-media/generated/home-unicorn-storytime.webp', 'image/webp'],
+      ['/assets/theme-media/generated/reading-enchanted-library.webp', 'image/webp'],
+      ['/assets/theme-media/generated/math-ice-gems.webp', 'image/webp'],
+      ['/assets/theme-media/generated/writing-rainbow-storybook.webp', 'image/webp'],
+      ['/assets/theme-media/generated/language-golden-ballroom.webp', 'image/webp'],
+      ['/assets/theme-media/generated/science-mermaid-lagoon.webp', 'image/webp'],
+      ['/assets/theme-media/generated/logic-crystal-number-palace.webp', 'image/webp'],
+      ['/assets/theme-media/generated/wellbeing-enchanted-forest.webp', 'image/webp'],
+      ['/assets/theme-media/generated/creative-tower-art-studio.webp', 'image/webp'],
+      ['/assets/audio/phonemes/phoneme_p.ogg', 'audio/ogg']
     ];
 
     for (const [route, expectedType] of routes) {
@@ -83,11 +88,13 @@ function get(base, route) {
 
     const index = (await get(base, '/')).body.toString('utf8');
     if (index.includes('sakhi-art.js')) throw new Error('Built index still loads the removed art runtime');
+    if (!index.includes('home-unicorn-storytime.webp')) throw new Error('Built index is missing the supplied home artwork');
+    if (!index.includes('science-mermaid-lagoon.webp')) throw new Error('Built index is missing subject-world artwork');
 
     const sw = (await get(base, '/sw.js')).body.toString('utf8');
-    if (!sw.includes('public-media-theme-20260911')) throw new Error('Built service worker cache is stale');
+    if (!sw.includes('sakhi-v3-rc4')) throw new Error('Built service worker cache is stale');
 
-    console.log('Dist server smoke passed: built app routes, MIME types, local media, and service worker are reachable');
+    console.log('Dist server smoke passed: self-contained app, generated artwork, audio, and fresh service worker are reachable');
   } finally {
     server.close();
   }

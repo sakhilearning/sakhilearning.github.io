@@ -1,16 +1,19 @@
 {
-  "name": "sakhi-learning-trails-v3-rc3",
+  "name": "sakhi-learning-trails-v3-rc4",
   "private": true,
-  "version": "3.0.0-rc3",
+  "version": "3.0.0-rc4",
   "scripts": {
     "syntax": "node scripts/check-syntax.cjs",
     "validate": "node scripts/validate-production-app.cjs",
     "test:activities": "node tests/activities.test.cjs",
     "test:plan": "node tests/plan.test.cjs",
+    "test:theme-media": "node tests/theme-media.test.cjs",
+    "test:runtime-logistics": "node tests/runtime-logistics.test.cjs",
+    "test:dist-smoke": "node tests/dist-server-smoke.test.cjs",
     "build": "node scripts/build.cjs",
     "validate:dist": "node scripts/validate-dist.cjs",
-    "qa": "npm run syntax && npm run validate && npm run test:activities && npm run test:plan && npm run test:runtime-core && npm run test:audio",
-    "release": "npm run qa && npm run build && npm run validate:dist",
+    "qa": "npm run syntax && npm run validate && npm run test:activities && npm run test:plan && npm run test:runtime-core && npm run test:audio && npm run test:theme-media && npm run test:runtime-logistics",
+    "release": "npm run qa && npm run build && npm run validate:dist && npm run test:dist-smoke",
     "preview": "node scripts/serve-local.cjs",
     "test:runtime-core": "node tests/runtime-core.test.cjs",
     "test:audio": "node tests/audio.test.cjs"

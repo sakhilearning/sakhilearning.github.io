@@ -21,6 +21,9 @@ if(/FAULT\.SILENT|kind\s*===\s*['"]SILENT['"]|Sound is on, but nothing is coming
 
 const presentation=read('sakhi-presentation.js');
 if(!/world-art/.test(presentation)||!/objectSet/.test(presentation)||!/storyCue/.test(presentation))throw new Error('Immersive presentation engine missing');
+const generatedScenes=[...presentation.matchAll(/\.\/assets\/theme-media\/generated\/[^'"]+\.webp/g)].map(m=>m[0]);
+if(new Set(generatedScenes).size!==9)throw new Error('Expected nine distinct generated world scenes');
+if(!/Pres\.scene\('reading',Prog\.domainProgress\('reading'\),'home'\)/.test(read('sakhi-app.js')))throw new Error('Home does not use the dedicated unicorn storytime scene');
 if(!/data-count-object/.test(presentation)||!/wireCountables/.test(templates))throw new Error('Countable learning objects are not interactive');
 if(!/primeBrowserVoice/.test(audio)||!/waitForVoices/.test(audio)||!/premiumCache/.test(audio)||!/narrate:/.test(audio))throw new Error('RC3 audio hardening missing');
 if(!/Test Sakhi voice/.test(read('sakhi-app.js')))throw new Error('Parent audio test control missing');
@@ -28,7 +31,7 @@ const progress=read('sakhi-progress.js');if(!/completeActivity/.test(progress))t
 const css=read('sakhi-production.css');if(/!important/.test(css))throw new Error('CSS contains !important');if(!/@layer reset,tokens,base,layout,components,states,utilities/.test(css))throw new Error('Missing CSS source layers');
 const html=read('index.template.html');const idMatches=[...html.matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]);if(new Set(idMatches).size!==idMatches.length)throw new Error('Duplicate HTML id');
 const hotlinks=[...fs.readdirSync(root).filter(f=>/\.(js|css|html)$/.test(f)).flatMap(f=>[...read(f).matchAll(/https?:\/\/[^'"\s)]+\.(?:png|jpe?g|webp|svg)/gi)].map(m=>m[0]))];if(hotlinks.length)throw new Error('Remote image hotlink found');
-console.log('Sakhi V3 RC3 source validation passed:');
+console.log('Sakhi V3 RC4 source validation passed:');
 console.log(` - ${c.skills.length} skills across 8 persistent subject trails`);
 console.log(' - prerequisite graph sound');
 console.log(' - 26 weeks / 130 days / 30 minutes validated');
@@ -37,5 +40,6 @@ console.log(' - adaptive/activity layers do not read presentation');
 console.log(' - mastery writes centralized in Progress');
 console.log(' - controller reset and legacy SILENT detector regressions blocked');
 console.log(' - RC3 audio fallback, narration cache, themed story cues and tappable learning objects present');
+console.log(' - nine distinct generated scenes mapped across the home and eight learning worlds');
 console.log(' - CSS source layers present; no !important');
 console.log(' - no duplicate DOM ids or remote image hotlinks');

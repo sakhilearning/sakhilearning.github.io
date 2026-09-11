@@ -24,16 +24,16 @@ if (!manifest.verified.includes('p') || !manifest.verified.includes('t')) {
 }
 
 const sw = read('sw.js');
-if (!/public-media-theme-20260911/.test(sw)) throw new Error('Service worker cache was not bumped for the public media theme build');
-for (const file of ['phoneme_p.ogg', 'phoneme_t.ogg', 'manifest.json']) {
-  if (!sw.includes(file)) throw new Error(`Service worker does not cache ${file}`);
-}
+if (!/sakhi-v3-rc4/.test(sw)) throw new Error('Service worker cache was not bumped for the supplied artwork build');
+if (!sw.includes("cache:'no-store'")) throw new Error('Navigation requests should bypass stale HTTP caches');
 for (const file of [
-  'assets/theme-media/public/meadow-bart-cc0.jpg',
-  'assets/theme-media/public/underwater-scribe-cc0.png',
-  'assets/theme-media/public/neuschwanstein-wikimedia.jpg'
+  'assets/theme-media/generated/home-unicorn-storytime.webp',
+  'assets/theme-media/generated/reading-enchanted-library.webp',
+  'assets/theme-media/generated/math-ice-gems.webp',
+  'assets/theme-media/generated/science-mermaid-lagoon.webp'
 ]) {
-  if (!sw.includes(file)) throw new Error(`Service worker does not cache ${file}`);
+  if (!read('sakhi-presentation.js').includes(file)) throw new Error(`Presentation layer does not use ${file}`);
+  if (!fs.existsSync(path.join(root, file))) throw new Error(`Generated scene is missing: ${file}`);
 }
 for (const file of ['index.html', 'sw.js', 'scripts/build.cjs', 'sakhi-presentation.js']) {
   if (read(file).includes('sakhi-art.js') || read(file).includes('SakhiArt')) {
@@ -44,4 +44,4 @@ if (!sw.includes('self.skipWaiting()') || !sw.includes('self.clients.claim()')) 
   throw new Error('Service worker should activate fresh deployment assets immediately');
 }
 
-console.log('Runtime logistics passed: audio endpoint, fallback, public media cache, and removed art runtime are deploy-safe');
+console.log('Runtime logistics passed: audio fallback, fresh navigation, generated scenes, and removed art runtime are deploy-safe');
