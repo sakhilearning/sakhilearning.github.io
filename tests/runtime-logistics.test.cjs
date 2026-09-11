@@ -9,7 +9,8 @@ if (!cloud.includes('AbortController')) throw new Error('Cloud speech needs a ti
 if (!cloud.includes("TTS||BASE+'/functions/v1/sakhi-speech'")) throw new Error('Cloud speech should prefer ttsEndpoint and only fall back to sakhi-speech when no endpoint is configured');
 
 const audio = read('sakhi-audio.js');
-if (!audio.includes("cloud.status==='CONNECTED'")) throw new Error('Narration should not call cloud speech before parent sync is connected');
+if (audio.includes("cloud.status==='CONNECTED'")) throw new Error('Narration should try premium TTS when configured, even before parent sync is connected');
+if (!audio.includes('timeout:3200')) throw new Error('Premium TTS should get a short child-friendly timeout before fallback');
 if (!audio.includes('cloudMutedUntil')) throw new Error('Cloud speech failures should be muted temporarily after fallback');
 if (!audio.includes('speechSynthesis.resume')) throw new Error('Browser speech should resume before speaking');
 
@@ -23,10 +24,11 @@ if (!manifest.verified.includes('p') || !manifest.verified.includes('t')) {
 }
 
 const sw = read('sw.js');
-if (!/audio-logistics-20260911/.test(sw)) throw new Error('Service worker cache was not bumped');
+if (!/premium-audio-pastel-art-20260911/.test(sw)) throw new Error('Service worker cache was not bumped for premium audio/art');
 for (const file of ['phoneme_p.ogg', 'phoneme_t.ogg', 'manifest.json']) {
   if (!sw.includes(file)) throw new Error(`Service worker does not cache ${file}`);
 }
+if (!sw.includes('sakhi-art.js')) throw new Error('Service worker should cache the illustrated art runtime');
 if (!sw.includes('self.skipWaiting()') || !sw.includes('self.clients.claim()')) {
   throw new Error('Service worker should activate fresh deployment assets immediately');
 }
