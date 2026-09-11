@@ -1,7 +1,7 @@
 window.SakhiCloud=(function(){
 'use strict';
 var CFG=window.SAKHI_CONFIG||window.RAINBOW_CONFIG||{};
-var BASE=CFG.supabaseUrl||'', ANON=CFG.supabaseAnonKey||CFG.supabasePublishableKey||'';
+var BASE=CFG.supabaseUrl||'', ANON=CFG.supabaseAnonKey||CFG.supabasePublishableKey||'', TTS=CFG.ttsEndpoint||'';
 var OUT='sakhi.v3.outbox', DEAD='sakhi.v3.deadletter', listeners=[];
 function read(k,f){try{var v=localStorage.getItem(k);return v?JSON.parse(v):f;}catch(e){return f;}}
 function write(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
@@ -18,7 +18,7 @@ async function flush(){if(flushing||status()!=='CONNECTED')return;flushing=true;
 async function signIn(email,password){if(!BASE||!ANON)throw new Error('Supabase not configured');var r=await fetch(BASE+'/auth/v1/token?grant_type=password',{method:'POST',headers:{'apikey':ANON,'Content-Type':'application/json'},body:JSON.stringify({email:email,password:password})});if(!r.ok)throw new Error('Sign-in failed');var v=await r.json();setSession(v);flush();return state();}
 async function signUp(email,password){if(!BASE||!ANON)throw new Error('Supabase not configured');var r=await fetch(BASE+'/auth/v1/signup',{method:'POST',headers:{'apikey':ANON,'Content-Type':'application/json'},body:JSON.stringify({email:email,password:password})});if(!r.ok)throw new Error('Sign-up failed');var v=await r.json();if(v.access_token)setSession(v);return{needsConfirmation:!v.access_token};}
 async function signOut(){var s=session();try{if(s&&s.access_token)await fetch(BASE+'/auth/v1/logout',{method:'POST',headers:{'apikey':ANON,'Authorization':'Bearer '+s.access_token}});}catch(e){}setSession(null);}
-async function speak(text){if(!BASE||!ANON)throw new Error('Speech service not configured');var s=session();var h={'apikey':ANON,'Authorization':'Bearer '+((s&&s.access_token)||ANON),'Content-Type':'application/json'};var r=await fetch(BASE+'/functions/v1/sakhi-speech',{method:'POST',headers:h,body:JSON.stringify({text:text})});if(!r.ok)throw new Error('Speech HTTP '+r.status);return await r.arrayBuffer();}
+async function speak(text,opts){if(!BASE||!ANON)throw new Error('Speech service not configured');opts=opts||{};var s=session(),ctrl=null,timer=null,endpoint=TTS||BASE+'/functions/v1/sakhi-speech';var h={'apikey':ANON,'Authorization':'Bearer '+((s&&s.access_token)||ANON),'Content-Type':'application/json'};if(window.AbortController){ctrl=new AbortController();timer=setTimeout(function(){try{ctrl.abort();}catch(e){}},opts.timeout||2500);}try{var r=await fetch(endpoint,{method:'POST',headers:h,body:JSON.stringify({text:text}),signal:ctrl&&ctrl.signal});if(!r.ok)throw new Error('Speech HTTP '+r.status);return await r.arrayBuffer();}finally{if(timer)clearTimeout(timer);}}
 window.addEventListener('online',flush);
 return{state:state,onChange:onChange,enqueue:enqueue,flush:flush,speak:speak,request:request,signIn:signIn,signUp:signUp,signOut:signOut};
 })();

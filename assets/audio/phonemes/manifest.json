@@ -1,5 +1,5 @@
 {
   "version":"2026.09.11-v3-rc1",
   "required":["m","s","t","p","n","k","b","d","g","f","l","r","h","v","w","y","z","a","e","i","o","u","sh","ch","th","wh","ck","ng"],
-  "verified":[]
+  "verified":["t","p"]
 }
