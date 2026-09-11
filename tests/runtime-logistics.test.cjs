@@ -24,13 +24,24 @@ if (!manifest.verified.includes('p') || !manifest.verified.includes('t')) {
 }
 
 const sw = read('sw.js');
-if (!/premium-audio-pastel-art-20260911/.test(sw)) throw new Error('Service worker cache was not bumped for premium audio/art');
+if (!/public-media-theme-20260911/.test(sw)) throw new Error('Service worker cache was not bumped for the public media theme build');
 for (const file of ['phoneme_p.ogg', 'phoneme_t.ogg', 'manifest.json']) {
   if (!sw.includes(file)) throw new Error(`Service worker does not cache ${file}`);
 }
-if (!sw.includes('sakhi-art.js')) throw new Error('Service worker should cache the illustrated art runtime');
+for (const file of [
+  'assets/theme-media/public/meadow-bart-cc0.jpg',
+  'assets/theme-media/public/underwater-scribe-cc0.png',
+  'assets/theme-media/public/neuschwanstein-wikimedia.jpg'
+]) {
+  if (!sw.includes(file)) throw new Error(`Service worker does not cache ${file}`);
+}
+for (const file of ['index.html', 'sw.js', 'scripts/build.cjs', 'sakhi-presentation.js']) {
+  if (read(file).includes('sakhi-art.js') || read(file).includes('SakhiArt')) {
+    throw new Error(`${file} should not reference the removed unicorn/vector art runtime`);
+  }
+}
 if (!sw.includes('self.skipWaiting()') || !sw.includes('self.clients.claim()')) {
   throw new Error('Service worker should activate fresh deployment assets immediately');
 }
 
-console.log('Runtime logistics passed: audio endpoint, fallback, phoneme manifest, and service worker cache are deploy-safe');
+console.log('Runtime logistics passed: audio endpoint, fallback, public media cache, and removed art runtime are deploy-safe');

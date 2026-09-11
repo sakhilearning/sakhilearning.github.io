@@ -8,7 +8,10 @@
     "test:activities":"node tests/activities.test.cjs",
     "test:plan":"node tests/plan.test.cjs",
     "test:runtime":"node tests/runtime-logistics.test.cjs",
-    "qa":"npm run syntax && npm run validate && npm run test:activities && npm run test:plan && npm run test:runtime",
+    "test:theme-media":"node tests/theme-media.test.cjs",
+    "test:navigation":"node tests/navigation-smoke.test.cjs",
+    "test:dist-server":"node tests/dist-server-smoke.test.cjs",
+    "qa":"npm run syntax && npm run validate && npm run test:activities && npm run test:plan && npm run test:runtime && npm run test:theme-media && npm run test:navigation && npm run build && npm run test:dist-server",
     "build":"node scripts/build.cjs",
     "preview":"node scripts/serve-local.cjs"
   }
