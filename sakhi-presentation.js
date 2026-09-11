@@ -36,8 +36,8 @@ var SCENE_MEDIA={
   creative:{src:'./assets/theme-media/generated/creative-tower-art-studio.webp',position:'center 52%'}
 };
 function scene(domain,progress,variant){
-  var t=SakhiTrails.get(domain),p=t.palette,ch=SakhiTrails.chapter(domain,progress),id='s'+Math.random().toString(36).slice(2,8),media=variant==='home'?SCENE_MEDIA.home:SCENE_MEDIA[domain];
-  var artwork=media?'<img class="world-art" src="'+media.src+'" alt="" aria-hidden="true" decoding="async" loading="'+(variant==='home'?'eager':'lazy')+'" style="object-position:'+media.position+'">':'<svg class="world-art" viewBox="0 0 1000 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true">'+defs(id,p[0],p[1],p[2])+'<rect width="1000" height="360" fill="url(#sky'+id+')"/>'+clouds()+(ART[domain]||readingArt)(id)+'</svg>';
+  var t=SakhiTrails.get(domain),p=t.palette,ch=SakhiTrails.chapter(domain,progress),id='s'+Math.random().toString(36).slice(2,8),media=variant==='home'?SCENE_MEDIA.home:(variant==='princess'?SCENE_MEDIA.logic:SCENE_MEDIA[domain]);
+  var artwork=media?'<img class="world-art" src="'+media.src+'" alt="" aria-hidden="true" decoding="async" loading="'+(variant==='home'||variant==='princess'?'eager':'lazy')+'">':'<svg class="world-art" viewBox="0 0 1000 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true">'+defs(id,p[0],p[1],p[2])+'<rect width="1000" height="360" fill="url(#sky'+id+')"/>'+clouds()+(ART[domain]||readingArt)(id)+'</svg>';
   return '<div class="scene-card scene-'+esc(domain)+'" style="--a:'+p[0]+';--b:'+p[1]+';--c:'+p[2]+'">'+
     artwork+'<div class="scene-vignette"></div>'+
     '<div class="scene-copy"><small>NOW EXPLORING</small><b>'+esc(t.name)+'</b><span>'+esc(ch)+' · '+pct(progress)+'% explored</span></div>'+

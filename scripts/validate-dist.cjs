@@ -10,7 +10,7 @@ if(!/window\.SAKHI_SIX_MONTH_PLAN=/.test(html))throw new Error('Embedded six-mon
 if(!/window\.SakhiApp=/.test(html))throw new Error('App runtime not embedded');
 if(!/\.today-card\{/.test(html))throw new Error('Compiled CSS not embedded');
 if(/@layer\s/.test(html))throw new Error('Deployment CSS still contains @layer and may fail on older browsers');
-if(!/3\.0\.0-rc5/.test(html))throw new Error('RC5 build marker missing');
+if(!/3\.0\.0-rc6/.test(html))throw new Error('RC6 build marker missing');
 if(html.includes('/*__SAKHI_'))throw new Error('Unresolved build placeholder in deployment HTML');
 if(!/class=\"world-art\"/.test(html)||!/mission-story/.test(html))throw new Error('Immersive world presentation missing from deployment');
 if(!/primeBrowserVoice/.test(html)||!/premiumCache/.test(html))throw new Error('Audio hardening missing from deployment');
@@ -22,4 +22,4 @@ console.log(' - self-contained CSS + runtime JS');
 console.log(' - embedded curriculum + six-month plan fallbacks');
 console.log(' - no CSS @layer dependency in shipped HTML');
 console.log(' - 130 learning days present');
-console.log(' - RC5 full-world theme + generated subject artwork embedded');
+console.log(' - RC6 screenshot-matched cinematic themes embedded');

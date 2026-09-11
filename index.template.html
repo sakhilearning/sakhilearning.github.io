@@ -7,11 +7,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Sakhi Learning Trails">
-<meta name="sakhi-build" content="3.0.0-rc5">
+<meta name="sakhi-build" content="3.0.0-rc6">
 <meta name="description" content="Sakhi Learning Trails — a magical Kindergarten learning adventure.">
 <title>Sakhi Learning Trails</title>
-<link rel="manifest" href="./manifest.json?v=3.0.0-rc5">
-<link rel="apple-touch-icon" href="./icon-180.png?v=3.0.0-rc5">
+<link rel="manifest" href="./manifest.json?v=3.0.0-rc6">
+<link rel="apple-touch-icon" href="./icon-180.png?v=3.0.0-rc6">
 <style>
 html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,sans-serif;background:#fff9fd;color:#402d5f}*{box-sizing:border-box}.boot-fallback{max-width:680px;margin:18vh auto 0;padding:28px;border-radius:24px;background:#fff;box-shadow:0 18px 60px rgba(70,37,97,.15);text-align:center}.boot-fallback button{min-height:48px;padding:10px 18px;border:0;border-radius:14px;background:#7c4dff;color:#fff;font-weight:800}.boot-fallback[hidden]{display:none}
 </style>
@@ -21,31 +21,28 @@ html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,sans-seri
 <div class="ambient" aria-hidden="true"><span>✦</span><span>✧</span><span>✦</span><span>✧</span></div>
 <header class="topbar">
   <button class="brand" data-nav="home" aria-label="Go home">
-    <img src="/*__SAKHI_ICON_DATA__*/" alt="">
-    <span><b>Sakhi</b><small>PRINCESS &amp; UNICORN ADVENTURE</small></span>
+    <span class="brand-spark">✦</span>
+    <span><b>Sakhi</b><small>Learning trails</small></span>
   </button>
-  <nav class="top-nav" aria-label="Main navigation">
-    <button data-nav="home" class="active">⌂ <span>Home</span></button>
-    <button id="adventureNav">🗺️ <span>Adventure</span></button>
-    <button data-nav="map">♛ <span>Kingdoms</span></button>
-    <button data-nav="rewards">★ <span>Rewards</span></button>
-    <button data-nav="parent">🔒 <span>Parents</span></button>
-  </nav>
-  <div class="top-stats"><span id="starStat">⭐ 0</span><span class="princess-chip">👸 Hi, Princess!</span></div>
+  <div class="adventure-switch" role="group" aria-label="Adventure theme"><button id="modeUnicorn" class="active">Unicorn</button><button id="modePrincess">Princess</button></div>
+  <div class="top-stats"><span id="starStat">✦ 0</span></div>
 </header>
 <main id="app">
   <section class="view active" data-view="home">
     <section class="home-stage">
       <div id="homeHero"></div>
       <div class="hero-message">
-        <span class="hero-kicker">✨ Your magical learning world</span>
-        <h1>A brighter, kinder,<br>smarter you awaits!</h1>
-        <p>Explore magical kingdoms, play, learn, and grow with your friends.</p>
-        <button class="primary huge" id="startBtn">▶ Start Today's Adventure</button>
+        <span class="hero-kicker">A little wonder. A little learning.</span>
+        <h1 id="heroTitle"><span class="desktop-title">Your next<br>adventure<br>starts with a little<br>magic.</span><span class="mobile-title">Ready for a<br>little magic?</span></h1>
+        <p id="heroInvite">Luna saved a place for you. Shall we explore?</p>
+        <button class="primary huge" id="startBtn">Let's play →</button>
+        <small id="questCount">4 little quests + a hands-on discovery</small>
       </div>
+      <aside class="hero-companion"><img src="/*__SAKHI_ICON_DATA__*/" alt=""><p>One little step.<br>A whole lot of wonder.</p></aside>
+      <section class="today-path"><div class="path-intro"><small>Your little path today</small><b>One discovery at a time</b></div><div class="path-steps" id="todayPath"></div></section>
     </section>
     <section class="kingdom-shelf">
-      <div class="shelf-heading"><div><small>🏰 CHOOSE YOUR WORLD</small><h2>Explore the Kingdoms</h2><p>Every kingdom opens a different learning adventure.</p></div><button class="shelf-link" data-nav="map">All Kingdoms →</button></div>
+      <div class="shelf-heading"><div><small>Follow your curiosity</small><h2>Choose a magical world</h2></div><button class="shelf-link" data-nav="map">All trails →</button></div>
       <div class="trail-preview" id="trailPreview"></div>
     </section>
     <section class="home-panels">
@@ -64,8 +61,8 @@ html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,sans-seri
   <section class="view" data-view="rewards"><div class="section-title"><small>TREASURE ROOM</small><h1>Your Magic Collection</h1><p>Practice, persistence, and brave tries make the kingdom glow.</p></div><div class="big-reward"><span>⭐</span><b id="rewardTotal">0</b><small>Trail Stars</small></div><div id="rewardRecent" class="reward-recent"></div></section>
   <section class="view" data-view="parent"><div class="section-title parent-title"><small>GROWN-UP VIEW</small><h1>Parent Dashboard</h1><p>Evidence you can understand — no mystery learning score.</p></div><div id="parentGate" class="parent-gate"><h2>Parent check</h2><p>To keep little hands out of settings, answer this:</p><label>What is 7 + 4?</label><input id="gateAnswer" inputmode="numeric"><button class="primary" id="gateBtn">Open Parent Dashboard</button></div><div id="parentBody" hidden></div></section>
 </main>
-<nav class="bottom-nav" aria-label="Mobile navigation"><button data-nav="home" class="active">🏠<span>Home</span></button><button data-nav="map">🏰<span>Kingdoms</span></button><button data-nav="rewards">⭐<span>Rewards</span></button><button data-nav="parent">🔒<span>Parents</span></button></nav>
-<div class="overlay" id="celebrate"><div class="celebrate-card"><div class="celebrate-icon" id="celebrateIcon">✨</div><h2 id="celebrateTitle">Wonderful work!</h2><p id="celebrateBody"></p><button class="primary huge" id="continueBtn">Continue →</button></div></div>
+<nav class="bottom-nav" aria-label="Main navigation"><button data-nav="home" class="active">⌂<span>Home</span></button><button data-nav="map">⌘<span>Trails</span></button><button data-nav="rewards">✦<span>Treasures</span></button><button data-nav="parent">♡<span>Parents</span></button></nav>
+<div class="overlay" id="celebrate"><div class="celebrate-card"><small>A treasure, just for you</small><div class="celebrate-icon" id="celebrateIcon">✨</div><h2 id="celebrateTitle">Wonderful work!</h2><p id="celebrateBody"></p><b class="celebrate-reward" id="celebrateReward">✦ 3 trail stars earned</b><button class="primary huge" id="continueBtn">Next little adventure →</button></div></div>
 <div class="toast" id="toast" role="status"></div>
 <div class="boot-fallback" id="bootFallback" hidden role="alert">
   <h2>Sakhi needs one refresh ✨</h2>
@@ -84,7 +81,7 @@ window.__SAKHI_BOOTED=false;
 setTimeout(function(){
   if(window.__SAKHI_BOOTED)return;
   var box=document.getElementById('bootFallback');
-  if(box){box.hidden=false;var d=box.querySelector('[data-boot-detail]');if(d&&!d.textContent)d.textContent='Build '+(window.SAKHI_BUILD_ID||'3.0.0-rc5')+' did not initialize.';}
+  if(box){box.hidden=false;var d=box.querySelector('[data-boot-detail]');if(d&&!d.textContent)d.textContent='Build '+(window.SAKHI_BUILD_ID||'3.0.0-rc6')+' did not initialize.';}
 },3500);
 </script>
 </body>
