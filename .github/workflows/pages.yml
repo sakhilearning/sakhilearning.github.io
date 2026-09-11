@@ -1,84 +1,37 @@
-name: Deploy Sakhi Magic Learning
-
+name: Deploy Sakhi V3 RC2
 on:
   push:
-    branches: [main]
+    branches: [ main, upgrade/sakhi-v3 ]
   workflow_dispatch:
-
 permissions:
   contents: read
   pages: write
   id-token: write
-
 concurrency:
   group: pages
   cancel-in-progress: true
-
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run release
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
   deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    needs: build
     steps:
-      - name: Checkout Sakhi
-        uses: actions/checkout@v4
-
-      - name: Stamp PWA build metadata
-        shell: bash
-        run: |
-          BUILD_STAMP=$(date -u +"%Y.%m.%d.%H%M")
-          SHORT_SHA=$(echo "$GITHUB_SHA" | cut -c1-7)
-          BUILD_ID="${BUILD_STAMP}-${SHORT_SHA}"
-          BUILT_AT=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-          export BUILD_ID BUILT_AT
-          cat > build-info.js <<EOF
-          window.SAKHI_BUILD_ID = "${BUILD_ID}";
-          window.SAKHI_BUILD_INFO = Object.freeze({
-            build: "${BUILD_ID}",
-            commit: "${GITHUB_SHA}",
-            built_at: "${BUILT_AT}"
-          });
-          EOF
-          cat > version.json <<EOF
-          {"build":"${BUILD_ID}","commit":"${GITHUB_SHA}","built_at":"${BUILT_AT}"}
-          EOF
-          python3 - <<'PY'
-          import os
-          from pathlib import Path
-          sw = Path('sw.js')
-          text = sw.read_text()
-          text = text.replace('__SAKHI_BUILD_ID__', os.environ['BUILD_ID'])
-          sw.write_text(text)
-          PY
-
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - name: Install test dependencies
-        run: npm ci
-
-      - name: Validate production app
-        run: |
-          for f in sakhi-cloud.js sakhi-curriculum.js sakhi-themes.js sakhi-content.js \
-                   sakhi-activities.js sakhi-plan.js sakhi-trails.js sakhi-presentation.js \
-                   sakhi-progress.js sakhi-adaptive.js sakhi-audio.js sakhi-art.js \
-                   sakhi-templates.js sakhi-app.js sw.js; do
-            node --check "$f"
-          done
-          npm run qa
-
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload Sakhi site
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: .
-
-      - name: Deploy Pages
+      - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

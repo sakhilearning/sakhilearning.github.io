@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#7c4dff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Sakhi Learning Trails">
+<meta name="sakhi-build" content="3.0.0-rc2">
+<meta name="description" content="Sakhi Learning Trails — a magical Kindergarten learning adventure.">
+<title>Sakhi Learning Trails</title>
+<link rel="manifest" href="./manifest.json?v=3.0.0-rc2">
+<link rel="apple-touch-icon" href="./icon-180.png?v=3.0.0-rc2">
+<style>
+html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,sans-serif;background:#fff9fd;color:#402d5f}*{box-sizing:border-box}.boot-fallback{max-width:680px;margin:18vh auto 0;padding:28px;border-radius:24px;background:#fff;box-shadow:0 18px 60px rgba(70,37,97,.15);text-align:center}.boot-fallback button{min-height:48px;padding:10px 18px;border:0;border-radius:14px;background:#7c4dff;color:#fff;font-weight:800}.boot-fallback[hidden]{display:none}
+</style>
+<style id="sakhi-style">/*__SAKHI_CSS__*/</style>
+</head>
+<body>
+<div class="ambient" aria-hidden="true"><span>✦</span><span>✧</span><span>✦</span><span>✧</span></div>
+<header class="topbar">
+  <button class="brand" data-nav="home" aria-label="Go home">
+    <img src="/*__SAKHI_ICON_DATA__*/" alt="">
+    <span><b>Sakhi</b><small>LEARNING TRAILS</small></span>
+  </button>
+  <div class="top-stats"><span id="starStat">⭐ 0</span></div>
+</header>
+<main id="app">
+  <section class="view active" data-view="home">
+    <div id="homeHero"></div>
+    <section class="today-card">
+      <div><small>TODAY'S ADVENTURE</small><h2 id="todayTitle">Preparing your magical learning day…</h2><p id="todaySummary">Rainbow Library, Crystal Number Palace, and more are getting ready.</p></div>
+      <button class="primary huge" id="startBtn">▶ Start Today's Adventure</button>
+    </section>
+    <div class="trail-preview" id="trailPreview"></div>
+  </section>
+  <section class="view" data-view="activity">
+    <div class="activity-shell">
+      <header class="activity-head"><button class="ghost" id="quitBtn">← Finish for now</button><div><small id="activityTrail"></small><h2 id="activitySkill"></h2></div><span class="progress-pill" id="activityProgress"></span></header>
+      <div id="activityScene"></div>
+      <div class="quest-card"><p class="quest-label" id="questLabel"></p><h1 id="questionPrompt"></h1><div id="interaction"></div><div class="hint-area" id="hintArea"></div><div class="activity-actions"><button class="soft" id="hearBtn">🔊 Hear again</button><button class="soft" id="hintBtn">💡 Hint</button><button class="primary" id="checkBtn">Check ✓</button></div></div>
+    </div>
+  </section>
+  <section class="view" data-view="map"><div class="section-title"><small>YOUR ADVENTURE MAP</small><h1>Learning Trails</h1><p>Every subject has its own magical world. Keep learning to travel farther.</p></div><div id="mapGrid" class="map-grid"></div></section>
+  <section class="view" data-view="rewards"><div class="section-title"><small>TREASURE ROOM</small><h1>Your Magic Collection</h1><p>Practice, persistence, and brave tries make the kingdom glow.</p></div><div class="big-reward"><span>⭐</span><b id="rewardTotal">0</b><small>Trail Stars</small></div><div id="rewardRecent" class="reward-recent"></div></section>
+  <section class="view" data-view="parent"><div class="section-title parent-title"><small>GROWN-UP VIEW</small><h1>Parent Dashboard</h1><p>Evidence you can understand — no mystery learning score.</p></div><div id="parentGate" class="parent-gate"><h2>Parent check</h2><p>To keep little hands out of settings, answer this:</p><label>What is 7 + 4?</label><input id="gateAnswer" inputmode="numeric"><button class="primary" id="gateBtn">Open Parent Dashboard</button></div><div id="parentBody" hidden></div></section>
+</main>
+<nav class="bottom-nav" aria-label="Main navigation"><button data-nav="home" class="active">🏠<span>Home</span></button><button data-nav="map">🗺️<span>Trails</span></button><button data-nav="rewards">⭐<span>Treasures</span></button><button data-nav="parent">🔒<span>Parents</span></button></nav>
+<div class="overlay" id="celebrate"><div class="celebrate-card"><div class="celebrate-icon" id="celebrateIcon">✨</div><h2 id="celebrateTitle">Wonderful work!</h2><p id="celebrateBody"></p><button class="primary huge" id="continueBtn">Continue →</button></div></div>
+<div class="toast" id="toast" role="status"></div>
+<div class="boot-fallback" id="bootFallback" hidden role="alert">
+  <h2>Sakhi needs one refresh ✨</h2>
+  <p>The learning app did not finish starting. Your progress has not been erased.</p>
+  <p class="muted" data-boot-detail></p>
+  <button type="button" onclick="location.reload()">Refresh Sakhi</button>
+</div>
+<script>
+window.__SAKHI_BOOTED=false;
+/*__SAKHI_RUNTIME_DATA__*/
+</script>
+<script id="sakhi-runtime">
+/*__SAKHI_RUNTIME_JS__*/
+</script>
+<script>
+setTimeout(function(){
+  if(window.__SAKHI_BOOTED)return;
+  var box=document.getElementById('bootFallback');
+  if(box){box.hidden=false;var d=box.querySelector('[data-boot-detail]');if(d&&!d.textContent)d.textContent='Build '+(window.SAKHI_BUILD_ID||'3.0.0-rc2')+' did not initialize.';}
+},3500);
+</script>
+</body>
+</html>

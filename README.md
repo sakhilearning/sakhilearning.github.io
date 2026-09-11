@@ -1,98 +1,40 @@
-# Sakhi Learning Trails V3
+# Sakhi Learning Trails V3 RC2
 
-Sakhi is a touch-first, mastery-based Kindergarten learning PWA built for a
-short daily routine at home. V3 turns the old mood-style worlds into **fixed,
-meaningful subject trails** while keeping curriculum and presentation strictly
-separate.
+Sakhi Learning Trails is a child-led Kindergarten practice PWA organized around persistent subject worlds rather than mood-selected themes.
 
-## Six-month learning program
+- Reading & Phonics → Luna's Rainbow Library
+- Math → Crystal Number Palace
+- Writing → Lantern Letter Studio
+- Stories & Language → Enchanted Story Castle
+- Science → Mermaid Discovery Lagoon
+- Logic → Butterfly Puzzle Garden
+- Wellbeing → Friendship Garden
+- Creative / Fine Motor / Movement → Starlight Create & Move Stage
 
-- 26 weeks
-- 5 planned practice days per week
-- 130 planned days total
-- about 30 minutes per canonical day
-- 24 minutes of app mini-quests + 6 minutes of movement/pencil/family talk
-- 85 skills across Reading & Phonics, Math, Writing, Stories & Language, Logic,
-  and Science
-- readiness-based placement, adaptive prerequisite substitution, spaced review,
-  and repeated independent evidence before mastery
+The curriculum contains 85 skills and a 26-week, 130-day pacing plan. A normal day targets 30 total minutes with Reading, Math, Writing, a rotating domain, and an off-screen hands-on activity.
 
-The stable subject worlds are:
+## Why RC2 exists
 
-- Rainbow Reading Trail — phonological awareness, phonics, decoding, connected text
-- Crystal Number Palace — counting, number sense, operations, geometry, measurement
-- Butterfly Letter Studio — pre-writing, handwriting, spelling, sentences, composition
-- Enchanted Story Library — listening, vocabulary, oral language, comprehension
-- Royal Puzzle Ballroom — memory, classification, patterns, reasoning, early coding
-- Mermaid Discovery Lagoon — observation, living things, materials, weather, space
+RC1 could fail visibly as mostly raw HTML if deployment/browser conditions prevented the stylesheet and runtime/data chain from initializing. RC2 ships a self-contained `index.html` containing compiled CSS, runtime JavaScript, curriculum, pacing data, and an inline icon. This makes GitHub Pages deployment much less fragile while keeping the source code modular and testable.
 
-The world makes an activity memorable; it never chooses what the child learns.
+Source CSS retains ordered cascade layers. The release build flattens them in order for broad browser compatibility, so production does not depend on browser support for CSS `@layer` and does not rely on accidental “last rule wins” overrides.
 
-## Local development
-
-Requires Node.js 20+.
+## Commands
 
 ```bash
 npm ci
-npm run qa
+npm run release
 npm run preview
 ```
 
-Then open `http://127.0.0.1:8080`.
+`npm run release` is the pre-deploy gate.
 
-This project intentionally has no third-party npm runtime dependencies. The
-browser app is static HTML/CSS/JavaScript and GitHub Pages serves it directly.
+## Audio
 
-## Release QA
+Normal narration uses the configured Supabase `sakhi-speech` Edge Function and ElevenLabs when available. Device speech is a fallback for ordinary narration only. Isolated phonemes never use TTS and remain disabled until corresponding recordings are explicitly verified in `assets/audio/phonemes/manifest.json`.
 
-`npm run qa` is the release gate. It validates:
+## Secrets
 
-- syntax for all runtime JavaScript;
-- 85-skill prerequisite graph and V2 ID compatibility;
-- generation for every skill at all five bands;
-- deterministic/replay-safe activity behavior;
-- one learning write path and read-only adaptive planning;
-- fixed trail/theme separation from pedagogy;
-- 26 weeks / 130 days / daily minute totals;
-- 25/30/35-minute session-length behavior;
-- cloud outbox/dead-letter/idempotency guards;
-- parent gate regression checks;
-- CSS cascade-layer ownership and absence of `!important`;
-- local image/audio references and PWA/service-worker wiring.
+Never commit an ElevenLabs API key, Supabase service-role key, email-provider key, or GitHub token. `supabase-config.js` contains public browser configuration only.
 
-## Supabase and ElevenLabs
-
-`supabase-config.js` contains only public browser configuration. Never place a
-service-role key, ElevenLabs API key, Resend key, or other secret in the repo.
-
-Narration follows:
-
-`browser -> Supabase sakhi-tts Edge Function -> ElevenLabs`
-
-Pure instructional phonemes use validated local recordings first. A dedicated
-server phoneme request may be used for missing sounds, but each instructional
-phoneme should be listened to and approved before it is treated as validated.
-
-For V3 cloud metadata and weekly email support, apply:
-
-1. `migrations/20260909_theme_configuration.sql` if it has not already been applied
-2. `migrations/20260910_v3_foundation.sql`
-
-The weekly email function lives at `supabase/functions/weekly-report/index.ts`.
-Its secrets stay in Supabase. The GitHub workflow only stores the protected
-function URL and cron secret.
-
-## Asset policy
-
-The public GitHub Pages repository ships original/generic magical worlds and
-controlled educational assets. Do not commit unlicensed Disney/franchise art,
-music, or logos. Rights-cleared or user-owned familiar-character packs can be
-added later through the centralized art/presentation layer without changing the
-curriculum.
-
-## Hosting
-
-Production: https://sakhilearning.github.io/
-
-GitHub Pages deployment is defined in `.github/workflows/pages.yml` and runs the
-full V3 QA gate before publishing.
+See `PATCH_NOTES_RC2.md` for the fixes in this release and `DEPLOY_MAC.md` for the exact upgrade/deploy steps.

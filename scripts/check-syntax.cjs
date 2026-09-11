@@ -1,27 +1,5 @@
-const { execFileSync } = require('child_process');
-const path = require('path');
-
-const root = path.join(__dirname, '..');
-const files = [
-  'supabase-config.js',
-  'sakhi-cloud.js',
-  'sakhi-curriculum.js',
-  'sakhi-themes.js',
-  'sakhi-content.js',
-  'sakhi-activities.js',
-  'sakhi-plan.js',
-  'sakhi-trails.js',
-  'sakhi-presentation.js',
-  'sakhi-progress.js',
-  'sakhi-adaptive.js',
-  'sakhi-audio.js',
-  'sakhi-art.js',
-  'sakhi-templates.js',
-  'sakhi-app.js',
-  'sw.js'
-];
-
-for (const file of files) {
-  execFileSync(process.execPath, ['--check', path.join(root, file)], { stdio: 'inherit' });
-}
+const fs=require('fs'),cp=require('child_process'),path=require('path');
+const root=path.join(__dirname,'..');
+const files=fs.readdirSync(root).filter(f=>/^sakhi-.*\.js$/.test(f)||f==='supabase-config.js'||f==='sw.js');
+for(const f of files)cp.execFileSync(process.execPath,['--check',path.join(root,f)],{stdio:'pipe'});
 console.log(`Syntax check passed: ${files.length} JavaScript files`);

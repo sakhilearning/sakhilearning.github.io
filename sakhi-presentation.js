@@ -1,42 +1,31 @@
-/* Sakhi presentation decorator.
- *
- * Converts semantic visual roles into props from the fixed subject trail.
- * It is deliberately downstream of activity generation: answers, difficulty,
- * item choice and curriculum selection are never changed here.
- */
-window.SakhiPresentation = (function(){
-  'use strict';
-  function clone(x){return JSON.parse(JSON.stringify(x));}
-  function decorateQuestion(question,trail){
-    var q=clone(question),m=q.media;
-    if(!m)return q;
-    if(m.semanticRole==='countable.primary' && m.repeat) m.repeat=trail.props.primary;
-    if(m.semanticRole==='compare.groups' && m.groups){
-      if(m.groups[0])m.groups[0].emoji=trail.props.primary;
-      if(m.groups[1])m.groups[1].emoji=trail.props.secondary;
-    }
-    /* V2 math activities predate semantic roles. Theme them here because the
-       domain/trail has already been chosen; the underlying number is untouched. */
-    if(trail.domain==='math'){
-      if(m.repeat && ['⭐','💎','🌸','🐚','❄️'].indexOf(m.repeat)!==-1)m.repeat=trail.props.primary;
-      if(m.groups)m.groups.forEach(function(g,i){if(g.emoji==='⭐')g.emoji=i?trail.props.secondary:trail.props.primary;});
-      if(m.tens!=null){m.tenSymbol='🔷';m.oneSymbol='💎';}
-    }
-    return q;
-  }
-  function decorateActivity(activity,trail){
-    var a=clone(activity);a.questions=a.questions.map(function(q){return decorateQuestion(q,trail);});return a;
-  }
-  function storyPrompt(trail,skillTitle,index){
-    var frames={
-      reading:['A page is glowing at '+trail.landmarks[index]+'!','Luna found a sound clue.','A story door is waiting for the right words.'],
-      math:['The crystal palace needs your number magic.','Nova found a gem puzzle.','Light the next crystal with your math thinking.'],
-      writing:['A butterfly brought a message for the studio.','Mira needs your careful hand.','Add one more mark to the author gallery.'],
-      language:['Wren opened a story with a mystery inside.','Listen for the clue hidden in the story.','Your words can help the library grow.'],
-      logic:['The ballroom puzzle doors are locked.','Princess Amara spotted a secret rule.','One clever choice will light the next chandelier.'],
-      science:['Coral found something curious in the lagoon.','Make a scientist choice: look, predict, then decide.','A discovery shell is waiting to open.']
-    };
-    var a=frames[trail.domain]||frames.reading; return a[(index||0)%a.length]+' Today: '+skillTitle+'.';
-  }
-  return{decorateQuestion:decorateQuestion,decorateActivity:decorateActivity,storyPrompt:storyPrompt};
+window.SakhiPresentation=(function(){
+'use strict';
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];});}
+var WORLD={
+  reading:{landmark:'📚',spark:'✦ ✧ ✦',object:'⭐'},
+  math:{landmark:'🏰',spark:'◆ ✦ ◆',object:'💎'},
+  writing:{landmark:'🏮',spark:'✧ ✦ ✧',object:'🏮'},
+  language:{landmark:'📖',spark:'❀ ✦ ❀',object:'🌹'},
+  science:{landmark:'🐚',spark:'○ ✦ ○',object:'🐚'},
+  logic:{landmark:'🦋',spark:'✦ ❀ ✦',object:'🦋'},
+  wellbeing:{landmark:'🌷',spark:'♡ ✦ ♡',object:'🌷'},
+  creative:{landmark:'✨',spark:'✦ ★ ✦',object:'✨'}
+};
+function scene(domain,progress){
+  var t=SakhiTrails.get(domain),p=t.palette,ch=SakhiTrails.chapter(domain,progress),w=WORLD[domain]||WORLD.reading,icon=window.SAKHI_ICON_DATA||'./icon-192.png';
+  return '<div class="scene-card scene-'+esc(domain)+'" style="--a:'+p[0]+';--b:'+p[1]+';--c:'+p[2]+'">'+
+    '<div class="scene-cloud cloud-a"></div><div class="scene-cloud cloud-b"></div>'+
+    '<div class="sky-sparkles">'+esc(w.spark)+'</div>'+
+    '<div class="scene-landmark" aria-hidden="true">'+w.landmark+'</div>'+
+    '<div class="scene-path" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>'+
+    '<div class="scene-companion"><span class="companion-glow"></span><img src="'+icon+'" alt="'+esc(t.companion)+'"></div>'+
+    '<div class="scene-copy"><small>NOW EXPLORING</small><b>'+esc(t.name)+'</b><span>'+esc(ch)+' · '+Math.max(0,Math.min(100,progress||0))+'% explored</span></div>'+
+  '</div>';
+}
+function objectSet(domain,count){
+  var w=WORLD[domain]||WORLD.reading,glyph=w.object;
+  return Array.from({length:count},function(_,i){return '<button class="learn-object" type="button" aria-label="learning object '+(i+1)+'"><span>'+glyph+'</span></button>';}).join('');
+}
+function celebration(domain){var t=SakhiTrails.get(domain);return{title:'Wonderful work!',body:t.companion+' helped you move farther through '+t.name+'.',icon:t.icon};}
+return{scene:scene,objectSet:objectSet,celebration:celebration};
 })();

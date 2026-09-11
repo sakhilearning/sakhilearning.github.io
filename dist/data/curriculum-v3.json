@@ -1,0 +1,1986 @@
+{
+  "curriculum_version": "2026.09.11-v3-rc1",
+  "domains": [
+    {
+      "domain_id": "reading",
+      "title": "Reading & Phonics",
+      "trail": "Luna's Rainbow Library"
+    },
+    {
+      "domain_id": "math",
+      "title": "Math",
+      "trail": "Crystal Number Palace"
+    },
+    {
+      "domain_id": "writing",
+      "title": "Writing",
+      "trail": "Lantern Letter Studio"
+    },
+    {
+      "domain_id": "language",
+      "title": "Stories & Language",
+      "trail": "Enchanted Story Castle"
+    },
+    {
+      "domain_id": "logic",
+      "title": "Logic & Executive Function",
+      "trail": "Butterfly Puzzle Garden"
+    },
+    {
+      "domain_id": "science",
+      "title": "Science & Discovery",
+      "trail": "Mermaid Discovery Lagoon"
+    },
+    {
+      "domain_id": "wellbeing",
+      "title": "Friendship & Life Skills",
+      "trail": "Friendship Garden"
+    },
+    {
+      "domain_id": "creative",
+      "title": "Create & Move",
+      "trail": "Starlight Create & Move Stage"
+    }
+  ],
+  "skills": [
+    {
+      "skill_id": "reading.print_concepts",
+      "domain_id": "reading",
+      "title": "Print concepts",
+      "kind": "print",
+      "difficulty_level": 1,
+      "prerequisites": [],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "reading.letter_names_upper",
+      "domain_id": "reading",
+      "title": "Uppercase letter names",
+      "kind": "letter_name",
+      "difficulty_level": 1,
+      "prerequisites": [
+        "reading.print_concepts"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "reading.letter_names_lower",
+      "domain_id": "reading",
+      "title": "Lowercase letter names",
+      "kind": "letter_name",
+      "difficulty_level": 1,
+      "prerequisites": [
+        "reading.letter_names_upper"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "reading.rhyme",
+      "domain_id": "reading",
+      "title": "Rhyming words",
+      "kind": "rhyme",
+      "difficulty_level": 1,
+      "prerequisites": [
+        "reading.letter_names_lower"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "reading.syllables",
+      "domain_id": "reading",
+      "title": "Syllables",
+      "kind": "syllable",
+      "difficulty_level": 2,
+      "prerequisites": [
+        "reading.rhyme"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "reading.initial_sounds",
+      "domain_id": "reading",
+      "title": "Beginning sounds",
+      "kind": "initial_sound",
+      "difficulty_level": 2,
+      "prerequisites": [
+        "reading.syllables"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "reading.final_sounds",
+      "domain_id": "reading",
+      "title": "Ending sounds",
+      "kind": "final_sound",
+      "difficulty_level": 2,
+      "prerequisites": [
+        "reading.initial_sounds"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "reading.oral_blending",
+      "domain_id": "reading",
+      "title": "Blend spoken sounds",
+      "kind": "oral_blend",
+      "difficulty_level": 2,
+      "prerequisites": [
+        "reading.final_sounds"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "reading.oral_segmenting",
+      "domain_id": "reading",
+      "title": "Segment spoken words",
+      "kind": "oral_segment",
+      "difficulty_level": 3,
+      "prerequisites": [
+        "reading.oral_blending"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "reading.letter_sounds",
+      "domain_id": "reading",
+      "title": "Letter sounds",
+      "kind": "letter_sound",
+      "difficulty_level": 3,
+      "prerequisites": [
+        "reading.oral_segmenting"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "reading.short_vowels",
+      "domain_id": "reading",
+      "title": "Short vowels",
+      "kind": "short_vowel",
+      "difficulty_level": 3,
+      "prerequisites": [
+        "reading.letter_sounds"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "reading.cvc_mixed",
+      "domain_id": "reading",
+      "title": "Read CVC words",
+      "kind": "cvc_read",
+      "difficulty_level": 3,
+      "prerequisites": [
+        "reading.short_vowels"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "reading.cvc_encode",
+      "domain_id": "reading",
+      "title": "Spell CVC words",
+      "kind": "cvc_spell",
+      "difficulty_level": 4,
+      "prerequisites": [
+        "reading.cvc_mixed"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "reading.digraphs",
+      "domain_id": "reading",
+      "title": "Digraphs sh, ch, th, wh, ck, ng",
+      "kind": "digraph",
+      "difficulty_level": 4,
+      "prerequisites": [
+        "reading.cvc_encode"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "reading.blends",
+      "domain_id": "reading",
+      "title": "Consonant blends",
+      "kind": "blend",
+      "difficulty_level": 4,
+      "prerequisites": [
+        "reading.digraphs"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "reading.high_frequency",
+      "domain_id": "reading",
+      "title": "Common irregular words",
+      "kind": "sight_word",
+      "difficulty_level": 4,
+      "prerequisites": [
+        "reading.blends"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "reading.sentences",
+      "domain_id": "reading",
+      "title": "Read short sentences",
+      "kind": "sentence_read",
+      "difficulty_level": 5,
+      "prerequisites": [
+        "reading.high_frequency"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "reading.stories",
+      "domain_id": "reading",
+      "title": "Read decodable stories",
+      "kind": "story",
+      "difficulty_level": 5,
+      "prerequisites": [
+        "reading.sentences"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "reading.fluency",
+      "domain_id": "reading",
+      "title": "Accurate expressive reading",
+      "kind": "fluency",
+      "difficulty_level": 5,
+      "prerequisites": [
+        "reading.stories"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "reading.advanced",
+      "domain_id": "reading",
+      "title": "Silent-e and early vowel teams",
+      "kind": "advanced_phonics",
+      "difficulty_level": 5,
+      "prerequisites": [
+        "reading.fluency"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "math.count_sequence",
+      "domain_id": "math",
+      "title": "Count sequence to 100",
+      "kind": "count_sequence",
+      "difficulty_level": 1,
+      "prerequisites": [],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "math.numerals_0_20",
+      "domain_id": "math",
+      "title": "Recognize numerals 0–20",
+      "kind": "numeral",
+      "difficulty_level": 1,
+      "prerequisites": [
+        "math.count_sequence"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "math.write_numerals",
+      "domain_id": "math",
+      "title": "Write numerals 0–20",
+      "kind": "trace_number",
+      "difficulty_level": 1,
+      "prerequisites": [
+        "math.numerals_0_20"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "math.cardinality_20",
+      "domain_id": "math",
+      "title": "Count objects to 20",
+      "kind": "count",
+      "difficulty_level": 1,
+      "prerequisites": [
+        "math.write_numerals"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "math.subitize",
+      "domain_id": "math",
+      "title": "See small quantities quickly",
+      "kind": "subitize",
+      "difficulty_level": 2,
+      "prerequisites": [
+        "math.cardinality_20"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "math.compare",
+      "domain_id": "math",
+      "title": "Compare quantities and numerals",
+      "kind": "compare",
+      "difficulty_level": 2,
+      "prerequisites": [
+        "math.subitize"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "math.compose_5",
+      "domain_id": "math",
+      "title": "Compose and decompose 5",
+      "kind": "compose",
+      "difficulty_level": 2,
+      "prerequisites": [
+        "math.compare"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "math.compose_to_10",
+      "domain_id": "math",
+      "title": "Compose and decompose 10",
+      "kind": "compose",
+      "difficulty_level": 2,
+      "prerequisites": [
+        "math.compose_5"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "math.addition_5",
+      "domain_id": "math",
+      "title": "Addition within 5",
+      "kind": "add",
+      "difficulty_level": 3,
+      "prerequisites": [
+        "math.compose_to_10"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "math.subtraction_5",
+      "domain_id": "math",
+      "title": "Subtraction within 5",
+      "kind": "sub",
+      "difficulty_level": 3,
+      "prerequisites": [
+        "math.addition_5"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "math.addition",
+      "domain_id": "math",
+      "title": "Addition within 10",
+      "kind": "add",
+      "difficulty_level": 3,
+      "prerequisites": [
+        "math.subtraction_5"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "math.subtraction",
+      "domain_id": "math",
+      "title": "Subtraction within 10",
+      "kind": "sub",
+      "difficulty_level": 3,
+      "prerequisites": [
+        "math.addition"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "math.number_bonds",
+      "domain_id": "math",
+      "title": "Number bonds to 10",
+      "kind": "bond",
+      "difficulty_level": 4,
+      "prerequisites": [
+        "math.subtraction"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "math.teen_numbers",
+      "domain_id": "math",
+      "title": "Teen numbers as ten and ones",
+      "kind": "teen",
+      "difficulty_level": 4,
+      "prerequisites": [
+        "math.number_bonds"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "math.patterns",
+      "domain_id": "math",
+      "title": "Patterns",
+      "kind": "pattern",
+      "difficulty_level": 4,
+      "prerequisites": [
+        "math.teen_numbers"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "math.measurement",
+      "domain_id": "math",
+      "title": "Compare and measure",
+      "kind": "measure",
+      "difficulty_level": 4,
+      "prerequisites": [
+        "math.patterns"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "math.geometry",
+      "domain_id": "math",
+      "title": "2D and 3D shapes",
+      "kind": "shape",
+      "difficulty_level": 5,
+      "prerequisites": [
+        "math.measurement"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "math.data",
+      "domain_id": "math",
+      "title": "Sort and interpret simple data",
+      "kind": "data",
+      "difficulty_level": 5,
+      "prerequisites": [
+        "math.geometry"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "writing.prewriting_strokes",
+      "domain_id": "writing",
+      "title": "Pre-writing strokes",
+      "kind": "trace_stroke",
+      "difficulty_level": 1,
+      "prerequisites": [],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "writing.name",
+      "domain_id": "writing",
+      "title": "Write your name",
+      "kind": "practice",
+      "difficulty_level": 1,
+      "prerequisites": [
+        "writing.prewriting_strokes"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "writing.uppercase",
+      "domain_id": "writing",
+      "title": "Form uppercase letters",
+      "kind": "trace_letter",
+      "difficulty_level": 1,
+      "prerequisites": [
+        "writing.name"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "writing.lowercase",
+      "domain_id": "writing",
+      "title": "Form lowercase letters",
+      "kind": "trace_letter",
+      "difficulty_level": 1,
+      "prerequisites": [
+        "writing.uppercase"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "writing.numerals",
+      "domain_id": "writing",
+      "title": "Form numerals",
+      "kind": "trace_number",
+      "difficulty_level": 2,
+      "prerequisites": [
+        "writing.lowercase"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "writing.cvc_words",
+      "domain_id": "writing",
+      "title": "Write CVC words",
+      "kind": "cvc_spell",
+      "difficulty_level": 2,
+      "prerequisites": [
+        "writing.numerals"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "writing.dictation",
+      "domain_id": "writing",
+      "title": "Hear and write simple words",
+      "kind": "dictation",
+      "difficulty_level": 2,
+      "prerequisites": [
+        "writing.cvc_words"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "writing.labels",
+      "domain_id": "writing",
+      "title": "Label pictures",
+      "kind": "label",
+      "difficulty_level": 2,
+      "prerequisites": [
+        "writing.dictation"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "writing.captions",
+      "domain_id": "writing",
+      "title": "Write a short caption",
+      "kind": "practice",
+      "difficulty_level": 3,
+      "prerequisites": [
+        "writing.labels"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "writing.conventions",
+      "domain_id": "writing",
+      "title": "Capital letters and end marks",
+      "kind": "punctuation",
+      "difficulty_level": 3,
+      "prerequisites": [
+        "writing.captions"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "writing.sentence",
+      "domain_id": "writing",
+      "title": "Build and write a sentence",
+      "kind": "sentence_build",
+      "difficulty_level": 3,
+      "prerequisites": [
+        "writing.conventions"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "writing.story",
+      "domain_id": "writing",
+      "title": "Draw and write a mini story",
+      "kind": "practice",
+      "difficulty_level": 3,
+      "prerequisites": [
+        "writing.sentence"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "language.listening",
+      "domain_id": "language",
+      "title": "Listening comprehension",
+      "kind": "listen",
+      "difficulty_level": 1,
+      "prerequisites": [],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "language.vocabulary",
+      "domain_id": "language",
+      "title": "Vocabulary",
+      "kind": "vocab",
+      "difficulty_level": 1,
+      "prerequisites": [
+        "language.listening"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "language.questions",
+      "domain_id": "language",
+      "title": "Who, what, where, when, why",
+      "kind": "wh_question",
+      "difficulty_level": 1,
+      "prerequisites": [
+        "language.vocabulary"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "language.sequence",
+      "domain_id": "language",
+      "title": "Story sequencing",
+      "kind": "story_order",
+      "difficulty_level": 1,
+      "prerequisites": [
+        "language.questions"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "language.retell",
+      "domain_id": "language",
+      "title": "Retell beginning, middle, end",
+      "kind": "retell",
+      "difficulty_level": 2,
+      "prerequisites": [
+        "language.sequence"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "language.prediction",
+      "domain_id": "language",
+      "title": "Prediction",
+      "kind": "predict",
+      "difficulty_level": 2,
+      "prerequisites": [
+        "language.retell"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "language.cause_effect",
+      "domain_id": "language",
+      "title": "Cause and effect",
+      "kind": "cause",
+      "difficulty_level": 2,
+      "prerequisites": [
+        "language.prediction"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "language.inference",
+      "domain_id": "language",
+      "title": "Inference from clues",
+      "kind": "infer",
+      "difficulty_level": 2,
+      "prerequisites": [
+        "language.cause_effect"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "language.main_idea",
+      "domain_id": "language",
+      "title": "Main idea",
+      "kind": "main_idea",
+      "difficulty_level": 3,
+      "prerequisites": [
+        "language.inference"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "language.conversation",
+      "domain_id": "language",
+      "title": "Speaking and conversation",
+      "kind": "practice",
+      "difficulty_level": 3,
+      "prerequisites": [
+        "language.main_idea"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "logic.classify",
+      "domain_id": "logic",
+      "title": "Classification",
+      "kind": "classify",
+      "difficulty_level": 1,
+      "prerequisites": [],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "logic.patterns",
+      "domain_id": "logic",
+      "title": "Logic patterns",
+      "kind": "pattern",
+      "difficulty_level": 1,
+      "prerequisites": [
+        "logic.classify"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "logic.sequence",
+      "domain_id": "logic",
+      "title": "Everyday sequencing",
+      "kind": "steps",
+      "difficulty_level": 1,
+      "prerequisites": [
+        "logic.patterns"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "logic.spatial",
+      "domain_id": "logic",
+      "title": "Spatial reasoning",
+      "kind": "spatial",
+      "difficulty_level": 1,
+      "prerequisites": [
+        "logic.sequence"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "logic.memory",
+      "domain_id": "logic",
+      "title": "Working memory",
+      "kind": "memory",
+      "difficulty_level": 2,
+      "prerequisites": [
+        "logic.spatial"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "logic.deduction",
+      "domain_id": "logic",
+      "title": "Simple deduction",
+      "kind": "deduce",
+      "difficulty_level": 2,
+      "prerequisites": [
+        "logic.memory"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "logic.coding",
+      "domain_id": "logic",
+      "title": "Directional coding",
+      "kind": "code",
+      "difficulty_level": 2,
+      "prerequisites": [
+        "logic.deduction"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "logic.flexibility",
+      "domain_id": "logic",
+      "title": "Flexible thinking",
+      "kind": "flexibility",
+      "difficulty_level": 2,
+      "prerequisites": [
+        "logic.coding"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "science.observe",
+      "domain_id": "science",
+      "title": "Observe and compare",
+      "kind": "observe",
+      "difficulty_level": 1,
+      "prerequisites": [],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "science.habitats",
+      "domain_id": "science",
+      "title": "Animal habitats",
+      "kind": "habitat",
+      "difficulty_level": 1,
+      "prerequisites": [
+        "science.observe"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "science.plants",
+      "domain_id": "science",
+      "title": "Plants and growth",
+      "kind": "plant",
+      "difficulty_level": 1,
+      "prerequisites": [
+        "science.habitats"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "science.weather",
+      "domain_id": "science",
+      "title": "Weather and seasons",
+      "kind": "weather",
+      "difficulty_level": 1,
+      "prerequisites": [
+        "science.plants"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "science.materials",
+      "domain_id": "science",
+      "title": "Materials and properties",
+      "kind": "materials",
+      "difficulty_level": 2,
+      "prerequisites": [
+        "science.weather"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "science.float_sink",
+      "domain_id": "science",
+      "title": "Predict and test floating",
+      "kind": "float_sink",
+      "difficulty_level": 2,
+      "prerequisites": [
+        "science.materials"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "science.magnets",
+      "domain_id": "science",
+      "title": "Magnet exploration",
+      "kind": "magnet",
+      "difficulty_level": 2,
+      "prerequisites": [
+        "science.float_sink"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "science.light_sound",
+      "domain_id": "science",
+      "title": "Light and sound",
+      "kind": "light_sound",
+      "difficulty_level": 2,
+      "prerequisites": [
+        "science.magnets"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "science.earth_space",
+      "domain_id": "science",
+      "title": "Earth and space",
+      "kind": "space",
+      "difficulty_level": 3,
+      "prerequisites": [
+        "science.light_sound"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "wellbeing.emotions",
+      "domain_id": "wellbeing",
+      "title": "Name and manage feelings",
+      "kind": "emotions",
+      "difficulty_level": 1,
+      "prerequisites": [],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "wellbeing.friendship",
+      "domain_id": "wellbeing",
+      "title": "Friendship and kindness",
+      "kind": "social",
+      "difficulty_level": 1,
+      "prerequisites": [
+        "wellbeing.emotions"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "wellbeing.routines",
+      "domain_id": "wellbeing",
+      "title": "Independent routines",
+      "kind": "routine",
+      "difficulty_level": 1,
+      "prerequisites": [
+        "wellbeing.friendship"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "wellbeing.safety",
+      "domain_id": "wellbeing",
+      "title": "Everyday safety",
+      "kind": "safety",
+      "difficulty_level": 1,
+      "prerequisites": [
+        "wellbeing.routines"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "creative.fine_motor",
+      "domain_id": "creative",
+      "title": "Fine-motor strength",
+      "kind": "practice",
+      "difficulty_level": 1,
+      "prerequisites": [],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "creative.art",
+      "domain_id": "creative",
+      "title": "Art and design",
+      "kind": "practice",
+      "difficulty_level": 1,
+      "prerequisites": [
+        "creative.fine_motor"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "creative.music_movement",
+      "domain_id": "creative",
+      "title": "Music and movement",
+      "kind": "movement",
+      "difficulty_level": 1,
+      "prerequisites": [
+        "creative.art"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    },
+    {
+      "skill_id": "creative.imaginative_play",
+      "domain_id": "creative",
+      "title": "Imaginative play",
+      "kind": "practice",
+      "difficulty_level": 1,
+      "prerequisites": [
+        "creative.music_movement"
+      ],
+      "mastery_criteria": {
+        "min_attempts": 4,
+        "target_accuracy": 0.8,
+        "independent_evidence": 3,
+        "multi_session": true
+      },
+      "review_policy": {
+        "learning_days": 1,
+        "developing_days": 3,
+        "mostly_mastered_days": 7,
+        "mastered_days": 18
+      },
+      "active": true
+    }
+  ]
+}

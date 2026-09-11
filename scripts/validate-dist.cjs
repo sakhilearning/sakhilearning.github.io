@@ -1,0 +1,21 @@
+const fs=require('fs'),path=require('path');
+const root=path.join(__dirname,'..'),dist=path.join(root,'dist');
+function read(f){return fs.readFileSync(path.join(dist,f),'utf8');}
+if(!fs.existsSync(path.join(dist,'index.html')))throw new Error('dist/index.html missing');
+const html=read('index.html');
+if(/<script\s+[^>]*src=/i.test(html))throw new Error('Deployment HTML still depends on external runtime JS');
+if(/<link\s+[^>]*rel=["']stylesheet["']/i.test(html))throw new Error('Deployment HTML still depends on external CSS');
+if(!/window\.SAKHI_CURRICULUM_DATA=/.test(html))throw new Error('Embedded curriculum fallback missing');
+if(!/window\.SAKHI_SIX_MONTH_PLAN=/.test(html))throw new Error('Embedded six-month plan missing');
+if(!/window\.SakhiApp=/.test(html))throw new Error('App runtime not embedded');
+if(!/\.today-card\{/.test(html))throw new Error('Compiled CSS not embedded');
+if(/@layer\s/.test(html))throw new Error('Deployment CSS still contains @layer and may fail on older browsers');
+if(!/3\.0\.0-rc2/.test(html))throw new Error('RC2 build marker missing');
+for(const f of ['manifest.json','sw.js','icon-180.png','icon-192.png','icon-512.png'])if(!fs.existsSync(path.join(dist,f)))throw new Error('Missing deploy file '+f);
+const days=JSON.parse(fs.readFileSync(path.join(dist,'data/six-month-plan.json'),'utf8')).weeks.reduce((n,w)=>n+w.days.length,0);
+if(days!==130)throw new Error('Deployed six-month plan is incomplete');
+console.log('Deployment validation passed:');
+console.log(' - self-contained CSS + runtime JS');
+console.log(' - embedded curriculum + six-month plan fallbacks');
+console.log(' - no CSS @layer dependency in shipped HTML');
+console.log(' - 130 learning days present');
