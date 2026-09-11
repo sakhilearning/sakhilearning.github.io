@@ -1,14 +1,14 @@
 {
-  "name": "sakhi-magic-learning",
-  "private": true,
-  "version": "1.0.0",
-  "scripts": {
-    "test:engine": "node tests/engine.test.cjs",
-    "test:activities": "node tests/activities.test.cjs",
-    "test:unit": "node tests/activities.test.cjs && node tests/engine.test.cjs",
-    "test:runtime": "playwright test"
-  },
-  "devDependencies": {
-    "@playwright/test": "1.55.0"
+  "name":"sakhi-learning-trails-v3-rc1",
+  "private":true,
+  "version":"3.0.0-rc1",
+  "scripts":{
+    "syntax":"node scripts/check-syntax.cjs",
+    "validate":"node scripts/validate-production-app.cjs",
+    "test:activities":"node tests/activities.test.cjs",
+    "test:plan":"node tests/plan.test.cjs",
+    "qa":"npm run syntax && npm run validate && npm run test:activities && npm run test:plan",
+    "build":"node scripts/build.cjs",
+    "preview":"node scripts/serve-local.cjs"
   }
 }

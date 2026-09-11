@@ -1,0 +1,8 @@
+window.SakhiPlan=(function(){
+'use strict';
+var ROT=['language','science','logic','wellbeing','creative'];
+function dayIndex(){var start=new Date('2026-09-01T00:00:00'),now=new Date();return Math.max(0,Math.floor((now-start)/86400000));}
+function build(){var idx=dayIndex(),rot=ROT[idx%ROT.length],mins=Number(SakhiProgress.load().settings.session_minutes)||30;var scale=mins/30;var blocks=[['reading',6],['math',6],['writing',5],[rot,6]];var used=[];var missions=blocks.map(function(b){var p=SakhiAdaptive.pick(b[0],used);if(p)used.push(p.skill_id);return{domain:b[0],minutes:Math.max(4,Math.round(b[1]*scale)),pick:p};}).filter(function(x){return x.pick;});return{date:new Date().toISOString().slice(0,10),minutes:mins,missions:missions,offscreen:{minutes:Math.max(4,Math.round(5*scale)),domain:rot,prompt:offscreen(rot)},celebration_minutes:2};}
+function offscreen(d){return{reading:'Find three things at home that start with the sound you practiced.',math:'Count or sort real objects: spoons, blocks, socks, or fruit.',writing:'Use pencil and paper for one line of careful letter or number practice.',language:'Tell a grown-up the beginning, middle, and end of a favorite story.',science:'Make a prediction about something at home, then observe what really happens.',logic:'Build a simple repeating pattern with toys or household objects.',wellbeing:'Practice one helpful routine independently and tell a grown-up how it felt.',creative:'Draw, dance, build, or act out something from today’s learning.'}[d]||'Do a short hands-on learning mission with a grown-up nearby.';}
+return{build:build};
+})();
