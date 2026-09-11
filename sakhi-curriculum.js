@@ -11,7 +11,7 @@
 window.SakhiCurriculum = (function () {
   'use strict';
 
-  var ACTIVE_VERSION = '2026.09.08-v2';
+  var ACTIVE_VERSION = '2026.09.10-v3';
   var graph = null;
 
   function index(g) {
@@ -55,11 +55,20 @@ window.SakhiCurriculum = (function () {
     var q = '&curriculum_version=eq.' + ACTIVE_VERSION;
     if (C) {
       try {
+        /* V3 prefers the versioned curriculum bundle. It is additive to the
+         * historical normalized tables and can therefore be deployed safely. */
+        var bundles = await C.request('/rest/v1/curriculum_bundles?select=bundle&curriculum_version=eq.' + encodeURIComponent(ACTIVE_VERSION) + '&active=eq.true&limit=1', { auth: false });
+        if (bundles && bundles[0] && bundles[0].bundle) {
+          var bundled = bundles[0].bundle; bundled.source = 'supabase';
+          C.cachePut('curriculum.' + ACTIVE_VERSION, bundled); graph = normalise(bundled); return graph;
+        }
+      } catch (bundleError) {}
+      try {
         var parts = await Promise.all([
-          C.request('/rest/v1/curriculum_domains?select=*' + q),
-          C.request('/rest/v1/curriculum_strands?select=*' + q),
-          C.request('/rest/v1/curriculum_skills?select=*' + q),
-          C.request('/rest/v1/skill_prerequisites?select=*' + q)
+          C.request('/rest/v1/curriculum_domains?select=*' + q, { auth: false }),
+          C.request('/rest/v1/curriculum_strands?select=*' + q, { auth: false }),
+          C.request('/rest/v1/curriculum_skills?select=*' + q, { auth: false }),
+          C.request('/rest/v1/skill_prerequisites?select=*' + q, { auth: false })
         ]);
         if (parts[2] && parts[2].length) {
           var live = { curriculum_version: ACTIVE_VERSION, domains: parts[0], strands: parts[1], skills: parts[2], prerequisites: parts[3], source: 'supabase' };
@@ -67,10 +76,9 @@ window.SakhiCurriculum = (function () {
           graph = normalise(live);
           return graph;
         }
-      } catch (e) {
-        var cached = C.cacheValue('curriculum.' + ACTIVE_VERSION);
-        if (cached) { cached.source = 'cache'; graph = normalise(cached); return graph; }
-      }
+      } catch (e) {}
+      var cached = C.cacheValue('curriculum.' + ACTIVE_VERSION);
+      if (cached) { cached.source = 'cache'; graph = normalise(cached); return graph; }
     }
     var res = await fetch('./curriculum-snapshot.json');
     var snap = await res.json();

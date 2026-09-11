@@ -1,33 +1,34 @@
-# Sakhi control and settings audit
+# Sakhi V3 control and settings audit
 
-This audit is the internal shipping record for visible controls. A visible control must have one conceptual owner, persistent state where applicable, and an observable effect.
+A visible control ships only if it has one owner, persistent state where needed,
+and an observable effect.
 
-| Control | Visible location | Intended purpose | State source | Persistence | Components affected | Result | Decision |
-|---|---|---|---|---|---|---|---|
-| Start Today's Adventure | Child Home | Start adaptive session | Quest state | learner progress | Quest planner / activity runner | PASS | KEEP |
-| Story Castle / Number Kingdom / Puzzle Palace / Discovery World / Create & Play | Child Home | Open domain exploration | navigation only | n/a | Learn domain view | PASS | KEEP |
-| Home / Quest / Rewards | Child navigation | Primary child navigation | view state | n/a | main views | PASS | KEEP |
-| Parents | Child navigation | Enter protected Parent Mode | ParentAuthService | sessionStorage with inactivity expiry | Parent view | PASS | KEEP |
-| Legacy Adventure dropdown | Old hero | Former theme selector | legacy `data.theme` | local cache only | partial theme styling | HIDDEN | REMOVE FROM VISIBLE UI; compatibility shim only |
-| Learn / Reading Baseline nav items | Old main navigation | Adult/general navigation | view state | n/a | learn/baseline views | HIDDEN | REMOVE FROM CHILD NAV; parent/tools still access them |
-| Today's Adventure Theme | Parent Settings | Presentation world only | SettingsService + AdventureService | `adaptiveProfile.settings` via family profile sync + local cache | background, scene, story wrapper, reward style | PASS | KEEP |
-| Session Length | Parent Settings | Target session duration | SettingsService | same | quest activity count/depth | PASS | KEEP |
-| Sakhi Voice | Parent Settings | Enable/disable spoken guidance | SettingsService | same | SpeechService | PASS | KEEP |
-| Movement Breaks | Parent Settings | Include/exclude movement missions | SettingsService | same | quest planner | PASS | KEEP |
-| Reduced Motion | Parent Settings | Reduce decorative motion | SettingsService | same | UI motion | PASS | KEEP |
-| Family Progress Sync actions | Parent Mode | authenticate/sync/disconnect family profile | ProgressService | Supabase | learner progress/settings | PASS | KEEP |
-| Manual skill state selectors | Parent Progress | parent correction/override | learner skill state | learner profile sync | mastery reporting/planning | PASS | KEEP |
-| Reading baseline answer buttons/reset | Adult-guided baseline | placement evidence | learner baseline state | learner progress cache/profile pipeline | baseline/readiness | PASS | KEEP |
-| Lesson observation selects/notes | Adult-guided lesson | capture observed support needs | learner observation state | local learner data | next-focus coaching | PASS | KEEP |
+| Control | Location | Owner/state | Observable effect | Status |
+|---|---|---|---|---|
+| Start Today's Adventure | Child Home | `sakhi-app.js` + `sakhi-plan.js` | starts placement or today's planned trail session | PASS |
+| Home / My Trails / Treasures | Child navigation | view state | switches child views only | PASS |
+| Parents | Child navigation | short arithmetic adult gate + 15-minute `sessionStorage` expiry | prevents casual child entry; **not security/authentication** | PASS |
+| Session length 25/30/35 | Parent Dashboard | learner profile + `SakhiPlan.stepsForDay()` | 3 / 4 / 5 app blocks before the off-screen mission | PASS |
+| Sakhi voice | Parent Dashboard | learner profile + `SakhiAudio` | enables/disables spoken guidance | PASS |
+| Movement mission | Parent Dashboard | learner profile | includes/excludes the movement part of the off-screen mission | PASS |
+| Reduced motion | Parent Dashboard | learner profile + body state | reduces decorative motion | PASS |
+| Sign in / Create account | Parent Dashboard | `SakhiCloud` | authenticates family sync | PASS |
+| Sync now / Sign out | Parent Dashboard | `SakhiProgress.syncCloud()` / `SakhiCloud` | reconciles or ends cloud session | PASS |
+| Weekly email preference | Parent Dashboard | learner profile | saves report email + enabled flag for server job | PASS after V3 migration/function deployment |
+| Export progress backup | Parent Dashboard | `SakhiProgress.snapshot()` | downloads JSON backup | PASS |
 
-## Adventure rule
+## Removed V2 controls
 
-AdventureService is presentation-only. It may choose a visual/story world but never chooses curriculum skill progression. AUTO is the default. Only worlds with complete built-in scene support are exposed. Branded character worlds remain hidden until complete, permitted, registered local assets exist.
+There is no child-facing mood/theme picker in V3. Subject-to-world mapping is
+fixed by `sakhi-trails.js`. The legacy `active_theme` profile field exists only
+for migration compatibility and does not steer V3 learning.
 
-## Settings source of truth
+## Parent gate vs authentication
 
-`SettingsService` is the conceptual owner. Settings are mirrored to `data.settings` and `data.adaptiveProfile.settings`; when Family Sync is authenticated, the existing profile snapshot sync persists `adaptiveProfile.settings` in Supabase. Browser storage is only the local cache.
+The arithmetic gate is deliberately only a child deterrent. Data protection is
+Supabase Auth + RLS. Never treat the arithmetic gate as account security.
 
 ## QA rule
 
-The Parent Settings QA table must contain no `UNKNOWN` or `NO EFFECT` rows. A control that fails this rule is removed from the visible UI until its behavior is implemented.
+A visible control with unknown state ownership, no persistent effect, or stale
+copy must be removed or fixed before release. `npm run qa` is the deploy gate.

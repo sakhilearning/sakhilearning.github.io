@@ -1,7 +1,17 @@
-# Sakhi Curriculum
+# Sakhi V3 curriculum
 
-CurriculumEngine selects the learning target before LessonPlanner constructs a session. Parent explanations must be derived from that target and learner evidence rather than invented after random activity selection.
+Active curriculum version: `2026.09.10-v3`.
 
-Learning paths are prerequisite-graph based, chronological but adaptive. Strong verified prerequisites may be compressed. Core progression must expose PAST, CURRENT, NEXT, and LATER states in Parent Mode.
+The graph contains 85 skills across six Kindergarten domains and retains all 48
+V2 IDs. The six-month plan contains 26 weeks, five practice days per week, and
+130 days total. Reading and math occur every planned day; writing and rotating
+language/logic/science blocks provide breadth. Every canonical day also includes
+a short movement, pencil, and family-talk mission away from the screen.
 
-The curriculum graph must be auditable for orphan skills, missing prerequisites, skipped foundations, missing next links, duplicates, and activity coverage.
+Curriculum availability is prerequisite-based. The six-month plan supplies the
+scope/sequence target, while `SakhiAdaptive.nextForTarget()` may substitute an
+unlocked prerequisite, spaced review, or readiness-appropriate next skill within
+the same subject trail.
+
+Five activity bands change scaffolding/distractor difficulty, not curriculum
+scope. Repeated multi-session independent evidence is required for mastery.

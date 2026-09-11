@@ -1,553 +1,213 @@
-/* Sakhi app shell.
+/* Sakhi Learning Trails V3 application shell.
  *
- * Phase 14: the child-led loop is the default and needs no adult.
- *   launch -> "Start Adventure" (this tap unlocks audio) -> Sakhi picks the
- *   skill -> template task -> atomic commit -> Sakhi picks the next -> rewards.
- * Nothing in that path asks a grown-up to score, script or configure anything.
+ * Child flow: Home -> a fixed subject trail -> interactive activity -> short
+ * celebration -> next planned trail -> off-screen mission -> treasures.
  *
- * Phase 12/13: the parent view answers four questions in ten seconds and then
- * gets out of the way; the detail lives in tabs below the fold.
+ * Curriculum/adaptation remain upstream. This file only wires views and hands an
+ * already selected skill to the presentation layer for its fixed domain trail.
  */
-(function () {
+(function(){
   'use strict';
 
-  var Cur = window.SakhiCurriculum, Themes = window.SakhiThemes, Act = window.SakhiActivities,
-      Prog = window.SakhiProgress, Adapt = window.SakhiAdaptive, Audio = window.SakhiAudio,
-      Tpl = window.SakhiTemplates, Cloud = window.SakhiCloud;
+  var Cur=window.SakhiCurriculum,Themes=window.SakhiThemes,Act=window.SakhiActivities,
+      Plan=window.SakhiPlan,Trails=window.SakhiTrails,Present=window.SakhiPresentation,
+      Prog=window.SakhiProgress,Adapt=window.SakhiAdaptive,Audio=window.SakhiAudio,
+      Art=window.SakhiArt,Tpl=window.SakhiTemplates,Cloud=window.SakhiCloud;
+  var $=function(s){return document.querySelector(s);};
+  var el=function(t,c,x){var n=document.createElement(t);if(c)n.className=c;if(x!=null)n.textContent=x;return n;};
+  var clear=function(n){while(n&&n.firstChild)n.removeChild(n.firstChild);};
 
-  var PASS = '071621';
-  var $ = function (s) { return document.querySelector(s); };
-  var el = function (t, c, x) { var n = document.createElement(t); if (c) n.className = c; if (x != null) n.textContent = x; return n; };
-  var clear = function (n) { while (n && n.firstChild) n.removeChild(n.firstChild); };
+  var view='home',session=null,sessionMode=null,planDay=null,sessionSteps=[],stepIndex=0;
+  var current=null,currentTrail=null,controller=null,hintLevel=0,tries=0,qIndex=0,answers=[];
+  var usedSkills=[],lastResult=null,lastByDomain={},questionStartedAt=0,faultsShown={};
+  var PARENT_TTL=15*60*1000;
 
-  var view = 'home';
-  var parentUnlocked = sessionStorage.sakhiParent === '1';
-  var session = null, current = null, controller = null, upcoming = null;
-  var hintLevel = 0, tries = 0, qIndex = 0, answers = [], usedSkills = [], lastResult = null;
-  var questionStartedAt = 0;
+  function parentUnlocked(){return Number(sessionStorage.getItem('sakhi.parent.until')||0)>Date.now();}
+  function unlockParent(){
+    var a=17+Math.floor(Math.random()*23),b=14+Math.floor(Math.random()*26);
+    var answer=window.prompt('Grown-up check: what is '+a+' + '+b+'?');
+    if(answer===null)return false;
+    if(Number(answer)!==a+b){toast('That grown-up check did not match.');return false;}
+    sessionStorage.setItem('sakhi.parent.until',String(Date.now()+PARENT_TTL));return true;
+  }
+  function toast(msg){var t=$('#toast');if(!t)return;t.textContent=msg;t.classList.add('is-visible');clearTimeout(t._timer);t._timer=setTimeout(function(){t.classList.remove('is-visible');},2400);}
+  function pct(n,d){return d?Math.round(n/d*100):0;}
+  function sameDomainUsed(domain){return usedSkills.filter(function(id){var sk=Cur.skill(id);return sk&&sk.domain_id===domain;});}
+  function applyAccessibility(){var p=Prog.load().profile;document.body.classList.toggle('reduce-motion',!!p.reduced_motion);Audio.setEnabled(p.voice_enabled!==false);}
 
-  function theme() { return Themes.get(Prog.load().profile.active_theme); }
+  function show(v){
+    Audio.stopAll();
+    if(v==='parent'&&!parentUnlocked()&&!unlockParent())return;
+    view=v;
+    document.querySelectorAll('[data-nav]').forEach(function(b){b.classList.toggle('is-active',b.dataset.nav===v||(v==='activity'&&b.dataset.nav==='home'));});
+    document.querySelectorAll('.view').forEach(function(n){n.classList.toggle('is-active',n.dataset.view===v);});
+    render();window.scrollTo({top:0,behavior:Prog.load().profile.reduced_motion?'auto':'smooth'});
+  }
 
-  /* ---------- navigation ---------- */
+  function render(){applyAccessibility();renderStats();({home:renderHome,activity:renderActivity,trails:renderTrails,rewards:renderRewards,parent:renderParent}[view]||renderHome)();}
+  function renderStats(){var pr=Plan.progress(Prog.load());$('#statWeek').textContent='Week '+pr.week;$('#statDays').textContent=pr.completed+' / '+pr.total;}
 
-  function show(v) {
-    Audio.stopAll();                       // Phase 8: never let audio cross a route
-    if (v === 'parent' && !parentUnlocked) {
-      var p = prompt('Parent passcode');
-      if (p !== PASS) { if (p !== null) toast('That passcode did not match 🔒'); return; }
-      parentUnlocked = true; sessionStorage.sakhiParent = '1';
+  /* ------------------------------- home ---------------------------------- */
+  function renderHome(){
+    var s=Prog.load(),placement=Adapt.placementActive(),day=Plan.dayForState(s),pr=Plan.progress(s),heroTrail=Trails.forDomain('reading');
+    Themes.apply(heroTrail.theme_id);
+    $('#homeScene').innerHTML=Art.scene(heroTrail.theme_id,{eager:true,label:'Sakhi learning trails'});
+    $('#homePlanMeter').style.width=pr.pct+'%';
+    $('#homeProgress').textContent=pr.completed+' of '+pr.total+' practice days complete · Week '+pr.week;
+    if(placement){
+      $('#homeEyebrow').textContent='ONE-TIME STARTING CHECK';$('#homeTitle').textContent='Let’s find your best starting place';
+      $('#homeWelcome').textContent='Four tiny quests help Sakhi skip things you already know. No grades — just a smarter beginning.';
+      $('#startAdventure').textContent='✨ Find my starting place';renderPlacementStops();renderOffscreenPreview(null);return;
     }
-    view = v;
-    document.querySelectorAll('[data-nav]').forEach(function (b) {
-      b.classList.toggle('is-active', b.dataset.nav === v || (v === 'activity' && b.dataset.nav === 'home'));
-    });
-    document.querySelectorAll('.view').forEach(function (n) { n.classList.toggle('is-active', n.dataset.view === v); });
-    render();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    $('#homeEyebrow').textContent='WEEK '+day.week+' · DAY '+day.day_of_week;$('#homeTitle').textContent=day.week_title;
+    $('#homeWelcome').textContent=day.weekly_goal;$('#startAdventure').textContent='▶ Start Today’s Adventure';
+    renderTodayStops(day);renderOffscreenPreview(day);
+  }
+  function renderPlacementStops(){
+    var wrap=$('#todayStops');clear(wrap);['reading','math','logic','language'].forEach(function(d){var t=Trails.forDomain(d);wrap.appendChild(stopCard(t,'Quick starting check',null));});
+  }
+  function stopCard(t,skillTitle,minutes){
+    var c=el('article','stop-card');c.style.setProperty('--stop-image','url("'+Art.src(t.theme_id)+'")');c.appendChild(el('span','stop-icon',t.icon));c.appendChild(el('b',null,t.short));c.appendChild(el('small',null,skillTitle));if(minutes)c.appendChild(el('span','stop-time',minutes+' min'));return c;
+  }
+  function renderTodayStops(day){var wrap=$('#todayStops');clear(wrap);day.app_blocks.forEach(function(b){var sk=Cur.skill(b.skill_id),t=Trails.forSkill(b.skill_id);wrap.appendChild(stopCard(t,sk?sk.title:b.slot,b.minutes));});}
+  function renderOffscreenPreview(day){
+    var box=$('#homeOffscreen');clear(box);if(!day){box.appendChild(el('h3',null,'Today is just the starting check'));box.appendChild(el('p','muted','Your six-month trail begins right after Sakhi finds the best starting point.'));return;}
+    box.appendChild(el('span','eyebrow','REAL-WORLD QUEST · 6 MIN'));box.appendChild(el('h3',null,'Finish away from the screen'));
+    var row=el('div','mission-inline');row.appendChild(el('span',null,'🤸 Move'));row.appendChild(el('span',null,'✏️ Pencil'));row.appendChild(el('span',null,'💬 Family talk'));box.appendChild(row);
   }
 
-  function toast(msg) {
-    var t = $('#toast'); if (!t) return;
-    t.textContent = msg; t.classList.add('is-visible');
-    clearTimeout(t._timer);
-    t._timer = setTimeout(function () { t.classList.remove('is-visible'); }, 2200);
-  }
-
-  function renderStats() {
-    var b = Prog.balances(), t = theme();
-    $('#statPrimary').textContent = (t.rewards.primary.icon || '⭐') + ' ' + (b[t.rewards.primary.key] || 0);
-    $('#statBadge').textContent = (t.rewards.badge.icon || '💎') + ' ' + (b[t.rewards.badge.key] || 0);
-  }
-
-  function render() {
-    Themes.apply(Prog.load().profile.active_theme);
-    renderStats();
-    ({ home: renderHome, activity: renderActivity, rewards: renderRewards,
-       parent: renderParent, paths: renderPaths, themes: renderThemes }[view] || renderHome)();
-  }
-
-  /* ---------- home: one button, child-led ---------- */
-
-  function renderHome() {
-    var t = theme();
-    $('#homeCompanion').innerHTML = window.SakhiArt ? SakhiArt.scene(t.id, { eager: true }) : t.icon;
-    $('#homeWorld').textContent = t.name;
-    $('#homeTagline').textContent = t.tagline;
-    $('#homeWelcome').textContent = t.narration.welcome;
-
-    var placement = Adapt.placementActive();
-    $('#startAdventure').textContent = placement ? '▶ Start' : '▶ Start Today’s Adventure';
-    var pick = Adapt.nextActivity({ usedSkillIds: [], lastResult: null });
-    $('#homeNext').textContent = placement
-      ? 'Sakhi will find the right starting point first.'
-      : Adapt.explain(pick);
-  }
-
-  /* ---------- the session loop ---------- */
-
-  async function startAdventure() {
-    /* THE first tap: unlock audio here and nowhere else. */
-    await Audio.unlock();
-    session = Prog.startSession(theme().id);
-    usedSkills = []; lastResult = null; upcoming = null;
+  /* ------------------------------ session -------------------------------- */
+  async function startAdventure(){
+    await Audio.unlock();usedSkills=[];lastResult=null;lastByDomain={};stepIndex=0;answers=[];
+    if(Adapt.placementActive()){
+      sessionMode='placement';planDay=null;sessionSteps=[];session=Prog.startSession('learning_trails',{planned_blocks:['placement']});
+    }else{
+      sessionMode='plan';planDay=Plan.dayForState(Prog.load());sessionSteps=Plan.stepsForDay(planDay,Prog.load().profile.typical_session_length||30);session=Prog.startSession('learning_trails',{plan_day_id:planDay.day_id,week:planDay.week,planned_blocks:sessionSteps.map(function(x){return x.block;})});
+    }
     await nextActivity();
   }
-
-  async function nextActivity() {
-    var pick = Adapt.nextActivity({ usedSkillIds: usedSkills, lastResult: lastResult });
-    if (!pick) return finishSession('Everything unlocked for today is done.');
-    current = upcoming && upcoming.skill_id === pick.skill_id
-      ? upcoming.activity
-      : Act.generate(pick.skill_id, pick.band, session.session_id + ':' + usedSkills.length);
-    current._pick = pick;
-    qIndex = 0; answers = []; hintLevel = 0; tries = 0;
-    upcoming = null;
-    show('activity');
-    /* Speak immediately. Waiting on the warm-up left the child looking at a
-     * silent screen for over a second; speak() shares the in-flight fetch, so
-     * this is the same request, just not gated behind it. */
-    speakQuestion();
-    Audio.preloadActivity(current);
-    prefetchNext(pick);
+  function strong(res){return !!(res&&res.accuracy===1&&res.correct>0&&res.independent===res.correct);}
+  function pickForPlanStep(step){
+    var target=Cur.skill(step.block.skill_id),domain=target?target.domain_id:step.block.skill_id.split('.')[0],prev=lastByDomain[domain];
+    if(step.repeat&&prev&&!strong(prev))return{skill_id:prev.skill_id,band:Prog.bandFor(prev.skill_id),reason:'second practice round in '+domain};
+    return Adapt.nextForTarget(step.block.skill_id,{usedSkillIds:sameDomainUsed(domain),lastResult:prev})||{skill_id:step.block.skill_id,band:Prog.bandFor(step.block.skill_id),reason:'today’s '+domain+' trail practice'};
   }
-
-  /* Phase 8: warm the NEXT activity while the child works on this one. */
-  function prefetchNext(pick) {
-    var peek = Adapt.nextActivity({ usedSkillIds: usedSkills.concat([pick.skill_id]), lastResult: null });
-    if (!peek) return;
-    var a = Act.generate(peek.skill_id, peek.band, session.session_id + ':' + (usedSkills.length + 1));
-    upcoming = { skill_id: peek.skill_id, activity: a };
-    Audio.prefetchActivity(a);
-  }
-
-  function q() { return current.questions[qIndex]; }
-
-  function speakQuestion() {
-    var question = q();
-    var line = question.narration;
-    /* At the scaffolded bands, say what to do as well as what the question is. */
-    if (current.band <= 2 && Tpl.actionFor) line += ' ' + Tpl.actionFor(question);
-    Audio.speak(line).catch(function (f) { showAudioFault(f); });
-  }
-
-  var faultsShown = {};
-  function showAudioFault(fault) {
-    var d = Audio.describe(fault);
-    if (!d) return;
-    if (faultsShown[fault.kind]) return;   // say it once, not once per question
-    faultsShown[fault.kind] = true;
-    var box = $('#audioFault');
-    clear(box);
-    box.appendChild(el('b', null, d.title));
-    box.appendChild(el('span', null, d.body));
-    box.classList.add('is-visible');
-    clearTimeout(box._timer);
-    box._timer = setTimeout(function () { box.classList.remove('is-visible'); }, 6000);
-  }
-
-  function renderActivity() {
-    if (!current) return show('home');
-    var t = theme(), question = q();
-    $('#activityWorld').textContent = t.name;
-    $('#activitySkill').textContent = current.skill_title;
-    $('#activityBand').textContent = 'Level ' + current.band + ' · ' + current.band_name;
-    $('#activityProgress').textContent = (qIndex + 1) + ' of ' + current.questions.length;
-    /* The world was only visible on the home screen; the exercise itself looked
-     * like a generic worksheet. Dress it. */
-    document.querySelector('.view-activity').style.setProperty('--activity-scene', 'url("' + SakhiArt.src(t.id) + '")');
-    var guide = $('#activityGuide');
-    if (guide) guide.innerHTML = SakhiArt.portrait(t.id, t.companion);
-    $('#companionName').textContent = t.companion;
-    say('ready');
-
-    hintLevel = current.support.hintUpFront ? 1 : 0;
-    tries = 0;
-    questionStartedAt = Date.now();
-    renderHint();
-
-    controller = Tpl.render($('#interaction'), question, {
-      onHear: function () { Audio.repeat().catch(showAudioFault); },
-      onImmediate: function (res) { grade(res.correct, res.response); },
-      onProgress: function () { $('#checkBtn').disabled = !controller.isReady(); }
-    });
-    $('#checkBtn').hidden = !!controller.immediate;
-    $('#checkBtn').disabled = !controller.isReady();
-    $('#resetBtn').hidden = !!controller.immediate;
-  }
-
-  /* What the companion is saying right now. It must not open with a correction. */
-  function say(mood) {
-    var t = theme(), line;
-    if (mood === 'wrong') line = t.narration.encourage;
-    else if (mood === 'right') line = t.narration.celebrate;
-    else line = t.narration.welcome;
-    var node = $('#companionLine');
-    if (node) node.textContent = line;
-    return line;
-  }
-
-  function renderHint() {
-    var box = $('#hintBox');
-    clear(box);
-    var hints = q().hints || [];
-    for (var i = 0; i < hintLevel && i < hints.length; i++) {
-      box.appendChild(el('div', 'hint', '💡 ' + hints[i]));
+  async function nextActivity(){
+    var pick;
+    if(sessionMode==='placement'){
+      pick=Adapt.nextProbe();if(!pick)return finishSession(false,'Starting point found. Your learning trails are ready!');
+    }else{
+      if(stepIndex>=sessionSteps.length)return showOffscreen();pick=pickForPlanStep(sessionSteps[stepIndex]);
     }
-    $('#hintBtn').disabled = hintLevel >= hints.length;
+    currentTrail=Trails.forSkill(pick.skill_id);Themes.apply(currentTrail.theme_id);Art.prefetch(currentTrail.theme_id);
+    var seed=session.session_id+':'+sessionMode+':'+stepIndex+':'+usedSkills.length;
+    var raw=Act.generate(pick.skill_id,pick.band,seed);current=Present.decorateActivity(raw,currentTrail);current._pick=pick;current._trail=currentTrail;
+    qIndex=0;answers=[];hintLevel=0;tries=0;show('activity');
+    await Audio.preloadActivity(current).catch(function(){});speakQuestion();
   }
-
-  function useHint() {
-    var hints = q().hints || [];
-    if (hintLevel >= hints.length) return;
-    hintLevel++;
-    renderHint();
-    Audio.speak(hints[hintLevel - 1]).catch(showAudioFault);
+  function question(){return current&&current.questions[qIndex];}
+  function speakQuestion(){if(!question())return;Audio.speakQuestion(question()).catch(showAudioFault);}
+  function renderActivity(){
+    if(!current)return show('home');var t=currentTrail,q=question(),theme=Themes.get(t.theme_id);Themes.apply(t.theme_id);
+    $('.view-activity').style.setProperty('--activity-scene','url("'+Art.src(t.theme_id)+'")');
+    $('#activityWorld').textContent=t.name;$('#activitySkill').textContent=current.skill_title;$('#activityLandmark').textContent='At '+Trails.landmarkForSkill(current.skill_id);
+    var total=sessionMode==='placement'?Adapt.PROBE_LIMIT:sessionSteps.length,pos=sessionMode==='placement'?(Prog.load().placement&&Prog.load().placement.probes?Prog.load().placement.probes.length+1:1):stepIndex+1;
+    $('#activityProgress').textContent=(sessionMode==='placement'?'Check ':'Quest ')+Math.min(pos,total)+' of '+total;$('#questMeter').style.width=Math.min(100,Math.round((pos-1)/total*100))+'%';
+    $('#activityStory').textContent=Present.storyPrompt(t,current.skill_title,stepIndex);$('#activityGuide').innerHTML=Art.portrait(t.theme_id,t.companion);$('#companionName').textContent=t.companion;$('#companionLine').textContent=theme.narration.encourage;
+    hintLevel=current.support.hintUpFront?1:0;tries=0;questionStartedAt=Date.now();renderHint();
+    controller=Tpl.render($('#interaction'),q,{onHear:function(){Audio.speakQuestion(q).catch(showAudioFault);},onImmediate:function(res){grade(res.correct,res.response);},onProgress:function(){$('#checkBtn').disabled=!controller.isReady();}});
+    $('#checkBtn').hidden=!!controller.immediate;$('#checkBtn').disabled=!controller.isReady();$('#resetBtn').hidden=!!controller.immediate;
   }
-
-  function grade(correct, response) {
+  function renderHint(){var box=$('#hintBox');clear(box);var hints=question().hints||[];for(var i=0;i<hintLevel&&i<hints.length;i++)box.appendChild(el('div','hint','💡 '+hints[i]));$('#hintBtn').disabled=hintLevel>=hints.length;}
+  function useHint(){var hints=question().hints||[];if(hintLevel>=hints.length)return;hintLevel++;renderHint();Audio.speakStructured(hints[hintLevel-1]).catch(showAudioFault);}
+  function grade(correct,response){
     tries++;
-    say(correct ? 'right' : 'wrong');
-    if (!correct && tries < 2) {
-      /* One free retry with a hint before it counts against her. */
-      if (hintLevel < (q().hints || []).length) { hintLevel++; renderHint(); }
-      Audio.speak(theme().narration.encourage).catch(function () {});
-      setTimeout(function () { controller.reset(); $('#checkBtn').disabled = true; }, 700);
-      return;
-    }
-    answers.push({
-      questionIndex: qIndex, correct: correct, hintsUsed: hintLevel,
-      responseMs: Date.now() - questionStartedAt, response: response, tries: tries
-    });
-    Audio.speak(correct ? theme().narration.celebrate : 'Let us look at that one again later.').catch(function () {});
-    setTimeout(function () {
-      if (qIndex < current.questions.length - 1) { qIndex++; renderActivity(); speakQuestion(); }
-      else finishActivity();
-    }, correct ? 700 : 1100);
+    if(!correct&&tries<2){if(hintLevel<(question().hints||[]).length){hintLevel++;renderHint();}Audio.speak(Themes.get(currentTrail.theme_id).narration.encourage).catch(function(){});setTimeout(function(){controller.reset();$('#checkBtn').disabled=true;},700);return;}
+    answers.push({questionIndex:qIndex,correct:correct,hintsUsed:hintLevel,responseMs:Date.now()-questionStartedAt,response:response,tries:tries});
+    Audio.speak(correct?Themes.get(currentTrail.theme_id).narration.celebrate:'Good try. We will remember this one for later.').catch(function(){});
+    setTimeout(function(){if(qIndex<current.questions.length-1){qIndex++;renderActivity();speakQuestion();}else finishActivity();},850);
   }
-
-  function finishActivity() {
-    /* Phase 11: the one atomic commit. */
-    var status = Prog.completeActivity({
-      activity: current, sessionId: session.session_id,
-      themeId: theme().id, answers: answers
-    });
-    lastResult = status;
-    usedSkills.push(current.skill_id);
-
-    if (Adapt.placementActive()) {
-      Adapt.recordProbe(current.skill_id, status.accuracy, status.independent === status.correct);
-    }
-
-    renderStats();   // the counters must move the moment the reward is shown
-    var t = theme();
-    var milestone = t.milestones[Math.min(t.milestones.length - 1, usedSkills.length - 1)];
-    $('#doneTitle').textContent = t.rewards.badge.icon + ' ' + current.skill_title + ' done!';
-    $('#doneBody').textContent = milestone;
-    clear($('#doneRewards'));
-    status.rewards_issued.forEach(function (r) {
-      $('#doneRewards').appendChild(el('span', 'reward-chip', '+' + r.amount + ' ' + r.label));
-    });
-
-    var cont = Adapt.shouldContinue(session, { usedSkillIds: usedSkills, lastResult: status });
-    $('#doneNext').textContent = cont.continue
-      ? 'Next: ' + (Cur.skill(cont.next.skill_id) || {}).title
-      : 'That is today’s adventure complete.';
-    $('#doneContinue').textContent = cont.continue ? 'Keep going →' : 'See my rewards ⭐';
-    $('#doneContinue').onclick = function () {
-      $('#doneOverlay').classList.remove('is-visible');
-      if (cont.continue) nextActivity(); else finishSession();
-    };
+  function finishActivity(){
+    var status=Prog.completeActivity({activity:current,sessionId:session.session_id,themeId:currentTrail.theme_id,answers:answers,placementProbe:!!current._pick.placement_probe});
+    lastResult=status;lastByDomain[current.domain_id]=status;usedSkills.push(current.skill_id);renderStats();
+    var theme=Themes.get(currentTrail.theme_id),stage=Trails.stageForSkill(current.skill_id),milestone=theme.milestones[Math.min(theme.milestones.length-1,stage%theme.milestones.length)];
+    $('#doneIcon').textContent=currentTrail.props.success||'✨';$('#doneTrail').textContent=currentTrail.name;$('#doneTitle').textContent=current.skill_title+' complete!';$('#doneBody').textContent=milestone+'. '+(strong(status)?'You solved that independently!':'Your trail remembers what to practice next.');
+    clear($('#doneRewards'));status.rewards_issued.forEach(function(r){$('#doneRewards').appendChild(el('span','reward-chip','+'+r.amount+' '+r.label));});
+    var isLast=sessionMode==='placement'?!!status.placement&&status.placement.complete:stepIndex>=sessionSteps.length-1;
+    if(sessionMode==='placement'){$('#doneNext').textContent=isLast?'Sakhi found your starting point.':'Another tiny starting check is waiting.';$('#doneContinue').textContent=isLast?'See my trails ✨':'Next check →';}
+    else{$('#doneNext').textContent=isLast?'One real-world mission finishes today’s adventure.':'Next stop: '+nextStepLabel();$('#doneContinue').textContent=isLast?'Real-world quest →':'Next trail →';}
+    $('#doneContinue').onclick=function(){$('#doneOverlay').classList.remove('is-visible');if(sessionMode==='placement'&&isLast){finishSession(false,'Starting point found.');return;}stepIndex++;nextActivity();};
     $('#doneOverlay').classList.add('is-visible');
   }
-
-  function finishSession(note) {
-    if (session) Prog.endSession(session.session_id, note || null);
-    session = null;
-    show('rewards');
+  function nextStepLabel(){var n=sessionSteps[stepIndex+1];if(!n)return'Real-world quest';var t=Trails.forSkill(n.block.skill_id);return t.icon+' '+t.short;}
+  function showOffscreen(){
+    if(!planDay)return finishSession(false);var box=$('#offscreenMissions');clear(box),off=planDay.offscreen_block,profile=Prog.load().profile;
+    if(profile.movement_breaks!==false)box.appendChild(mission('🤸','Move',off.movement));box.appendChild(mission('✏️','Pencil',off.handwriting));box.appendChild(mission('💬','Family talk',off.family_talk));
+    $('#offscreenDone').onclick=function(){$('#offscreenOverlay').classList.remove('is-visible');finishSession(true,'Completed all app quests and the real-world mission.');};
+    $('#offscreenLater').onclick=function(){$('#offscreenOverlay').classList.remove('is-visible');finishSession(false,'App quests complete; real-world mission left for later.');};
+    $('#offscreenOverlay').classList.add('is-visible');
   }
+  function mission(icon,title,text){var c=el('div','mission-card'),i=el('div','mission-icon',icon),b=el('div');b.appendChild(el('b',null,title));b.appendChild(el('span',null,text));c.appendChild(i);c.appendChild(b);return c;}
+  function finishSession(completeDay,note){if(session)Prog.endSession(session.session_id,note||null,{completePlanDay:!!completeDay,abandoned:false});session=null;current=null;sessionMode=null;planDay=null;sessionSteps=[];stepIndex=0;show('rewards');}
+  function quitActivity(){if(!session){show('home');return;}if(window.confirm('Finish for now? Today’s plan will stay here so you can continue next time.')){Prog.endSession(session.session_id,'Left before the daily plan was complete.',{abandoned:true});session=null;current=null;show('home');}}
 
-  /* ---------- rewards ---------- */
-
-  function renderRewards() {
-    var t = theme(), b = Prog.balances();
-    var art = $('#rewardArt');
-    if (art && window.SakhiArt) art.innerHTML = SakhiArt.rewardScene();
-    $('#rewardWorld').textContent = t.icon + ' ' + t.name;
-    var grid = $('#rewardGrid');
-    clear(grid);
-    var keys = Object.keys(b);
-    if (!keys.length) grid.appendChild(el('p', 'muted', 'Start an adventure to collect your first reward.'));
-    keys.forEach(function (k) {
-      var row = Prog.load().rewards.filter(function (r) { return r.reward_key === k; })[0] || {};
-      var card = el('div', 'reward-card');
-      card.appendChild(el('div', 'reward-icon', k.indexOf('star') > -1 ? '⭐' : (row.reward_label || '').slice(0, 2)));
-      card.appendChild(el('b', null, String(b[k])));
-      card.appendChild(el('small', null, row.reward_label || k));
-      grid.appendChild(card);
-    });
-    var s = Prog.load();
-    $('#rewardStory').textContent = s.sessions.length
-      ? 'You have finished ' + s.sessions.filter(function (x) { return x.status === 'COMPLETED'; }).length + ' adventures so far.'
-      : '';
-  }
-
-  /* ---------- Phase 12: the ten-second parent view ---------- */
-
-  function renderParent() {
-    var s = Prog.load();
-    var pick = Adapt.nextActivity({ usedSkillIds: [], lastResult: null });
-    var skill = pick && Cur.skill(pick.skill_id);
-
-    $('#pGoal').textContent = skill ? skill.title : 'Everything unlocked is complete';
-    $('#pWhy').textContent = Adapt.explain(pick);
-
-    /* "How she is doing" from real rows only — never a fabricated number. */
-    var evs = Object.keys(s.skills).map(function (k) { return s.skills[k]; });
-    var practised = evs.filter(function (e) { return e.attempt_count > 0; });
-    var attempts = practised.reduce(function (n, e) { return n + e.attempt_count; }, 0);
-    var indep = practised.reduce(function (n, e) { return n + e.independent_correct_count; }, 0);
-    var acc = attempts ? Math.round(indep / attempts * 100) : null;
-
-    var health = $('#pHealth');
-    clear(health);
-    health.appendChild(el('span', 'label', 'How she is doing'));
-    if (!attempts) {
-      health.appendChild(el('b', null, 'No practice recorded yet'));
-      health.appendChild(el('small', null, 'Numbers appear here after the first adventure.'));
-    } else {
-      var band = acc >= 75 ? ['Going well', 'is-good'] : acc >= 50 ? ['Working at it', 'is-ok'] : ['Needs support', 'is-low'];
-      health.className = 'insight ' + band[1];
-      health.appendChild(el('b', null, band[0]));
-      health.appendChild(el('small', null, indep + ' of ' + attempts + ' answered independently (' + acc + '%) across ' + practised.length + ' skills'));
-    }
-
-    var next = $('#pWeek');
-    clear(next);
-    Cur.domains().forEach(function (d) {
-      var f = Cur.frontier(d.domain_id, Prog.masteryOf)[0];
-      var row = el('div', 'week-row');
-      row.appendChild(el('span', 'week-domain', d.title));
-      row.appendChild(el('span', 'week-skill', f ? f.title : 'all current work complete'));
-      next.appendChild(row);
-    });
-
-    /* Cloud status: honest, four-valued, never a fake "synced". */
-    var cs = Cloud ? Cloud.state() : { status: 'NOT_CONFIGURED', pending: 0 };
-    var cloudBox = $('#pCloud');
-    clear(cloudBox);
-    var LABEL = {
-      CONNECTED: ['CONNECTED', 'Saving to your account.'],
-      NOT_CONNECTED: ['NOT CONNECTED', 'Progress is saved on this device only. Sign in to sync across devices.'],
-      OFFLINE: ['NOT CONNECTED', 'This device is offline. Work is saved here and will upload when you reconnect.'],
-      NOT_CONFIGURED: ['NOT CONNECTED', 'No cloud account is set up for this build.']
-    }[cs.status] || ['NOT CONNECTED', ''];
-    cloudBox.className = 'insight ' + (cs.status === 'CONNECTED' ? 'is-good' : 'is-low');
-    cloudBox.appendChild(el('span', 'label', 'Cloud progress'));
-    cloudBox.appendChild(el('b', null, LABEL[0]));
-    cloudBox.appendChild(el('small', null, LABEL[1] + (cs.pending ? ' ' + cs.pending + ' change(s) waiting to upload.' : '')));
-
-    renderParentDetail();
-  }
-
-  function renderParentDetail() {
-    var s = Prog.load();
-
-    /* recent history, from stored attempts */
-    var hist = $('#pHistory');
-    clear(hist);
-    var recent = s.attempts.slice(-15).reverse();
-    if (!recent.length) hist.appendChild(el('li', null, 'No attempts recorded yet.'));
-    recent.forEach(function (a) {
-      var li = el('li');
-      li.appendChild(el('b', null, (Cur.skill(a.skill_id) || {}).title || a.skill_id));
-      li.appendChild(el('small', null,
-        new Date(a.timestamp).toLocaleString() + ' · ' + a.result.toLowerCase() +
-        (a.hint_level_used ? ' · ' + a.hint_level_used + ' hint(s)' : ' · independent') +
-        ' · level ' + a.difficulty));
-      hist.appendChild(li);
-    });
-
-    /* Which voice is actually playing, and the phoneme audit. The voice line is
-     * here because a silent downgrade to robotic browser speech is exactly the
-     * kind of regression nobody notices until a child is listening to it. */
-    var st = Audio.status();
-    var pa = $('#pAudio');
-    clear(pa);
-    var usingReal = st.voice === 'elevenlabs' && st.configured;
-    pa.className = 'insight ' + (usingReal && st.phonemes.complete ? 'is-good' : (usingReal ? 'is-ok' : 'is-low'));
-    pa.appendChild(el('span', 'label', 'Voice'));
-    pa.appendChild(el('b', null, usingReal ? 'Sakhi’s ElevenLabs voice' : 'Backup browser voice'));
-    pa.appendChild(el('small', null, usingReal
-      ? (st.cachedLines + ' line(s) cached for instant replay.')
-      : (st.configured ? 'The voice service could not be reached, so the robotic backup is in use.'
-                       : 'No voice service is configured in this build.')));
-    pa.appendChild(el('small', null,
-      'Phoneme recordings: ' + st.phonemes.present + ' of ' + st.phonemes.required + '. ' + st.phonemes.note));
-
-    /* settings */
-    var set = $('#pSettings');
-    clear(set);
-    var audioLabel = el('label', 'switch');
-    var audioBox = document.createElement('input');
-    audioBox.type = 'checkbox'; audioBox.checked = Audio.isEnabled();
-    audioBox.onchange = function () { Audio.setEnabled(audioBox.checked); };
-    audioLabel.appendChild(audioBox);
-    audioLabel.appendChild(el('span', null, 'Spoken instructions'));
-    set.appendChild(audioLabel);
-
-    var exportBtn = el('button', 'btn-soft', 'Export progress backup');
-    exportBtn.onclick = function () {
-      var blob = new Blob([JSON.stringify(Prog.snapshot(), null, 2)], { type: 'application/json' });
-      var u = URL.createObjectURL(blob), a = document.createElement('a');
-      a.href = u; a.download = 'sakhi-progress-' + new Date().toISOString().slice(0, 10) + '.json';
-      a.click(); URL.revokeObjectURL(u);
-    };
-    set.appendChild(exportBtn);
-  }
-
-  /* ---------- Phase 13: path maps ---------- */
-
-  function renderPaths() {
-    var wrap = $('#pathWrap');
-    clear(wrap);
-    Cur.domains().forEach(function (d) {
-      var sec = el('section', 'path-domain');
-      sec.appendChild(el('h3', null, d.title));
-      sec.appendChild(el('p', 'muted', d.description));
-      var track = el('div', 'path-track');
-      Cur.skillsIn(d.domain_id).forEach(function (sk) {
-        var m = Prog.masteryOf(sk.skill_id);
-        var mark, cls;
-        if (m === 'MASTERED' || m === 'MOSTLY_MASTERED') { mark = '✓'; cls = 'is-done'; }
-        else if (m === 'NOT_INTRODUCED') {
-          var open = Cur.isAvailable(sk.skill_id, Prog.masteryOf);
-          mark = open ? '○' : '🔒'; cls = open ? 'is-next' : 'is-locked';
-        } else { mark = '◐'; cls = 'is-current'; }
-        var node = el('button', 'path-node ' + cls);
-        node.type = 'button';
-        node.appendChild(el('span', 'path-mark', mark));
-        node.appendChild(el('span', 'path-name', sk.title));
-        node.appendChild(el('span', 'path-level', 'L' + sk.difficulty_level));
-        node.onclick = function () { openSkillModal(sk); };
-        track.appendChild(node);
-      });
-      sec.appendChild(track);
-      wrap.appendChild(sec);
+  /* ------------------------------ trails --------------------------------- */
+  function renderTrails(){
+    var grid=$('#trailGrid');clear(grid);Trails.all().forEach(function(t){
+      var p=Trails.progress(t.domain,Prog.masteryOf),front=Cur.frontier(t.domain,Prog.masteryOf)[0],stage=front?Trails.stageForSkill(front.skill_id):4;
+      var card=el('article','trail-card');card.dataset.domain=t.domain;var visual=el('div','trail-visual');visual.innerHTML=Art.scene(t.theme_id,{label:t.name});var content=el('div','trail-content');content.appendChild(el('span','eyebrow',t.icon+' '+t.short));content.appendChild(el('h2',null,t.name));content.appendChild(el('p',null,t.promise));
+      var meter=el('div','trail-progress'),fill=el('span');fill.style.width=p.pct+'%';meter.appendChild(fill);content.appendChild(meter);content.appendChild(el('div','trail-next',p.done+' of '+p.total+' skills strong'+(front?' · Next: '+front.title:' · Current path complete')));
+      var lm=el('div','landmark-row');t.landmarks.forEach(function(name,i){lm.appendChild(el('span','landmark-dot '+(i<stage?'is-done':i===stage?'is-current':'')));});lm.appendChild(el('span','trail-landmark-name',t.landmarks[stage]));content.appendChild(lm);card.appendChild(visual);card.appendChild(content);card.onclick=function(){openTrail(t);};grid.appendChild(card);
     });
   }
+  function openTrail(t){var body=$('#modalBody');clear(body);body.appendChild(el('span','eyebrow',t.icon+' '+t.name));body.appendChild(el('h2',null,'Your '+t.short+' path'));body.appendChild(el('p','muted',t.promise));Cur.skillsIn(t.domain).forEach(function(sk){var e=Prog.load().skills[sk.skill_id],m=e?e.mastery_state:'NOT_INTRODUCED',row=el('div','modal-row');row.appendChild(el('span','modal-k',m==='MASTERED'||m==='MOSTLY_MASTERED'?'✓ Strong':m==='NOT_INTRODUCED'?'○ Ahead':'◐ Growing'));row.appendChild(el('span','modal-v',sk.title));body.appendChild(row);});$('#modal').classList.add('is-visible');}
 
-  function openSkillModal(sk) {
-    var e = Prog.evidence(sk.skill_id);
-    var body = $('#modalBody');
-    clear(body);
-    body.appendChild(el('h2', null, sk.title));
-    body.appendChild(el('p', null, sk.description));
-    function row(k, v) {
-      var r = el('div', 'modal-row');
-      r.appendChild(el('span', 'modal-k', k));
-      r.appendChild(el('span', 'modal-v', v));
-      body.appendChild(r);
-    }
-    row('Why it matters', sk.age_guidance || 'Kindergarten foundation skill.');
-    row('Status', e.mastery_state.replace(/_/g, ' ').toLowerCase());
-    row('Evidence', e.attempt_count
-      ? e.independent_correct_count + ' independent of ' + e.attempt_count + ' attempts'
-      : 'not practised yet');
-    row('Working level', 'Level ' + (e.difficulty_level || 1) + ' of 5');
-    var pres = Cur.prerequisites(sk.skill_id).map(function (p) { return (Cur.skill(p) || {}).title || p; });
-    row('Needs first', pres.length ? pres.join(', ') : 'nothing — this is a starting point');
-    var nxt = Cur.unlockedBy(sk.skill_id).map(function (p) { return (Cur.skill(p) || {}).title || p; });
-    row('Leads to', nxt.length ? nxt.join(', ') : 'end of this strand');
-    if (e.placement_credited) row('Note', 'Credited from the placement check rather than re-taught.');
-    $('#modal').classList.add('is-visible');
+  /* ----------------------------- treasures ------------------------------- */
+  function renderRewards(){
+    var s=Prog.load(),b=Prog.balances();$('#rewardArt').innerHTML=Art.rewardScene();var grid=$('#rewardGrid');clear(grid);var keys=Object.keys(b);
+    if(!keys.length){grid.appendChild(el('div','reward-card','Start an adventure to find your first treasure.'));}
+    keys.forEach(function(k){var row=s.rewards.slice().reverse().find(function(r){return r.reward_key===k;})||{},card=el('div','reward-card');card.appendChild(el('div','reward-icon',rewardIcon(k)));card.appendChild(el('b',null,String(b[k])));card.appendChild(el('small',null,row.reward_label||humanize(k)));grid.appendChild(card);});
+    var completed=s.sessions.filter(function(x){return x.status==='COMPLETED';}).length;$('#rewardStory').textContent=completed?completed+' adventures finished. Every treasure is tied to real practice.':'Your treasures will appear after your first adventure.';
+    var list=$('#recentVictories');clear(list);s.rewards.slice(-10).reverse().forEach(function(r){var sk=Cur.skill(r.skill_id),row=el('div','victory-row');row.appendChild(el('span',null,rewardIcon(r.reward_key)+' '+(sk?sk.title:r.reason)));row.appendChild(el('span',null,'+'+r.amount+' '+r.reward_label));list.appendChild(row);});if(!s.rewards.length)list.appendChild(el('p','muted','No victories yet — your first trail is waiting.'));
   }
+  function rewardIcon(k){if(/snow/.test(k))return'❄️';if(/pearl|shell/.test(k))return'🐚';if(/butterfly|candle/.test(k))return'🦋';if(/heart|story/.test(k))return'📚';if(/royal/.test(k))return'👑';if(/gem/.test(k))return'💎';return'⭐';}
+  function humanize(k){return String(k).replace(/_/g,' ').replace(/\b\w/g,function(x){return x.toUpperCase();});}
 
-  /* ---------- theme picker (cosmetic only, and says so) ---------- */
-
-  function renderThemes() {
-    var grid = $('#themeGrid');
-    clear(grid);
-    var activeId = Prog.load().profile.active_theme;
-    Themes.all().forEach(function (t) {
-      var card = el('button', 'theme-card' + (t.id === activeId ? ' is-active' : ''));
-      card.type = 'button';
-      card.style.background = 'linear-gradient(135deg,' + t.palette.a + ',' + t.palette.b + ',' + t.palette.c + ')';
-      var art = el('div', 'theme-art');
-      art.innerHTML = window.SakhiArt ? SakhiArt.portrait(t.id, t.companion) : t.icon;
-      card.appendChild(art);
-      card.appendChild(el('b', null, t.name));
-      card.appendChild(el('small', null, t.tagline));
-      card.appendChild(el('em', null, 'Rewards: ' + t.rewards.primary.label + ' & ' + t.rewards.badge.label));
-      card.onmouseenter = function () { window.SakhiArt && SakhiArt.prefetch(t.id); };
-      card.onclick = function () {
-        Prog.setTheme(t.id);
-        toast(t.companion + ' is your guide now ✨');
-        render();
-      };
-      grid.appendChild(card);
-    });
+  /* ------------------------------- parent -------------------------------- */
+  function renderParent(){renderParentKpis();renderParentDomains();renderParentPlan();renderParentCloud();renderParentSettings();renderParentAudio();renderParentHistory();}
+  function renderParentKpis(){var w=Prog.weeklySummary(7),wrap=$('#parentKpis');clear(wrap);var rows=[['Practice days',w.practice_days,'unique days with completed practice'],['Learning time',w.minutes+' min','recorded app sessions'],['Correct',pct(w.correct,w.attempts)+'%','of objective attempts'],['Independent',pct(w.independent,w.attempts)+'%','correct without hints']];rows.forEach(function(r){var c=el('div','kpi');c.appendChild(el('small',null,r[0]));c.appendChild(el('b',null,String(r[1])));c.appendChild(el('small',null,r[2]));wrap.appendChild(c);});$('#pWeekSummary').textContent=w.hinted+' correct answers used support. Independence and correctness are shown separately.';}
+  function renderParentDomains(){var w=Prog.weeklySummary(7),wrap=$('#pDomains');clear(wrap);var h=el('div','domain-row header');['Trail','Attempts','Correct','Independent','Next ready skill'].forEach(function(x){h.appendChild(el('span',null,x));});wrap.appendChild(h);Trails.all().forEach(function(t){var d=w.domains[t.domain]||{attempts:0,correct:0,independent:0},front=Cur.frontier(t.domain,Prog.masteryOf)[0],row=el('div','domain-row');row.appendChild(el('span','domain-name',t.icon+' '+t.short));row.appendChild(el('span','metric-muted',String(d.attempts)));row.appendChild(el('span','metric-good',d.attempts?pct(d.correct,d.attempts)+'%':'—'));row.appendChild(el('span','metric-good',d.attempts?pct(d.independent,d.attempts)+'%':'—'));row.appendChild(el('span','domain-next',front?front.title:'Current trail complete'));wrap.appendChild(row);});}
+  function renderParentPlan(){var pr=Plan.progress(Prog.load()),day=Plan.dayForState(Prog.load()),box=$('#pPlan');clear(box);var big=el('div','plan-big'),ring=el('div','plan-ring');ring.style.setProperty('--pct',pr.pct);ring.appendChild(el('b',null,pr.pct+'%'));var copy=el('div','plan-copy');copy.appendChild(el('b',null,pr.completed+' / '+pr.total+' planned days'));copy.appendChild(el('small',null,'Currently Week '+pr.week+(day?' · next '+day.day_id:'')));big.appendChild(ring);big.appendChild(copy);box.appendChild(big);if(day){box.appendChild(el('p','muted',day.weekly_goal));}}
+  function renderParentCloud(){
+    var box=$('#pCloud');clear(box);if(!Cloud){box.appendChild(el('p','muted','Cloud transport is not available.'));return;}var cs=Cloud.state(),status=el('div','cloud-status'+(cs.status==='CONNECTED'?' is-good':''));status.appendChild(el('b',null,cs.status==='CONNECTED'?'Connected to family progress':'Not connected'));status.appendChild(el('span',null,cloudCopy(cs)));box.appendChild(status);
+    if(!cs.signedIn){var form=el('div','cloud-form'),email=field('Email','email','email'),pw=field('Password','password','password');form.appendChild(email.wrap);form.appendChild(pw.wrap);var br=el('div','button-row'),signin=el('button','btn-magic','Sign in'),signup=el('button','btn-soft','Create account');signin.onclick=function(){cloudAuth('signin',email.input.value,pw.input.value);};signup.onclick=function(){cloudAuth('signup',email.input.value,pw.input.value);};br.appendChild(signin);br.appendChild(signup);form.appendChild(br);box.appendChild(form);return;}
+    var info=el('p','muted','Signed in as '+(cs.email||'parent')+'. '+cs.pending+' queued change(s); '+cs.failed+' need attention.');box.appendChild(info);var row=el('div','button-row'),sync=el('button','btn-magic','Sync now'),out=el('button','btn-soft','Sign out');sync.onclick=async function(){sync.disabled=true;try{await Prog.syncCloud();toast('Family progress sync finished.');}catch(e){toast('Sync needs attention: '+e.message);}sync.disabled=false;renderParentCloud();};out.onclick=async function(){await Cloud.signOut();renderParentCloud();};row.appendChild(sync);row.appendChild(out);box.appendChild(row);
+    var profile=Prog.load().profile,report=el('div','cloud-form');report.appendChild(el('h3',null,'Sunday progress email'));var re=field('Send to','email','email');re.input.value=profile.weekly_report_email||cs.email||'';report.appendChild(re.wrap);var sw=switchControl('Send my weekly Sakhi summary','Uses only this learner’s parent dashboard evidence.',!!profile.weekly_report_enabled);report.appendChild(sw.wrap);var save=el('button','btn-soft','Save email preference');save.onclick=function(){Prog.updateProfile({weekly_report_email:re.input.value.trim()||null,weekly_report_enabled:sw.input.checked});toast('Weekly report preference saved.');};report.appendChild(save);box.appendChild(report);
+    if(cs.failed){var dead=el('div','cloud-status');dead.appendChild(el('b',null,cs.failed+' cloud write(s) need attention'));dead.appendChild(el('span',null,'Nothing was silently discarded. Retry after the V3 Supabase migration is applied.'));box.appendChild(dead);}
   }
+  function cloudCopy(cs){if(cs.status==='CONNECTED')return'Authenticated learner data request succeeded.';if(cs.status==='OFFLINE')return'Offline. Work remains queued on this device.';if(cs.status==='NOT_CONFIGURED')return'No Supabase client configuration is present.';return cs.signedIn?'Signed in, but learner-data connectivity has not been confirmed.':'Sign in to sync across devices and enable weekly reports.';}
+  async function cloudAuth(kind,email,password){if(!email||!password){toast('Enter the parent email and password.');return;}try{var res=kind==='signup'?await Cloud.signUp(email,password):await Cloud.signIn(email,password);if(res&&res.needsConfirmation){toast('Check your email to confirm the account.');return;}await Prog.syncCloud();toast('Family progress is connected.');renderParent();}catch(e){toast('Could not connect: '+e.message);}}
+  function field(label,type,autocomplete){var wrap=el('label','field');wrap.appendChild(el('span',null,label));var input=document.createElement('input');input.type=type;input.autocomplete=autocomplete;wrap.appendChild(input);return{wrap:wrap,input:input};}
+  function switchControl(title,note,checked){var wrap=el('label','switch-row'),copy=el('span','setting-copy'),input=document.createElement('input');input.type='checkbox';input.checked=checked;copy.appendChild(el('b',null,title));copy.appendChild(el('small',null,note));wrap.appendChild(copy);wrap.appendChild(input);return{wrap:wrap,input:input};}
+  function renderParentSettings(){var box=$('#pSettings');clear(box),p=Prog.load().profile;var voice=switchControl('Sakhi voice','ElevenLabs narration when available; browser voice is narration fallback only.',p.voice_enabled!==false);voice.input.onchange=function(){Prog.updateProfile({voice_enabled:voice.input.checked});Audio.setEnabled(voice.input.checked);};box.appendChild(voice.wrap);var move=switchControl('Movement mission','Include the short off-screen movement activity.',p.movement_breaks!==false);move.input.onchange=function(){Prog.updateProfile({movement_breaks:move.input.checked});};box.appendChild(move.wrap);var reduced=switchControl('Reduced motion','Keep the magic, reduce decorative movement.',!!p.reduced_motion);reduced.input.onchange=function(){Prog.updateProfile({reduced_motion:reduced.input.checked});applyAccessibility();};box.appendChild(reduced.wrap);var f=el('label','field');f.appendChild(el('span',null,'Target session length'));var sel=document.createElement('select');[25,30,35].forEach(function(n){var o=document.createElement('option');o.value=n;o.textContent=n+' minutes';o.selected=Number(p.typical_session_length||30)===n;sel.appendChild(o);});sel.onchange=function(){Prog.updateProfile({typical_session_length:Number(sel.value)});toast('Session target updated.');};f.appendChild(sel);box.appendChild(f);var exp=el('button','btn-soft','Export progress backup');exp.onclick=exportProgress;box.appendChild(exp);}
+  function renderParentAudio(){var box=$('#pAudio');clear(box),r=Audio.phonemeReport(),s=Audio.status();var rows=[['Narration',s.configured?'ElevenLabs gateway configured':'Gateway not configured'],['Local isolated sounds',r.localVerified+' of '+r.required],['Remote phoneme gateway',r.remoteGateway?'Available':'Not configured'],['Cached narration',s.cachedLines+' lines this visit']];rows.forEach(function(x){var c=el('div','audio-chip');c.appendChild(el('b',null,x[0]+': '));c.appendChild(document.createTextNode(x[1]));box.appendChild(c);});box.appendChild(el('p','muted',r.note));if(r.missing.length)box.appendChild(el('small','muted','Local recordings still needed/validated: '+r.missing.join(', ')));}
+  function renderParentHistory(){var hist=$('#pHistory');clear(hist);var recent=Prog.load().attempts.slice(-20).reverse();if(!recent.length){hist.appendChild(el('li',null,'No practice recorded yet.'));return;}recent.forEach(function(a){var li=el('li'),sk=Cur.skill(a.skill_id);li.appendChild(el('b',null,sk?sk.title:a.skill_id));li.appendChild(el('small',null,new Date(a.timestamp).toLocaleString()+' · '+(a.result==='CORRECT'?'correct':'retry needed')+' · '+(a.independent_success?'independent':a.hint_level_used?'support used':'not independent')));hist.appendChild(li);});}
+  function exportProgress(){var blob=new Blob([JSON.stringify(Prog.snapshot(),null,2)],{type:'application/json'}),u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download='sakhi-progress-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(u);}
 
-  /* ---------- offline + updates ---------- */
+  /* ------------------------- faults / lifecycle --------------------------- */
+  function showAudioFault(fault){var d=Audio.describe(fault);if(!d)return;if(faultsShown[fault.kind]&&fault.kind!=='MISSING_ASSET')return;faultsShown[fault.kind]=true;var box=$('#audioFault');clear(box);box.appendChild(el('b',null,d.title));box.appendChild(el('span',null,d.body));box.classList.add('is-visible');clearTimeout(box._timer);box._timer=setTimeout(function(){box.classList.remove('is-visible');},6500);}
+  function registerServiceWorker(){if(!('serviceWorker'in navigator))return;navigator.serviceWorker.register('./sw.js').then(function(reg){function offer(){var b=$('#updateBanner');b.classList.add('is-visible');$('#updateNow').onclick=function(){if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});location.reload();};$('#updateLater').onclick=function(){b.classList.remove('is-visible');};}if(reg.waiting)offer();reg.addEventListener('updatefound',function(){var w=reg.installing;if(!w)return;w.addEventListener('statechange',function(){if(w.state==='installed'&&navigator.serviceWorker.controller)offer();});});setInterval(function(){reg.update().catch(function(){});},30*60*1000);}).catch(function(e){console.warn('[Sakhi] service worker:',e.message);});}
 
-  /* Registration needs a secure context, so this is a no-op over plain http on a
-   * LAN address. That is correct rather than broken: the app still runs, it just
-   * has no offline cache until it is served from https or localhost. */
-  function registerServiceWorker() {
-    if (!('serviceWorker' in navigator)) return;
-    navigator.serviceWorker.register('./sw.js').then(function (reg) {
-      function offerUpdate() {
-        var banner = $('#updateBanner');
-        banner.classList.add('is-visible');
-        $('#updateNow').onclick = function () {
-          if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-          location.reload();
-        };
-        $('#updateLater').onclick = function () { banner.classList.remove('is-visible'); };
-      }
-      if (reg.waiting) offerUpdate();
-      reg.addEventListener('updatefound', function () {
-        var incoming = reg.installing;
-        if (!incoming) return;
-        incoming.addEventListener('statechange', function () {
-          /* Only an update, not the very first install. */
-          if (incoming.state === 'installed' && navigator.serviceWorker.controller) offerUpdate();
-        });
-      });
-      setInterval(function () { reg.update().catch(function () {}); }, 30 * 60 * 1000);
-    }).catch(function (e) { console.warn('[Sakhi] service worker not registered:', e.message); });
-  }
-
-  /* ---------- boot ---------- */
-
-  async function boot() {
-    await Cur.load();
-    Prog.load();
-
-    document.querySelectorAll('[data-nav]').forEach(function (b) {
-      b.onclick = function () { show(b.dataset.nav); };
-    });
-    $('#startAdventure').onclick = startAdventure;
-    $('#checkBtn').onclick = function () {
-      var res = controller.check();
-      if (res) grade(res.correct, res.response);
-    };
-    $('#resetBtn').onclick = function () { controller.reset(); $('#checkBtn').disabled = true; };
-    $('#hintBtn').onclick = useHint;
-    $('#hearAgain').onclick = function () { Audio.repeat().catch(showAudioFault); };
-    $('#activityQuit').onclick = function () { if (session) finishSession('Left early.'); else show('home'); };
-    $('#modalClose').onclick = function () { $('#modal').classList.remove('is-visible'); };
-    $('#modal').onclick = function (e) { if (e.target === $('#modal')) $('#modal').classList.remove('is-visible'); };
-
-    registerServiceWorker();
-    Audio.onFault(showAudioFault);
-    document.addEventListener('visibilitychange', function () { if (document.hidden) Audio.stopAll(); });
-    if (Cloud) { Cloud.probe(); Cloud.onChange(function () { if (view === 'parent') renderParent(); }); }
-
+  async function boot(){
+    try{await Cur.load();await Plan.load();Prog.load();applyAccessibility();}
+    catch(e){document.body.innerHTML='<main class="app"><section class="parent-block"><h1>Sakhi could not start</h1><p>'+String(e.message)+'</p></section></main>';return;}
+    document.querySelectorAll('[data-nav]').forEach(function(b){b.onclick=function(){show(b.dataset.nav);};});
+    $('#startAdventure').onclick=startAdventure;$('#activityQuit').onclick=quitActivity;$('#checkBtn').onclick=function(){var r=controller.check();if(r)grade(r.correct,r.response);};$('#resetBtn').onclick=function(){controller.reset();$('#checkBtn').disabled=true;};$('#hintBtn').onclick=useHint;$('#hearAgain').onclick=function(){Audio.repeat().catch(showAudioFault);};$('#modalClose').onclick=function(){$('#modal').classList.remove('is-visible');};$('#modal').onclick=function(e){if(e.target===$('#modal'))$('#modal').classList.remove('is-visible');};
+    Audio.onFault(showAudioFault);document.addEventListener('visibilitychange',function(){if(document.hidden)Audio.stopAll();});registerServiceWorker();
+    if(Cloud){Cloud.onChange(function(){if(view==='parent')renderParentCloud();});await Cloud.probe().catch(function(){});if(Cloud.state().signedIn)Prog.syncCloud().then(function(){render();}).catch(function(e){console.warn('[Sakhi] cloud restore deferred:',e.message);});}
     show('home');
   }
 
-  window.SakhiApp = { boot: boot, show: show, state: function () { return Prog.snapshot(); } };
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true });
-  else boot();
+  window.SakhiApp={boot:boot,show:show,state:function(){return Prog.snapshot();}};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();

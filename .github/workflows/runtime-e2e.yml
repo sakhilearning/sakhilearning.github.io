@@ -17,9 +17,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 24
-      - name: Validate single production runtime
-        run: |
-          node scripts/validate-production-app.cjs
-          node tests/activities.test.cjs
-          node tests/engine.test.cjs
+          node-version: 22
+      - name: Install dependencies
+        run: npm ci
+      - name: Validate Sakhi V3 runtime and curriculum
+        run: npm run qa

@@ -3,194 +3,186 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#9257de">
+<meta name="theme-color" content="#8d5be7">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Sakhi Magic Learning">
-<meta name="sakhi-build" content="2026.09.10-kingdom-activity-1">
-<meta name="description" content="Sakhi — a princess and unicorn learning adventure for a 5-year-old.">
-<title>Sakhi Magic Learning</title>
+<meta name="apple-mobile-web-app-title" content="Sakhi Learning Trails">
+<meta name="sakhi-build" content="2026.09.10-v3-trails">
+<meta name="description" content="Sakhi Learning Trails — a six-month magical Kindergarten learning adventure.">
+<title>Sakhi Learning Trails</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;700;900&display=swap">
-<link rel="manifest" href="./manifest.json?v=20260910-kingdom-activity-1">
-<link rel="apple-touch-icon" sizes="180x180" href="./icon-180.png?v=20260910-kingdom-activity-1">
-<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png?v=20260910-kingdom-activity-1">
-<link rel="stylesheet" href="./sakhi-production.css?v=20260910-kingdom-activity-1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap">
+<link rel="manifest" href="./manifest.json?v=20260910-v3">
+<link rel="apple-touch-icon" sizes="180x180" href="./icon-180.png?v=20260910-v3">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png?v=20260910-v3">
+<link rel="stylesheet" href="./sakhi-production.css?v=20260910-v3">
 </head>
 <body data-theme="unicorn_meadow">
-
+<a class="skip-link" href="#main">Skip to learning</a>
 <header class="topbar">
   <button class="brand" data-nav="home" aria-label="Go home">
-    <span class="brand-mark">🦄</span>
-    <span class="brand-copy"><b>Sakhi</b><small>LEARNING ADVENTURE</small></span>
+    <img src="./icon-192.png" width="48" height="48" alt="" class="brand-icon">
+    <span class="brand-copy"><b>Sakhi</b><small>LEARNING TRAILS</small></span>
   </button>
-  <nav class="nav" aria-label="Main">
+  <nav class="nav" aria-label="Main navigation">
     <button data-nav="home" class="is-active">🏠 Home</button>
-    <button data-nav="paths">🗺️ My Path</button>
-    <button data-nav="rewards">⭐ Rewards</button>
-    <button data-nav="themes">✨ Worlds</button>
+    <button data-nav="trails">🗺️ My Trails</button>
+    <button data-nav="rewards">✨ Treasures</button>
     <button data-nav="parent">🔒 Parents</button>
   </nav>
-  <div class="stats">
-    <span class="pill" id="statPrimary">⭐ 0</span>
-    <span class="pill" id="statBadge">💎 0</span>
+  <div class="stats" aria-label="Learning plan progress">
+    <span class="pill" id="statWeek">Week 1</span>
+    <span class="pill" id="statDays">0 / 130</span>
   </div>
 </header>
 
-<main class="app">
-
+<main class="app" id="main">
   <section class="view is-active" data-view="home">
-    <section class="hero">
+    <section class="journey-hero" id="homeHero">
+      <div class="hero-scene" id="homeScene"></div>
+      <div class="hero-shade"></div>
       <div class="hero-copy">
-        <span class="eyebrow" id="homeWorld">Unicorn Meadow</span>
-        <h1>Hi, Sakhi!</h1>
-        <p class="hero-welcome" id="homeWelcome"></p>
-        <p class="hero-tagline" id="homeTagline"></p>
+        <span class="eyebrow" id="homeEyebrow">TODAY'S MAGIC</span>
+        <h1 id="homeTitle">Hi, Sakhi!</h1>
+        <p class="hero-welcome" id="homeWelcome">Four magical learning trails are waiting.</p>
         <button id="startAdventure" class="btn-magic btn-huge">▶ Start Today’s Adventure</button>
-        <p class="hero-next"><span class="label">Sakhi picked</span><span id="homeNext"></span></p>
+        <div class="plan-meter" aria-label="Six month plan progress"><span id="homePlanMeter"></span></div>
+        <p class="hero-progress" id="homeProgress"></p>
       </div>
-      <div class="hero-art" id="homeCompanion"></div>
     </section>
+
+    <section class="home-section">
+      <div class="section-head compact"><div><span class="eyebrow">TODAY</span><h2>Your trail stops</h2></div><span class="time-chip">≈ 30 min</span></div>
+      <div class="today-stops" id="todayStops"></div>
+    </section>
+
+    <section class="home-section offscreen-preview" id="homeOffscreen"></section>
   </section>
 
   <section class="view view-activity" data-view="activity">
+    <div class="activity-scene" id="activityScene" aria-hidden="true"></div>
+    <div class="activity-scrim" aria-hidden="true"></div>
     <header class="activity-bar">
-      <button id="activityQuit" class="btn-ghost" aria-label="Finish for now">← Done</button>
+      <button id="activityQuit" class="btn-ghost" aria-label="Finish for now">← Finish</button>
       <div class="crumb">
         <small id="activityWorld"></small>
         <b id="activitySkill"></b>
-        <em id="activityBand"></em>
+        <em id="activityLandmark"></em>
       </div>
       <span class="pill" id="activityProgress"></span>
     </header>
-
+    <div class="quest-meter"><span id="questMeter"></span></div>
     <div class="activity-body">
+      <div class="story-ribbon"><span id="activityStory"></span></div>
       <section class="interaction" id="interaction" aria-live="polite"></section>
       <div class="hint-box" id="hintBox"></div>
       <div class="activity-tools">
-        <button id="hearAgain" class="btn-hear" aria-label="Hear it again">🔊<span>Hear it again</span></button>
+        <button id="hearAgain" class="btn-hear" aria-label="Hear it again">🔊 <span>Hear again</span></button>
         <button id="hintBtn" class="btn-soft">💡 Hint</button>
         <button id="resetBtn" class="btn-soft">↺ Start over</button>
         <button id="checkBtn" class="btn-magic">Check ✓</button>
       </div>
       <div class="companion">
         <div class="companion-face" id="activityGuide" aria-hidden="true"></div>
-        <div class="companion-say">
-          <b id="companionName"></b>
-          <span id="companionLine"></span>
-        </div>
+        <div class="companion-say"><b id="companionName"></b><span id="companionLine"></span></div>
       </div>
     </div>
   </section>
 
+  <section class="view" data-view="trails">
+    <div class="section-head"><div><span class="eyebrow">YOUR KINGDOM</span><h1>My Learning Trails</h1><p class="muted">Every subject has its own world. The world stays familiar while the learning grows.</p></div></div>
+    <div class="trail-grid" id="trailGrid"></div>
+  </section>
+
   <section class="view" data-view="rewards">
-    <div class="panel center">
+    <section class="reward-hero">
       <div class="reward-art" id="rewardArt"></div>
-      <h1 id="rewardWorld"></h1>
-      <div class="reward-grid" id="rewardGrid"></div>
-      <p class="muted" id="rewardStory"></p>
-      <button class="btn-magic" data-nav="home">🏠 Back home</button>
-    </div>
+      <div><span class="eyebrow">TREASURE ROOM</span><h1>Your magic is growing</h1><p class="muted" id="rewardStory"></p></div>
+    </section>
+    <div class="reward-grid" id="rewardGrid"></div>
+    <section class="home-section"><div class="section-head compact"><h2>Recent victories</h2></div><div id="recentVictories" class="victory-list"></div></section>
   </section>
 
-  <section class="view" data-view="paths">
-    <div class="section-head">
-      <h1>My Learning Path</h1>
-      <p class="muted">✓ done &nbsp; ◐ working on it &nbsp; ○ ready to start &nbsp; 🔒 comes later</p>
-    </div>
-    <div id="pathWrap"></div>
-  </section>
+  <section class="view parent-view" data-view="parent">
+    <div class="section-head"><div><span class="eyebrow">GROWN-UP SPACE</span><h1>Parent Dashboard</h1><p class="muted">Evidence, not a single score: accuracy, independence, retention, practice and next steps.</p></div></div>
+    <div class="parent-kpis" id="parentKpis"></div>
 
-  <section class="view" data-view="themes">
-    <div class="section-head">
-      <h1>Choose your world</h1>
-      <p class="muted">Worlds change the characters, colours and reward names. They never change what Sakhi teaches you next.</p>
-    </div>
-    <div class="theme-grid" id="themeGrid"></div>
-  </section>
+    <section class="parent-block" aria-labelledby="weekHeading">
+      <div class="section-head compact"><div><h2 id="weekHeading">This week</h2><p class="muted" id="pWeekSummary"></p></div></div>
+      <div class="domain-table" id="pDomains"></div>
+    </section>
 
-  <section class="view" data-view="parent">
-    <div class="section-head"><h1>Parent view</h1></div>
-
-    <div class="parent-top">
-      <div class="insight"><span class="label">Today’s goal</span><b id="pGoal"></b></div>
-      <div class="insight"><span class="label">Why Sakhi chose it</span><b id="pWhy"></b></div>
-      <div class="insight" id="pHealth"></div>
-      <div class="insight" id="pCloud"></div>
+    <div class="parent-columns">
+      <section class="parent-block"><h2>Six-month plan</h2><div id="pPlan"></div></section>
+      <section class="parent-block"><h2>Cloud & weekly email</h2><div id="pCloud"></div></section>
     </div>
 
-    <details class="parent-block" open>
-      <summary>What’s next this week</summary>
-      <div id="pWeek"></div>
-    </details>
+    <div class="parent-columns">
+      <section class="parent-block"><h2>Learning settings</h2><div class="settings" id="pSettings"></div></section>
+      <section class="parent-block"><h2>Audio quality</h2><div id="pAudio"></div></section>
+    </div>
 
-    <details class="parent-block">
-      <summary>Recent attempts</summary>
-      <ul class="history" id="pHistory"></ul>
-    </details>
-
-    <details class="parent-block">
-      <summary>Audio check</summary>
-      <div id="pAudio"></div>
-    </details>
-
-    <details class="parent-block">
-      <summary>Settings</summary>
-      <div class="settings" id="pSettings"></div>
-    </details>
+    <section class="parent-block"><h2>Recent evidence</h2><ul class="history" id="pHistory"></ul></section>
   </section>
-
 </main>
 
-<nav class="bottom-nav" aria-label="Mobile">
+<nav class="bottom-nav" aria-label="Mobile navigation">
   <button data-nav="home" class="is-active"><span>🏠</span>Home</button>
-  <button data-nav="paths"><span>🗺️</span>Path</button>
-  <button data-nav="rewards"><span>⭐</span>Rewards</button>
-  <button data-nav="themes"><span>✨</span>Worlds</button>
+  <button data-nav="trails"><span>🗺️</span>Trails</button>
+  <button data-nav="rewards"><span>✨</span>Treasures</button>
   <button data-nav="parent"><span>🔒</span>Parents</button>
 </nav>
 
-<div class="overlay" id="doneOverlay">
-  <div class="overlay-card">
-    <div class="overlay-big">🌈</div>
+<div class="overlay" id="doneOverlay" role="dialog" aria-modal="true" aria-labelledby="doneTitle">
+  <div class="overlay-card celebration-card">
+    <div class="overlay-big" id="doneIcon">✨</div>
+    <span class="eyebrow" id="doneTrail"></span>
     <h2 id="doneTitle"></h2>
     <p id="doneBody"></p>
     <div class="reward-chips" id="doneRewards"></div>
     <p class="muted" id="doneNext"></p>
-    <button class="btn-magic btn-huge" id="doneContinue"></button>
+    <button class="btn-magic btn-huge" id="doneContinue">Keep going →</button>
   </div>
 </div>
 
-<div class="overlay" id="modal">
-  <div class="overlay-card modal-card">
-    <div id="modalBody"></div>
-    <button class="btn-soft" id="modalClose">Close</button>
+<div class="overlay" id="offscreenOverlay" role="dialog" aria-modal="true" aria-labelledby="offscreenTitle">
+  <div class="overlay-card offscreen-card">
+    <div class="overlay-big">🌟</div>
+    <span class="eyebrow">LAST QUEST — AWAY FROM THE SCREEN</span>
+    <h2 id="offscreenTitle">Real-world magic time</h2>
+    <p class="muted">About 6 minutes. A grown-up can join in.</p>
+    <div id="offscreenMissions" class="mission-list"></div>
+    <button class="btn-magic btn-huge" id="offscreenDone">We did it! ✨</button>
+    <button class="btn-link" id="offscreenLater">Finish for now</button>
   </div>
+</div>
+
+<div class="overlay" id="modal" role="dialog" aria-modal="true">
+  <div class="overlay-card modal-card"><div id="modalBody"></div><button class="btn-soft" id="modalClose">Close</button></div>
 </div>
 
 <div class="update-banner" id="updateBanner" role="status">
-  <div><b>✨ A new Sakhi is ready</b><span>Refresh to get the latest version.</span></div>
-  <div class="update-actions">
-    <button class="btn-soft" id="updateLater">Later</button>
-    <button class="btn-magic" id="updateNow">Refresh</button>
-  </div>
+  <div><b>✨ A new Sakhi is ready</b><span>Refresh to get the newest learning trails.</span></div>
+  <div class="update-actions"><button class="btn-soft" id="updateLater">Later</button><button class="btn-magic" id="updateNow">Refresh</button></div>
 </div>
-
 <div class="audio-fault" id="audioFault" role="status"></div>
 <div class="toast" id="toast" role="status"></div>
 
-<script src="./supabase-config.js?v=20260910-kingdom-activity-1"></script>
-<script src="./sakhi-cloud.js?v=20260910-kingdom-activity-1"></script>
-<script src="./sakhi-curriculum.js?v=20260910-kingdom-activity-1"></script>
-<script src="./sakhi-themes.js?v=20260910-kingdom-activity-1"></script>
-<script src="./sakhi-content.js?v=20260910-kingdom-activity-1"></script>
-<script src="./sakhi-activities.js?v=20260910-kingdom-activity-1"></script>
-<script src="./sakhi-progress.js?v=20260910-kingdom-activity-1"></script>
-<script src="./sakhi-adaptive.js?v=20260910-kingdom-activity-1"></script>
-<script src="./sakhi-audio.js?v=20260910-kingdom-activity-1"></script>
-<script src="./sakhi-art.js?v=20260910-kingdom-activity-1"></script>
-<script src="./sakhi-templates.js?v=20260910-kingdom-activity-1"></script>
-<script src="./sakhi-app.js?v=20260910-kingdom-activity-1"></script>
+<script src="./supabase-config.js?v=20260910-v3"></script>
+<script src="./sakhi-cloud.js?v=20260910-v3"></script>
+<script src="./sakhi-curriculum.js?v=20260910-v3"></script>
+<script src="./sakhi-themes.js?v=20260910-v3"></script>
+<script src="./sakhi-content.js?v=20260910-v3"></script>
+<script src="./sakhi-activities.js?v=20260910-v3"></script>
+<script src="./sakhi-plan.js?v=20260910-v3"></script>
+<script src="./sakhi-trails.js?v=20260910-v3"></script>
+<script src="./sakhi-presentation.js?v=20260910-v3"></script>
+<script src="./sakhi-progress.js?v=20260910-v3"></script>
+<script src="./sakhi-adaptive.js?v=20260910-v3"></script>
+<script src="./sakhi-audio.js?v=20260910-v3"></script>
+<script src="./sakhi-art.js?v=20260910-v3"></script>
+<script src="./sakhi-templates.js?v=20260910-v3"></script>
+<script src="./sakhi-app.js?v=20260910-v3"></script>
 </body>
 </html>

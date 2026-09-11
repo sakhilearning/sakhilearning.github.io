@@ -1,7 +1,16 @@
-# Sakhi Supabase
+# Sakhi V3 Supabase
 
-Supabase is the durable source of truth for authenticated learner state: profiles, settings, sessions, attempts, mastery, review schedule, rewards, and curriculum state.
+Supabase is durable authority after parent authentication. Browser storage is a
+cache/offline bridge and outbox.
 
-Activity completion must use one authoritative atomic/idempotent database operation. RLS must be tested using authenticated parent identities and must prevent one parent from reading or modifying another learner's rows.
+- `SakhiCloud` owns auth, transport, connection truth, idempotent outbox replay,
+  and the dead-letter queue.
+- `SakhiProgress` owns learner-state merge/reconciliation.
+- `CONNECTED` is reported only after an authenticated learner-table request.
+- Non-transient rejected writes are retained for attention rather than silently discarded.
+- RLS must scope learner rows to the authenticated parent user.
 
-Browser storage is only a cache/offline bridge after family authentication.
+Apply the existing 20260909 migration(s) as needed, then
+`migrations/20260910_v3_foundation.sql` for V3 plan/settings/curriculum bundle
+support. Weekly reporting is implemented by `supabase/functions/weekly-report`;
+service-role, ElevenLabs, and Resend secrets remain server-side only.

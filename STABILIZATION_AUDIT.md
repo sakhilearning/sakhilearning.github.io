@@ -1,3 +1,5 @@
+> **Historical V2 record.** This file describes the 2026-09-09 stabilization baseline. Current V3 architecture is defined by `ARCHITECTURE.md`.
+
 # Phase 1 — Safe Checkpoint & Audit
 
 Recorded 2026-09-09 on branch `stabilization/princess-theme-core`.

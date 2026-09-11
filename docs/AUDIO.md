@@ -1,8 +1,14 @@
-# Sakhi Audio
+# Sakhi V3 audio
 
-Sakhi has two separate audio responsibilities:
+`SakhiAudio` owns all browser audio behavior.
 
-1. `SpeechService` owns narration, provider selection, caching, playback state, readiness, overlap prevention, replay, and user-facing playback diagnostics.
-2. `PhonemeAudioService` owns instructional phoneme assets and will only play validated phoneme recordings.
+- Narration: Supabase `sakhi-tts` -> ElevenLabs, cached per line in the visit.
+- Fallback narration: browser speech synthesis only when provider narration is unavailable.
+- Isolated phonemes: validated local OGG recording first; otherwise the dedicated
+  server phoneme route. Generic browser TTS is never allowed for a pure phoneme.
+- First Start tap primes playback for iOS autoplay policy.
+- Route changes stop current audio so lines cannot overlap.
+- Parent Dashboard shows narration configuration and local phoneme coverage.
 
-General TTS must not be treated as authoritative phonics audio. First child interaction must initialize audio before the first activity narration is needed. Parent Mode must provide a sound test and distinguish provider failure, browser playback restriction, and likely device mute/inaudibility without promising that browser code can override OS silent mode.
+The two bundled local recordings are `/t/` and `/p/`. Remaining pure sounds must
+be validated before they are considered locally verified.

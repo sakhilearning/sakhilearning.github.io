@@ -29,7 +29,9 @@ window.SakhiAudio = (function () {
     l: 'phoneme_l', r: 'phoneme_r', h: 'phoneme_h',
     a: 'phoneme_a', e: 'phoneme_e', i: 'phoneme_i', o: 'phoneme_o', u: 'phoneme_u',
     sh: 'phoneme_sh', ch: 'phoneme_ch', th: 'phoneme_th', wh: 'phoneme_wh',
-    ck: 'phoneme_ck', ng: 'phoneme_ng'
+    ck: 'phoneme_ck', ng: 'phoneme_ng',
+    j: 'phoneme_j', v: 'phoneme_v', w: 'phoneme_w', y: 'phoneme_y', z: 'phoneme_z',
+    kw: 'phoneme_kw', ks: 'phoneme_ks'
   };
   var PHONEME_DIR = './assets/audio/phonemes/';
   var PHONEME_EXT = '.ogg';
@@ -237,6 +239,8 @@ window.SakhiAudio = (function () {
   /* "Hear again" replays the cached blob — no refetch, no re-synthesis. */
   function repeat() {
     if (!lastRequest) return Promise.resolve(false);
+    if (lastRequest.question) return speakQuestion(lastRequest.question);
+    if (lastRequest.structured) return speakStructured(lastRequest.structured, lastRequest.opts || {});
     if (lastRequest.phoneme) return playPhoneme(lastRequest.phoneme);
     var k = key(lastRequest.text, lastRequest.kind, lastRequest.profile);
     if (blobCache[k]) return playBlob(blobCache[k]).catch(function () { return fallbackSpeak(lastRequest.text); });
@@ -247,29 +251,29 @@ window.SakhiAudio = (function () {
 
   function phonemeUrl(sym) { var b = PHONEMES[sym]; return b ? PHONEME_DIR + b + PHONEME_EXT : null; }
   function hasPhoneme(sym) { return PHONEMES_PRESENT.indexOf(sym) !== -1; }
+  function hasRemotePhonemeGateway() { return !!(cfg().ttsEndpoint && cfg().supabaseAnonKey); }
 
   function phonemeReport() {
     var all = Object.keys(PHONEMES);
     var missing = all.filter(function (s) { return !hasPhoneme(s); });
     return {
-      required: all.length, present: all.length - missing.length, missing: missing,
+      required: all.length,
+      localVerified: all.length - missing.length,
+      present: all.length - missing.length,
+      missing: missing,
+      remoteGateway: hasRemotePhonemeGateway(),
       complete: missing.length === 0,
       note: missing.length
-        ? missing.length + ' of ' + all.length + ' phoneme recordings are missing. Isolated sounds are disabled for these; ' +
-          'the Sakhi voice is deliberately NOT substituted, because a TTS engine adds a schwa ("tuh" for /t/).'
-        : 'All required phonemes are present.'
+        ? (all.length - missing.length) + ' of ' + all.length + ' sounds have local recordings. ' +
+          (hasRemotePhonemeGateway()
+            ? 'Missing local sounds use the dedicated ElevenLabs phoneme gateway, never browser TTS. A parent should still validate each isolated sound once before relying on it for instruction.'
+            : 'The remaining sounds need validated recordings; browser TTS is never used for an isolated phoneme.')
+        : 'All required phonemes have local validated recordings.'
     };
   }
 
-  function playPhoneme(sym) {
-    if (!enabled) return Promise.reject(raise(FAULT.DISABLED, 'Audio is switched off in Parent settings.'));
-    if (!PHONEMES[sym]) return Promise.reject(raise(FAULT.MISSING_ASSET, 'Unknown sound "' + sym + '".'));
-    if (!hasPhoneme(sym)) {
-      return Promise.reject(raise(FAULT.MISSING_ASSET,
-        'The pure /' + sym + '/ recording has not been added yet. Sakhi will not use a computer voice for a single sound, ' +
-        'because it would say "' + sym + 'uh" and teach the wrong thing.'));
-    }
-    lastRequest = { phoneme: sym };
+  function playLocalPhoneme(sym) {
+    lastRequest = { phoneme: sym, source: 'local' };
     var url = phonemeUrl(sym);
     if (phonemeCache[url]) return playBlob(phonemeCache[url]);
     return fetch(url).then(function (r) {
@@ -278,13 +282,73 @@ window.SakhiAudio = (function () {
     }).then(function (b) { phonemeCache[url] = b; return playBlob(b); });
   }
 
+  function playRemotePhoneme(sym) {
+    if (!hasRemotePhonemeGateway()) return Promise.reject(raise(FAULT.MISSING_ASSET, 'No validated source is configured for /' + sym + '/.'));
+    lastRequest = { phoneme: sym, source: 'remote' };
+    return fetchVoice(sym, 'phoneme', 'sakhi').then(function (blob) {
+      voice = 'elevenlabs';
+      return playBlob(blob);
+    });
+  }
+
+  /* Local validated recordings are preferred. The dedicated server phoneme
+   * route is the only fallback; generic speech synthesis is never allowed for
+   * an isolated sound. */
+  function playPhoneme(sym) {
+    sym = String(sym || '').replace(/^\//, '').replace(/\/$/, '').toLowerCase();
+    if (!enabled) return Promise.reject(raise(FAULT.DISABLED, 'Audio is switched off in Parent settings.'));
+    if (!PHONEMES[sym]) return Promise.reject(raise(FAULT.MISSING_ASSET, 'Unknown sound "' + sym + '".'));
+    return hasPhoneme(sym) ? playLocalPhoneme(sym) : playRemotePhoneme(sym);
+  }
+
+  function pause(ms) { return new Promise(function (resolve) { setTimeout(resolve, ms); }); }
+  function playPhonemes(symbols) {
+    return (symbols || []).reduce(function (p, sym) {
+      return p.then(function () { return playPhoneme(sym); }).then(function () { return pause(90); });
+    }, Promise.resolve());
+  }
+
+  /* Narration may contain /m/ style tokens. Parse them before normalisation so
+   * a pure sound is played by the phoneme source rather than being spoken as a
+   * letter name. */
+  function speakStructured(text, opts) {
+    opts = opts || {};
+    var raw = String(text == null ? '' : text), re = /\/([a-z]{1,2})\//ig, parts = [], last = 0, m;
+    while ((m = re.exec(raw))) {
+      if (m.index > last) parts.push({ type: 'text', value: raw.slice(last, m.index) });
+      parts.push({ type: 'phoneme', value: m[1].toLowerCase() });
+      last = re.lastIndex;
+    }
+    if (last < raw.length) parts.push({ type: 'text', value: raw.slice(last) });
+    if (!parts.some(function (x) { return x.type === 'phoneme'; })) return speak(raw, opts);
+    lastRequest = { structured: raw, opts: opts };
+    return parts.reduce(function (p, part) {
+      return p.then(function () {
+        if (part.type === 'phoneme') return playPhoneme(part.value);
+        var clean = String(part.value).replace(/^[\s,.;:!?-]+|[\s,.;:!?-]+$/g, '').trim();
+        return clean ? speak(clean, opts) : true;
+      }).then(function () { return pause(70); });
+    }, Promise.resolve()).then(function (r) { lastRequest = { structured: raw, opts: opts }; return r; });
+  }
+
+  function speakQuestion(question) {
+    if (!question) return Promise.resolve(false);
+    var text = question.narration || question.prompt || '';
+    if (question.audio && Array.isArray(question.audio.phonemes) && question.audio.phonemes.length) {
+      return speak(text, { kind: 'instruction', profile: 'sakhi' }).then(function () {
+        return pause(120);
+      }).then(function () { return playPhonemes(question.audio.phonemes); }).then(function (r) { lastRequest = { question: question }; return r; });
+    }
+    return speakStructured(text, { kind: 'instruction', profile: 'sakhi' }).then(function (r) { lastRequest = { question: question }; return r; });
+  }
+
   /* ---- preload / prefetch -------------------------------------------------- */
 
   /* Warm every narration line in an activity. A cold provider call is about a
    * second; warmed, playback starts immediately. */
   function preloadActivity(activity) {
     if (!activity || !enabled) return Promise.resolve({ warmed: 0 });
-    var lines = activity.questions.map(function (q) { return normalise(q.narration); }).filter(Boolean);
+    var lines = activity.questions.map(function (q) { return normalise(String(q.narration || '').replace(/\/([a-z]{1,2})\//ig, '')); }).filter(Boolean);
     if (!lines.length) return Promise.resolve({ warmed: 0, of: 0 });
 
     /* One at a time. Firing all three at once reliably drew a 502 for one of
@@ -340,7 +404,7 @@ window.SakhiAudio = (function () {
     FAULT: FAULT, PHONEMES: PHONEMES,
     supported: supported, unlock: unlock, isUnlocked: isUnlocked,
     setEnabled: setEnabled, isEnabled: isEnabled,
-    speak: speak, repeat: repeat, stopAll: stopAll, normalise: normalise,
+    speak: speak, speakStructured: speakStructured, speakQuestion: speakQuestion, playPhonemes: playPhonemes, repeat: repeat, stopAll: stopAll, normalise: normalise,
     playPhoneme: playPhoneme, hasPhoneme: hasPhoneme, phonemeReport: phonemeReport,
     preloadActivity: preloadActivity, prefetchActivity: prefetchActivity,
     onFault: onFault, describe: describe, status: status, voiceInUse: voiceInUse,

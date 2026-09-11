@@ -1,17 +1,19 @@
-# Sakhi QA
+# Sakhi V3 QA
 
-Regression testing is mandatory for changes that affect UI, audio, activity logic, persistence, rewards, mastery, or parent reporting.
+The release gate is:
 
-Current acceptance targets include:
+```bash
+npm ci
+npm run qa
+```
 
-- first-play audio initialization from the child Start gesture;
-- no overlapping narration;
-- validated local phoneme playback;
-- visible and correct activity renderer;
-- atomic, idempotent activity completion;
-- Supabase persistence and RLS isolation;
-- reward persistence and refresh safety;
-- mastery evidence aligned with activity type;
-- Parent Overview and Learning Path clarity;
-- curriculum prerequisite/next-link audit;
-- service-worker update behavior.
+It includes syntax validation, graph/content/activity validation, 8,500 generated
+activity cases, adaptive/mastery/reward regressions, six-month plan checks,
+fixed-trail separation, 25/30/35-minute cadence checks, cloud integrity guards,
+CSS ownership checks, asset checks, and PWA wiring checks.
+
+Before merging a release branch to `main`, also complete a real-device smoke pass
+on the primary iPad/phone: Start -> full daily session -> off-screen completion ->
+Treasures -> Parent Dashboard -> refresh -> offline/reconnect. Confirm no console
+errors, no overlapping narration, no broken images, and legible touch targets in
+portrait and landscape.

@@ -195,8 +195,8 @@ window.SakhiTemplates = (function () {
     }
     if (m.tens != null) {
       var pv = el('div', 'q-objects');
-      for (var t = 0; t < m.tens; t++) pv.appendChild(el('span', 'q-object is-ten', '🔟'));
-      for (var o2 = 0; o2 < m.ones; o2++) pv.appendChild(el('span', 'q-object', '🔹'));
+      for (var t = 0; t < m.tens; t++) pv.appendChild(el('span', 'q-object is-ten', m.tenSymbol || '🔟'));
+      for (var o2 = 0; o2 < m.ones; o2++) pv.appendChild(el('span', 'q-object', m.oneSymbol || '🔹'));
       wrap.appendChild(pv);
     }
     return wrap.childNodes.length ? wrap : null;

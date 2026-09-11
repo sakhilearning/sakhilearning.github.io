@@ -1,14 +1,14 @@
-# Sakhi source-of-truth documents
+# Sakhi V3 documentation
 
-Current governing documents:
+Current authoritative documents:
 
-- `SAKHI_SOURCE_OF_TRUTH.md`
-- `ARCHITECTURE.md`
-- `CURRICULUM.md`
-- `ACTIVITY_SCHEMA.md`
-- `AUDIO.md`
-- `ASSETS.md`
-- `SUPABASE.md`
-- `QA.md`
+- `../ARCHITECTURE.md` — runtime ownership and invariants
+- `CURRICULUM.md` — V3 curriculum/scope model
+- `AUDIO.md` — ElevenLabs and phoneme separation
+- `SUPABASE.md` — cloud authority, RLS and V3 migration
+- `QA.md` — automated and real-device release checks
+- `STATUS.md` — current release-candidate status
+- `SAKHI_SOURCE_OF_TRUTH.md` — compact non-negotiable rules
 
-Historical notes belong under `docs/archive/`.
+Files under `docs/archive/` and the top-level `STABILIZATION_AUDIT.md` are
+historical reference material and do not define current runtime behavior.
