@@ -10,7 +10,10 @@ if(!/window\.SAKHI_SIX_MONTH_PLAN=/.test(html))throw new Error('Embedded six-mon
 if(!/window\.SakhiApp=/.test(html))throw new Error('App runtime not embedded');
 if(!/\.today-card\{/.test(html))throw new Error('Compiled CSS not embedded');
 if(/@layer\s/.test(html))throw new Error('Deployment CSS still contains @layer and may fail on older browsers');
-if(!/3\.0\.0-rc2/.test(html))throw new Error('RC2 build marker missing');
+if(!/3\.0\.0-rc3/.test(html))throw new Error('RC3 build marker missing');
+if(html.includes('/*__SAKHI_'))throw new Error('Unresolved build placeholder in deployment HTML');
+if(!/class=\"world-art\"/.test(html)||!/mission-story/.test(html))throw new Error('Immersive world presentation missing from deployment');
+if(!/primeBrowserVoice/.test(html)||!/premiumCache/.test(html))throw new Error('Audio hardening missing from deployment');
 for(const f of ['manifest.json','sw.js','icon-180.png','icon-192.png','icon-512.png'])if(!fs.existsSync(path.join(dist,f)))throw new Error('Missing deploy file '+f);
 const days=JSON.parse(fs.readFileSync(path.join(dist,'data/six-month-plan.json'),'utf8')).weeks.reduce((n,w)=>n+w.days.length,0);
 if(days!==130)throw new Error('Deployed six-month plan is incomplete');
@@ -19,3 +22,4 @@ console.log(' - self-contained CSS + runtime JS');
 console.log(' - embedded curriculum + six-month plan fallbacks');
 console.log(' - no CSS @layer dependency in shipped HTML');
 console.log(' - 130 learning days present');
+console.log(' - RC3 audio fallback + immersive subject-world presentation embedded');

@@ -1,7 +1,7 @@
 {
-  "name": "sakhi-learning-trails-v3-rc2",
+  "name": "sakhi-learning-trails-v3-rc3",
   "private": true,
-  "version": "3.0.0-rc2",
+  "version": "3.0.0-rc3",
   "scripts": {
     "syntax": "node scripts/check-syntax.cjs",
     "validate": "node scripts/validate-production-app.cjs",
@@ -9,9 +9,10 @@
     "test:plan": "node tests/plan.test.cjs",
     "build": "node scripts/build.cjs",
     "validate:dist": "node scripts/validate-dist.cjs",
-    "qa": "npm run syntax && npm run validate && npm run test:activities && npm run test:plan && npm run test:runtime-core",
+    "qa": "npm run syntax && npm run validate && npm run test:activities && npm run test:plan && npm run test:runtime-core && npm run test:audio",
     "release": "npm run qa && npm run build && npm run validate:dist",
     "preview": "node scripts/serve-local.cjs",
-    "test:runtime-core": "node tests/runtime-core.test.cjs"
+    "test:runtime-core": "node tests/runtime-core.test.cjs",
+    "test:audio": "node tests/audio.test.cjs"
   }
 }

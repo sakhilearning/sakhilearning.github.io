@@ -3,13 +3,14 @@ window.SakhiTemplates=(function(){
 function clear(n){while(n&&n.firstChild)n.removeChild(n.firstChild);}
 function btn(text,cls){var b=document.createElement('button');b.type='button';b.className=cls||'answer';b.textContent=text;return b;}
 function notify(ctx){if(ctx&&typeof ctx.onProgress==='function')ctx.onProgress();}
+function wireCountables(root){var tapped=0;root.querySelectorAll('[data-count-object]').forEach(function(b){b.onclick=function(){if(b.dataset.counted==='1')return;b.dataset.counted='1';b.setAttribute('aria-pressed','true');tapped++;b.classList.add('counted');var m=b.querySelector('.count-mark');if(m)m.textContent=String(tapped);};});}
 function media(root,q,domain){
   if(!q.media)return;
   if(q.media.passage){var p=document.createElement('div');p.className='passage';p.textContent=q.media.passage;root.appendChild(p);}
-  if(q.media.count){var d=document.createElement('div');d.className='object-field';d.innerHTML=SakhiPresentation.objectSet(domain,q.media.count);root.appendChild(d);}
+  if(q.media.count){var d=document.createElement('div');d.className='object-field';d.innerHTML=SakhiPresentation.objectSet(domain,q.media.count);root.appendChild(d);wireCountables(d);var tip=document.createElement('small');tip.className='count-tip';tip.textContent='Tap each treasure as you count.';root.appendChild(tip);}
   if(q.media.shape){var wrap=document.createElement('div');wrap.className='shape-wrap';var im=document.createElement('img');im.className='shape-hero';im.src=q.media.shape.src;im.alt=q.media.shape.name;im.onerror=function(){im.hidden=true;wrap.dataset.fallback=q.media.shape.name;};wrap.appendChild(im);root.appendChild(wrap);}
-  if(q.media.groups){var groups=document.createElement('div');groups.className='group-field';q.media.groups.forEach(function(n){var g=document.createElement('div');g.innerHTML=SakhiPresentation.objectSet(domain,n);groups.appendChild(g);});root.appendChild(groups);}
-  if(q.media.subtract){var sub=document.createElement('div');sub.className='object-field';sub.innerHTML=SakhiPresentation.objectSet(domain,q.media.subtract[0]);root.appendChild(sub);}
+  if(q.media.groups){var groups=document.createElement('div');groups.className='group-field';q.media.groups.forEach(function(n){var g=document.createElement('div');g.innerHTML=SakhiPresentation.objectSet(domain,n);groups.appendChild(g);wireCountables(g);});root.appendChild(groups);}
+  if(q.media.subtract){var sub=document.createElement('div');sub.className='object-field';sub.innerHTML=SakhiPresentation.objectSet(domain,q.media.subtract[0]);root.appendChild(sub);wireCountables(sub);}
 }
 function render(root,q,ctx){
   clear(root);media(root,q,ctx.domain);var state={response:null};

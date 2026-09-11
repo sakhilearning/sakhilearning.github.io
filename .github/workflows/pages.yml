@@ -1,4 +1,4 @@
-name: Deploy Sakhi V3 RC2
+name: Deploy Sakhi V3 RC3
 on:
   push:
     branches: [ main, upgrade/sakhi-v3 ]

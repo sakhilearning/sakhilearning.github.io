@@ -2,7 +2,7 @@ const fs=require('fs');
 const path=require('path');
 const root=path.join(__dirname,'..');
 const dist=path.join(root,'dist');
-const buildId='3.0.0-rc2';
+const buildId='3.0.0-rc3';
 const moduleOrder=[
   'supabase-config.js',
   'sakhi-cloud.js',
@@ -51,7 +51,7 @@ const runtimeJs=moduleOrder.map(f=>`\n/* ===== ${f} ===== */\n${read(f)}\n`).joi
 const flatCss=flattenLayers(read('sakhi-production.css'));
 let html=read('index.template.html')
   .replace('/*__SAKHI_CSS__*/',flatCss)
-  .replace('/*__SAKHI_ICON_DATA__*/',dataUri('icon-192.png','image/png'))
+  .replaceAll('/*__SAKHI_ICON_DATA__*/',dataUri('icon-192.png','image/png'))
   .replace('/*__SAKHI_RUNTIME_DATA__*/',runtimeData)
   .replace('/*__SAKHI_RUNTIME_JS__*/',runtimeJs);
 fs.writeFileSync(path.join(root,'index.html'),html);
