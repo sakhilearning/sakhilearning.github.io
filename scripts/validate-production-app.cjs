@@ -28,10 +28,10 @@ if(!/data-count-object/.test(presentation)||!/wireCountables/.test(templates))th
 if(!/primeBrowserVoice/.test(audio)||!/waitForVoices/.test(audio)||!/premiumCache/.test(audio)||!/narrate:/.test(audio))throw new Error('RC3 audio hardening missing');
 if(!/Test Sakhi voice/.test(read('sakhi-app.js')))throw new Error('Parent audio test control missing');
 const progress=read('sakhi-progress.js');if(!/completeActivity/.test(progress))throw new Error('Missing completion path');
-const css=read('sakhi-production.css');if(/!important/.test(css))throw new Error('CSS contains !important');if(!/@layer reset,tokens,base,layout,components,states,utilities/.test(css))throw new Error('Missing CSS source layers');
+const css=read('sakhi-production.css');if(/!important/.test(css))throw new Error('CSS contains !important');if(!/@layer reset,tokens,base,layout,components,experience,states,utilities/.test(css))throw new Error('Missing CSS source layers');
 const html=read('index.template.html');const idMatches=[...html.matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]);if(new Set(idMatches).size!==idMatches.length)throw new Error('Duplicate HTML id');
 const hotlinks=[...fs.readdirSync(root).filter(f=>/\.(js|css|html)$/.test(f)).flatMap(f=>[...read(f).matchAll(/https?:\/\/[^'"\s)]+\.(?:png|jpe?g|webp|svg)/gi)].map(m=>m[0]))];if(hotlinks.length)throw new Error('Remote image hotlink found');
-console.log('Sakhi V3 RC4 source validation passed:');
+console.log('Sakhi V3 RC5 source validation passed:');
 console.log(` - ${c.skills.length} skills across 8 persistent subject trails`);
 console.log(' - prerequisite graph sound');
 console.log(' - 26 weeks / 130 days / 30 minutes validated');
