@@ -1,18 +1,18 @@
 {
-  "name":"sakhi-learning-trails-v3-rc1",
-  "private":true,
-  "version":"3.0.0-rc1",
-  "scripts":{
-    "syntax":"node scripts/check-syntax.cjs",
-    "validate":"node scripts/validate-production-app.cjs",
-    "test:activities":"node tests/activities.test.cjs",
-    "test:plan":"node tests/plan.test.cjs",
-    "test:runtime":"node tests/runtime-logistics.test.cjs",
-    "test:theme-media":"node tests/theme-media.test.cjs",
-    "test:navigation":"node tests/navigation-smoke.test.cjs",
-    "test:dist-server":"node tests/dist-server-smoke.test.cjs",
-    "qa":"npm run syntax && npm run validate && npm run test:activities && npm run test:plan && npm run test:runtime && npm run test:theme-media && npm run test:navigation && npm run build && npm run test:dist-server",
-    "build":"node scripts/build.cjs",
-    "preview":"node scripts/serve-local.cjs"
+  "name": "sakhi-learning-trails-v3-rc3",
+  "private": true,
+  "version": "3.0.0-rc3",
+  "scripts": {
+    "syntax": "node scripts/check-syntax.cjs",
+    "validate": "node scripts/validate-production-app.cjs",
+    "test:activities": "node tests/activities.test.cjs",
+    "test:plan": "node tests/plan.test.cjs",
+    "build": "node scripts/build.cjs",
+    "validate:dist": "node scripts/validate-dist.cjs",
+    "qa": "npm run syntax && npm run validate && npm run test:activities && npm run test:plan && npm run test:runtime-core && npm run test:audio",
+    "release": "npm run qa && npm run build && npm run validate:dist",
+    "preview": "node scripts/serve-local.cjs",
+    "test:runtime-core": "node tests/runtime-core.test.cjs",
+    "test:audio": "node tests/audio.test.cjs"
   }
 }
