@@ -107,8 +107,15 @@ Deno.serve(async (req: Request) => {
     if (!response.ok) {
       const detail = await response.text();
       console.error("ElevenLabs error", response.status, detail);
+      let providerError = "Provider rejected the request";
+      try {
+        const parsed = JSON.parse(detail);
+        providerError = String(parsed?.detail?.message || parsed?.detail?.status || parsed?.message || providerError);
+      } catch {
+        providerError = detail || providerError;
+      }
       return Response.json(
-        { error: "Voice generation failed", status: response.status },
+        { error: "Voice generation failed", status: response.status, provider_error: providerError.slice(0, 220) },
         { status: 502, headers },
       );
     }
