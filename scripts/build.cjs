@@ -2,7 +2,7 @@ const fs=require('fs');
 const path=require('path');
 const root=path.join(__dirname,'..');
 const dist=path.join(root,'dist');
-const buildId='3.0.0-rc7';
+const buildId='3.1.1';
 const moduleOrder=[
   'supabase-config.js',
   'sakhi-cloud.js',

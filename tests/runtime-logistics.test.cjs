@@ -4,15 +4,27 @@ const root = path.join(__dirname, '..');
 const read = file => fs.readFileSync(path.join(root, file), 'utf8');
 
 const cloud = read('sakhi-cloud.js');
-if (!cloud.includes('CFG.ttsEndpoint')) throw new Error('Cloud speech must use configured ttsEndpoint');
-if (!cloud.includes('AbortController')) throw new Error('Cloud speech needs a timeout so audio fallback is not blocked');
-if (!cloud.includes("TTS||BASE+'/functions/v1/sakhi-speech'")) throw new Error('Cloud speech should prefer ttsEndpoint and only fall back to sakhi-speech when no endpoint is configured');
+if (!cloud.includes('CFG.speechFunctionUrl') || !cloud.includes('CFG.ttsEndpoint')) {
+  throw new Error('Cloud speech must support both speechFunctionUrl and ttsEndpoint');
+}
+if (!cloud.includes("SPEECH_URL||(BASE+'/functions/v1/sakhi-speech')")) {
+  throw new Error('Cloud speech should prefer a configured endpoint and fall back to sakhi-speech');
+}
+if (!cloud.includes('httpStatus:r.status') || !cloud.includes("mime:mime||'audio/mpeg'")) {
+  throw new Error('Cloud speech diagnostics are incomplete');
+}
 
 const audio = read('sakhi-audio.js');
-if (audio.includes("cloud.status==='CONNECTED'")) throw new Error('Narration should try premium TTS when configured, even before parent sync is connected');
-if (!audio.includes('timeout:3200')) throw new Error('Premium TTS should get a short child-friendly timeout before fallback');
-if (!audio.includes('cloudMutedUntil')) throw new Error('Cloud speech failures should be muted temporarily after fallback');
-if (!audio.includes('speechSynthesis.resume')) throw new Error('Browser speech should resume before speaking');
+if (/speechSynthesis|SpeechSynthesisUtterance|webkitSpeech/i.test(audio)) {
+  throw new Error('Browser or system TTS must not appear in production audio');
+}
+for (const token of ['SakhiCloud.speak', 'playWithHtmlAudio', 'premiumCache', 'decodeAudioData']) {
+  if (!audio.includes(token)) throw new Error(`Premium audio path is missing ${token}`);
+}
+
+const app = read('sakhi-app.js');
+if (!app.includes("answer==='071621'")) throw new Error('Parent passcode changed');
+if (!app.includes('[data-trail-domain]') || !app.includes('startTrail')) throw new Error('Trail cards are not wired for interaction');
 
 const manifest = JSON.parse(read('assets/audio/phonemes/manifest.json'));
 for (const symbol of manifest.verified) {
@@ -24,7 +36,7 @@ if (!manifest.verified.includes('p') || !manifest.verified.includes('t')) {
 }
 
 const sw = read('sw.js');
-if (!/sakhi-v3-rc6/.test(sw)) throw new Error('Service worker cache was not bumped for the screenshot-matched theme build');
+if (!/sakhi-v3-3\.1\.1/.test(sw)) throw new Error('Service worker cache was not bumped');
 if (!sw.includes("cache:'no-store'")) throw new Error('Navigation requests should bypass stale HTTP caches');
 for (const file of [
   'assets/theme-media/generated/home-unicorn-storytime.webp',
@@ -44,4 +56,4 @@ if (!sw.includes('self.skipWaiting()') || !sw.includes('self.clients.claim()')) 
   throw new Error('Service worker should activate fresh deployment assets immediately');
 }
 
-console.log('Runtime logistics passed: audio fallback, fresh navigation, generated scenes, and removed art runtime are deploy-safe');
+console.log('Runtime logistics passed: premium-only audio, clickable trails, protected parent gate, fresh navigation, and generated scenes are deploy-safe');
