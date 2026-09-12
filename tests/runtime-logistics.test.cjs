@@ -26,6 +26,14 @@ const app = read('sakhi-app.js');
 if (!app.includes("answer==='071621'")) throw new Error('Parent passcode changed');
 if (!app.includes('[data-trail-domain]') || !app.includes('startTrail')) throw new Error('Trail cards are not wired for interaction');
 
+const speechFunction = read('supabase/functions/sakhi-speech/index.ts');
+for (const token of ['PROD_ORIGIN', 'originOK', 'keyOK', 'authorization, apikey', 'SAKHI_VOICE_ID', 'response.ok']) {
+  if (!speechFunction.includes(token)) throw new Error(`Speech function security or compatibility is missing ${token}`);
+}
+if (speechFunction.includes('"Access-Control-Allow-Origin": "*"')) {
+  throw new Error('Speech function must not allow arbitrary web origins');
+}
+
 const manifest = JSON.parse(read('assets/audio/phonemes/manifest.json'));
 for (const symbol of manifest.verified) {
   const file = path.join(root, 'assets/audio/phonemes', `phoneme_${symbol}.ogg`);

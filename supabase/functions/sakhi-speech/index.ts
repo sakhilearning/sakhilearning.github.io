@@ -1,47 +1,133 @@
-import { serve } from 'https://deno.land/std@0.224.0/http/server.ts';
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
-function textResponse(body:string,status=200){return new Response(body,{status,headers:{...corsHeaders,'Content-Type':'text/plain; charset=utf-8'}});}
+const PROD_ORIGIN = "https://sakhilearning.github.io";
+const allowedKinds = new Set(["instruction", "character", "word", "story", "feedback"]);
+const allowedProfiles = new Set(["sakhi", "ice", "ocean", "book", "luna"]);
 
-serve(async (req) => {
-  if (req.method === 'OPTIONS') return textResponse('ok');
-  if (req.method !== 'POST') return textResponse('Method not allowed',405);
+function cors() {
+  return {
+    "Access-Control-Allow-Origin": PROD_ORIGIN,
+    "Vary": "Origin",
+    "Access-Control-Allow-Headers": "authorization, apikey, content-type, x-client-info",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+  };
+}
+
+function originOK(req: Request) {
+  return req.headers.get("origin") === PROD_ORIGIN;
+}
+
+function keyOK(req: Request) {
+  const supplied = req.headers.get("apikey") || "";
+  const legacy = Deno.env.get("SUPABASE_ANON_KEY") || "";
+  if (legacy && supplied === legacy) return true;
   try {
-    let payload:any;
-    try { payload = await req.json(); } catch { return textResponse('Invalid JSON',400); }
-    const text = String(payload?.text || '').trim();
-    if (!text || text.length > 800) return textResponse('Invalid text',400);
+    return Object.values(JSON.parse(Deno.env.get("SUPABASE_PUBLISHABLE_KEYS") || "{}"))
+      .map(String)
+      .includes(supplied);
+  } catch {
+    return false;
+  }
+}
 
-    const key = Deno.env.get('ELEVENLABS_API_KEY');
-    const voice = Deno.env.get('ELEVENLABS_VOICE_ID');
-    const model = Deno.env.get('ELEVENLABS_MODEL_ID') || 'eleven_multilingual_v2';
-    if (!key || !voice) return textResponse('Speech secrets not configured',503);
+Deno.serve(async (req: Request) => {
+  const headers = cors();
+  if (req.method === "OPTIONS") {
+    return originOK(req)
+      ? new Response("ok", { headers })
+      : new Response("Forbidden", { status: 403, headers });
+  }
+  if (req.method !== "POST") {
+    return Response.json({ error: "Method not allowed" }, { status: 405, headers });
+  }
+  if (!originOK(req)) {
+    return Response.json({ error: "Origin not allowed" }, { status: 403, headers });
+  }
+  if (!keyOK(req)) {
+    return Response.json({ error: "Invalid client key" }, { status: 401, headers });
+  }
 
-    const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voice}?output_format=mp3_44100_128`,{
-      method:'POST',
-      headers:{'xi-api-key':key,'Content-Type':'application/json','Accept':'audio/mpeg'},
-      body:JSON.stringify({
-        text,
-        model_id:model,
-        voice_settings:{
-          stability:0.50,
-          similarity_boost:0.78,
-          style:0,
-          use_speaker_boost:true,
-          speed:0.94
-        }
-      })
+  try {
+    const apiKey = Deno.env.get("ELEVENLABS_API_KEY");
+    const voiceId = Deno.env.get("ELEVENLABS_VOICE_ID") || Deno.env.get("SAKHI_VOICE_ID");
+    const modelId = Deno.env.get("ELEVENLABS_MODEL_ID") || "eleven_multilingual_v2";
+    if (!apiKey || !voiceId) {
+      return Response.json({ error: "TTS secrets are not configured" }, { status: 503, headers });
+    }
+
+    let body: Record<string, unknown>;
+    try {
+      body = await req.json();
+    } catch {
+      return Response.json({ error: "Invalid JSON" }, { status: 400, headers });
+    }
+
+    const kind = String(body?.kind || "instruction");
+    if (!allowedKinds.has(kind)) {
+      return Response.json({ error: "Unsupported narration kind" }, { status: 400, headers });
+    }
+    const requestedProfile = String(body?.profile || "sakhi");
+    const profile = allowedProfiles.has(requestedProfile) ? requestedProfile : "sakhi";
+    const text = String(body?.text || "").trim();
+    if (!text || text.length > 800) {
+      return Response.json({ error: "Text must be between 1 and 800 characters" }, { status: 400, headers });
+    }
+
+    const settings: Record<string, { stability: number; style: number; similarity_boost: number; speed: number }> = {
+      sakhi: { stability: 0.50, style: 0, similarity_boost: 0.78, speed: 0.94 },
+      ice: { stability: 0.60, style: 0.18, similarity_boost: 0.74, speed: 0.94 },
+      ocean: { stability: 0.48, style: 0.32, similarity_boost: 0.76, speed: 0.94 },
+      book: { stability: 0.62, style: 0.14, similarity_boost: 0.74, speed: 0.94 },
+      luna: { stability: 0.45, style: 0.36, similarity_boost: 0.76, speed: 0.94 },
+    };
+    const s = settings[profile];
+    const response = await fetch(
+      `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=mp3_44100_128`,
+      {
+        method: "POST",
+        headers: {
+          "xi-api-key": apiKey,
+          "Content-Type": "application/json",
+          "Accept": "audio/mpeg",
+        },
+        body: JSON.stringify({
+          text,
+          model_id: modelId,
+          voice_settings: {
+            stability: s.stability,
+            similarity_boost: s.similarity_boost,
+            style: s.style,
+            use_speaker_boost: true,
+            speed: s.speed,
+          },
+        }),
+      },
+    );
+
+    if (!response.ok) {
+      const detail = await response.text();
+      console.error("ElevenLabs error", response.status, detail);
+      return Response.json(
+        { error: "Voice generation failed", status: response.status },
+        { status: 502, headers },
+      );
+    }
+
+    const audio = await response.arrayBuffer();
+    if (audio.byteLength < 100) {
+      return Response.json({ error: "Empty audio response" }, { status: 502, headers });
+    }
+    return new Response(audio, {
+      status: 200,
+      headers: {
+        ...headers,
+        "Content-Type": "audio/mpeg",
+        "Cache-Control": kind === "story" ? "private, max-age=300" : "private, max-age=86400",
+        "X-Sakhi-Voice-Provider": "elevenlabs",
+      },
     });
-    if(!r.ok) return textResponse((await r.text()).slice(0,1000),r.status);
-    const audio = await r.arrayBuffer();
-    if(audio.byteLength < 100) return textResponse('Empty audio response',502);
-    return new Response(audio,{status:200,headers:{...corsHeaders,'Content-Type':'audio/mpeg','Cache-Control':'private, max-age=86400','X-Sakhi-Voice-Provider':'elevenlabs'}});
-  } catch(e) {
-    console.error('sakhi-speech',e);
-    return textResponse('Speech service error',500);
+  } catch (error) {
+    console.error("sakhi-tts", error);
+    return Response.json({ error: "Unexpected TTS error" }, { status: 500, headers });
   }
 });
