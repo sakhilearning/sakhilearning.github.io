@@ -18,8 +18,6 @@ function primeBrowserVoice(){
 }
 async function unlock(){
   if(!enabled)return false;
-  /* Prime browser speech synchronously inside the child's tap before awaiting anything. */
-  primeBrowserVoice();
   try{
     if(AC){
       ctx=ctx||new AC();
@@ -27,7 +25,7 @@ async function unlock(){
       var b=ctx.createBuffer(1,1,22050),s=ctx.createBufferSource(),g=ctx.createGain();
       g.gain.value=0;s.buffer=b;s.connect(g);g.connect(ctx.destination);s.start(0);
     }
-    unlocked=!!ctx||('speechSynthesis'in window);
+    unlocked=!!ctx;
     if(!unlocked)throw new Error('No supported audio API');
     return true;
   }catch(e){fault('BLOCKED','Tap the sound button once to enable Sakhi voice.',e);return false;}
@@ -95,12 +93,11 @@ async function speakText(text,allowBrowserFallback){
     try{var bytes=premiumCache[text];if(!bytes){bytes=await SakhiCloud.speak(text,{timeout:3200});if(bytes&&bytes.byteLength>100)premiumCache[text]=bytes.slice(0);}if(bytes&&bytes.byteLength>100)return await playBytes(bytes.slice(0));throw new Error('Empty narration response');}
     catch(e){cloudMutedUntil=Date.now()+60000;console.warn('[Sakhi] ElevenLabs route unavailable; using device voice:',e.message);lastError={kind:'PREMIUM_FALLBACK',message:e.message};}
   }
-  if(allowBrowserFallback)return browserSpeak(text,false);
-  throw fault('PREMIUM_UNAVAILABLE','Sakhi’s natural voice is not available in this build yet.');
+  throw fault('PREMIUM_UNAVAILABLE','Sakhi’s bundled natural voice is not available in this build yet.');
 }
 async function speak(text){
   if(!enabled)throw fault('DISABLED','Spoken guidance is turned off in Parent Settings.');
-  lastText=String(text||'');return speakText(lastText,true);
+  lastText=String(text||'');return speakText(lastText,false);
 }
 async function narrate(question,options){
   if(!enabled)throw fault('DISABLED','Spoken guidance is turned off in Parent Settings.');

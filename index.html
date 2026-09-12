@@ -173,6 +173,11 @@ body{padding:0;background:#2b1744}#app{padding:0}.topbar{position:absolute;top:1
 }
 
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none;scroll-behavior:auto;transition:none}}
+
+/* Theme ownership: an opened module keeps its own scene image while the global
+   adventure switch remains available only on Home. */
+body[data-view="activity"]{background:linear-gradient(180deg,rgba(43,22,65,.08),rgba(42,21,64,.62)),var(--world-image,var(--home-world)) center/cover fixed}
+body[data-view="activity"] .adventure-switch{display:none}
 </style>
 </head>
 <body>
@@ -622,8 +627,6 @@ function primeBrowserVoice(){
 }
 async function unlock(){
   if(!enabled)return false;
-  /* Prime browser speech synchronously inside the child's tap before awaiting anything. */
-  primeBrowserVoice();
   try{
     if(AC){
       ctx=ctx||new AC();
@@ -631,7 +634,7 @@ async function unlock(){
       var b=ctx.createBuffer(1,1,22050),s=ctx.createBufferSource(),g=ctx.createGain();
       g.gain.value=0;s.buffer=b;s.connect(g);g.connect(ctx.destination);s.start(0);
     }
-    unlocked=!!ctx||('speechSynthesis'in window);
+    unlocked=!!ctx;
     if(!unlocked)throw new Error('No supported audio API');
     return true;
   }catch(e){fault('BLOCKED','Tap the sound button once to enable Sakhi voice.',e);return false;}
@@ -699,12 +702,11 @@ async function speakText(text,allowBrowserFallback){
     try{var bytes=premiumCache[text];if(!bytes){bytes=await SakhiCloud.speak(text,{timeout:3200});if(bytes&&bytes.byteLength>100)premiumCache[text]=bytes.slice(0);}if(bytes&&bytes.byteLength>100)return await playBytes(bytes.slice(0));throw new Error('Empty narration response');}
     catch(e){cloudMutedUntil=Date.now()+60000;console.warn('[Sakhi] ElevenLabs route unavailable; using device voice:',e.message);lastError={kind:'PREMIUM_FALLBACK',message:e.message};}
   }
-  if(allowBrowserFallback)return browserSpeak(text,false);
-  throw fault('PREMIUM_UNAVAILABLE','Sakhi’s natural voice is not available in this build yet.');
+  throw fault('PREMIUM_UNAVAILABLE','Sakhi’s bundled natural voice is not available in this build yet.');
 }
 async function speak(text){
   if(!enabled)throw fault('DISABLED','Spoken guidance is turned off in Parent Settings.');
-  lastText=String(text||'');return speakText(lastText,true);
+  lastText=String(text||'');return speakText(lastText,false);
 }
 async function narrate(question,options){
   if(!enabled)throw fault('DISABLED','Spoken guidance is turned off in Parent Settings.');
@@ -804,6 +806,7 @@ var view='home',plan=null,session=null,missionIndex=0,current=null,qIndex=0,answ
 function toast(m){var t=$('#toast');if(!t)return;t.textContent=m;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(function(){t.classList.remove('show');},2600);}
 function setWorld(domain){if(domain)document.body.dataset.domain=domain;else delete document.body.dataset.domain;}
 function show(v){Audio.stopAll();view=v;document.body.dataset.view=v;if(v!=='activity')setWorld(null);document.querySelectorAll('.view').forEach(function(n){n.classList.toggle('active',n.dataset.view===v);});document.querySelectorAll('[data-nav]').forEach(function(b){b.classList.toggle('active',b.dataset.nav===v);});render();window.scrollTo(0,0);}
+function setAdventureMode(mode){adventureMode=mode;localStorage.setItem('sakhi_adventure_mode',adventureMode);document.body.dataset.adventureMode=adventureMode;if(view==='activity'&&current)renderActivity();else renderHome();}
 function render(){renderStats();if(view==='home')renderHome();else if(view==='map')renderMap();else if(view==='rewards')renderRewards();else if(view==='parent')renderParent();else if(view==='activity')renderActivity();}
 function renderStats(){var n=$('#starStat');if(n)n.textContent='✦ '+Prog.stars();}
 function trailCard(d){var p=Prog.domainProgress(d.domain_id),t=Trails.get(d.domain_id);return '<article class="trail-card domain-'+d.domain_id+'" data-trail-domain="'+d.domain_id+'" role="button" tabindex="0" aria-label="Open '+t.name+' trail"><div class="mini-scene">'+Pres.scene(d.domain_id,p)+'</div><div class="trail-card-copy"><h3>'+t.icon+' '+t.name+'</h3><p>'+d.title+' · '+Trails.chapter(d.domain_id,p)+'</p><div class="meter" aria-label="'+p+' percent explored"><i style="width:'+p+'%"></i></div><small>'+p+'% explored</small><span class="trail-open">Open trail →</span></div></article>';}
@@ -829,11 +832,11 @@ async function renderParent(){
   body.innerHTML='<div class="parent-grid">'+parentMetric('Program day',Math.min(130,completed+1)+' / 130','Six-month learning path')+parentMetric('Independent answers',tot?Math.round(ind/tot*100)+'%':'—','Objective questions only')+parentMetric('Hints used',hints,'Support is information, not failure')+parentMetric('Cloud',cloud.status,cloud.pending+' queued · '+cloud.dead+' needs review')+'</div>'+
   '<section class="parent-card parent-section"><h2>Family progress sync</h2>'+(cloud.configured?(cloud.status==='CONNECTED'?'<p>Connected to Supabase. Completed objective attempts can sync across devices.</p><button class="soft" id="cloudSignOut">Disconnect</button>':'<p class="muted">Sign in with the parent account used for Sakhi sync.</p><div class="parent-form"><input class="parent-input" id="cloudEmail" type="email" placeholder="Parent email"><input class="parent-input" id="cloudPassword" type="password" placeholder="Password"><button class="soft" id="cloudSignIn">Connect</button></div>'):'<p class="muted">Supabase public URL/key are not configured in this build. Progress stays on this device.</p>')+'</section>'+
   '<section class="parent-card parent-section"><h2>Subject progress</h2>'+Cur.domains().map(function(d){var p=Prog.domainProgress(d.domain_id);return '<div class="parent-progress"><p><b>'+d.title+'</b> — '+Trails.chapter(d.domain_id,p)+' <span class="muted">('+p+'%)</span></p><div class="meter"><i style="width:'+p+'%"></i></div></div>';}).join('')+'</section>'+
-  '<section class="parent-card parent-section"><h2>Audio readiness</h2><p class="audio-badge '+(audio.complete?'good':'warn')+'">Verified isolated phonemes: '+audio.present+' / '+audio.required+'</p><p class="muted">Normal instructions use the natural Sakhi voice route. Device speech is available only when a grown-up explicitly tests the fallback. Isolated phonemes never use TTS.</p><div class="audio-tools"><button class="soft" id="testVoiceBtn">🔊 Test Sakhi voice (fallback)</button><span class="muted" id="audioStatusText"></span></div></section>'+
+  '<section class="parent-card parent-section"><h2>Audio readiness</h2><p class="audio-badge '+(audio.complete?'good':'warn')+'">Verified isolated phonemes: '+audio.present+' / '+audio.required+'</p><p class="muted">Normal instructions use only the bundled gentle Sakhi voice. Browser speech is disabled so a robotic AI voice cannot replace it. Isolated phonemes never use TTS.</p><div class="audio-tools"><button class="soft" id="testVoiceBtn">🔊 Test Sakhi voice</button><span class="muted" id="audioStatusText"></span></div></section>'+
   '<section class="parent-card parent-section"><h2>Settings</h2><label class="parent-setting"><input type="checkbox" id="voiceToggle" '+(Audio.isEnabled()?'checked':'')+'> Spoken instructions</label><label class="parent-setting">Session length <select id="sessionMinutes"><option value="20">20 min</option><option value="25">25 min</option><option value="30">30 min</option></select></label><button class="soft" id="exportBtn">Export progress backup</button></section>';
   var sm=$('#sessionMinutes');sm.value=String(s.settings.session_minutes||30);sm.onchange=function(){Prog.setSetting('session_minutes',Number(sm.value));toast('Session length saved');};
   $('#voiceToggle').onchange=function(e){Audio.setEnabled(e.target.checked);Prog.setSetting('voice',e.target.checked);};
-  if($('#testVoiceBtn'))$('#testVoiceBtn').onclick=async function(){var out=$('#audioStatusText');try{await Audio.unlock();await Audio.speak('Hello! Sakhi voice is ready for our learning adventure.');var st=Audio.status();out.textContent='Playing with '+(st.provider==='elevenlabs'?'Sakhi natural voice':'device fallback')+'.';}catch(e){out.textContent='Natural Sakhi voice is not configured for this build yet.';}};
+  if($('#testVoiceBtn'))$('#testVoiceBtn').onclick=async function(){var out=$('#audioStatusText');try{await Audio.unlock();await Audio.speak('Hello! Sakhi voice is ready for our learning adventure.');out.textContent='Playing with the bundled Sakhi voice.';}catch(e){out.textContent='Bundled gentle Sakhi narration is not installed in this build.';}};
   if($('#cloudSignIn'))$('#cloudSignIn').onclick=async function(){try{await Cloud.signIn($('#cloudEmail').value,$('#cloudPassword').value);toast('Family progress connected');renderParent();}catch(e){console.error(e);toast('Could not sign in. Check the parent account.');}};
   if($('#cloudSignOut'))$('#cloudSignOut').onclick=async function(){await Cloud.signOut();toast('Family progress disconnected');renderParent();};
   $('#exportBtn').onclick=function(){var blob=new Blob([JSON.stringify(Prog.snapshot(),null,2)],{type:'application/json'}),u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download='sakhi-progress-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(u);};
@@ -873,7 +876,7 @@ function finishActivity(){
 }
 function continueAfter(){$('#celebrate').classList.remove('show');missionIndex++;if(missionIndex>plan.missions.length){Prog.endSession(session.session_id);session=null;show('rewards');}else loadMission();}
 function bind(){
-  document.querySelectorAll('[data-nav]').forEach(function(b){b.onclick=function(){show(b.dataset.nav);};});document.addEventListener('click',function(e){var card=e.target.closest&&e.target.closest('[data-trail-domain]');if(card)startTrail(card.dataset.trailDomain);});document.addEventListener('keydown',function(e){var card=e.target.closest&&e.target.closest('[data-trail-domain]');if(card&&(e.key==='Enter'||e.key===' ')){e.preventDefault();startTrail(card.dataset.trailDomain);}});$('#startBtn').onclick=start;$('#modeUnicorn').onclick=function(){adventureMode='unicorn';localStorage.setItem('sakhi_adventure_mode',adventureMode);renderHome();};$('#modePrincess').onclick=function(){adventureMode='princess';localStorage.setItem('sakhi_adventure_mode',adventureMode);renderHome();};$('#quitBtn').onclick=function(){if(session)Prog.endSession(session.session_id,'LEFT_EARLY');session=null;show('home');};$('#hearBtn').onclick=async function(){try{await Audio.unlock();await Audio.narrate(q(),{allowBrowserFallback:true});var st=Audio.status();var pill=$('#voicePill');if(pill)pill.textContent=st.provider==='elevenlabs'?'✨ Sakhi voice':'🔊 Device fallback';}catch(e){console.warn('[Sakhi repeat]',e);toast('Voice could not play. A grown-up can check Audio in Parents.');}};$('#hintBtn').onclick=hint;$('#checkBtn').onclick=check;$('#continueBtn').onclick=continueAfter;$('#gateBtn').onclick=function(){var answer=String($('#gateAnswer').value||'').replace(/\s/g,'');if(answer==='071621'){parentOpen=true;$('#gateAnswer').value='';renderParent();}else toast('Try the grown-up question again. That passcode did not match.');};Audio.onFault(function(e){console.warn('[Sakhi audio]',e.kind,e.message);});
+  document.querySelectorAll('[data-nav]').forEach(function(b){b.onclick=function(){show(b.dataset.nav);};});document.addEventListener('click',function(e){var card=e.target.closest&&e.target.closest('[data-trail-domain]');if(card)startTrail(card.dataset.trailDomain);});document.addEventListener('keydown',function(e){var card=e.target.closest&&e.target.closest('[data-trail-domain]');if(card&&(e.key==='Enter'||e.key===' ')){e.preventDefault();startTrail(card.dataset.trailDomain);}});$('#startBtn').onclick=start;$('#modeUnicorn').onclick=function(){setAdventureMode('unicorn');};$('#modePrincess').onclick=function(){setAdventureMode('princess');};$('#quitBtn').onclick=function(){if(session)Prog.endSession(session.session_id,'LEFT_EARLY');session=null;show('home');};$('#hearBtn').onclick=async function(){try{await Audio.unlock();await Audio.narrate(q());var st=Audio.status();var pill=$('#voicePill');if(pill)pill.textContent=st.provider==='elevenlabs'?'✨ Sakhi voice':'🔇 Sakhi voice unavailable';}catch(e){console.warn('[Sakhi repeat]',e);toast('Sakhi’s bundled gentle voice is not available yet.');}};$('#hintBtn').onclick=hint;$('#checkBtn').onclick=check;$('#continueBtn').onclick=continueAfter;$('#gateBtn').onclick=function(){var answer=String($('#gateAnswer').value||'').replace(/\s/g,'');if(answer==='071621'){parentOpen=true;$('#gateAnswer').value='';renderParent();}else toast('Try the grown-up question again. That passcode did not match.');};Audio.onFault(function(e){console.warn('[Sakhi audio]',e.kind,e.message);});
 }
 function bootFailure(e){
   console.error('[Sakhi boot failed]',e);window.__SAKHI_BOOT_ERROR=String(e&&e.message||e);var box=$('#bootFallback');if(box){box.hidden=false;var detail=box.querySelector('[data-boot-detail]');if(detail)detail.textContent='Build '+(window.SAKHI_BUILD_ID||'unknown')+' · '+window.__SAKHI_BOOT_ERROR;}

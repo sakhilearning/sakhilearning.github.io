@@ -142,3 +142,8 @@ body{padding:0;background:#2b1744}#app{padding:0}.topbar{position:absolute;top:1
 }
 
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none;scroll-behavior:auto;transition:none}}
+
+/* Theme ownership: an opened module keeps its own scene image while the global
+   adventure switch remains available only on Home. */
+body[data-view="activity"]{background:linear-gradient(180deg,rgba(43,22,65,.08),rgba(42,21,64,.62)),var(--world-image,var(--home-world)) center/cover fixed}
+body[data-view="activity"] .adventure-switch{display:none}
