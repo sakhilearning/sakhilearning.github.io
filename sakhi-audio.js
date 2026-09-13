@@ -131,7 +131,17 @@ async function speakText(text){
   if(naturalTts){try{return await naturalSpeak(text);}catch(e){naturalState='failed';naturalError=e;console.warn('[Sakhi] free local voice unavailable; using gentle device voice:',e&&e.message||e);}}
   warmNaturalVoice();
   /* First use speaks immediately while the free Kokoro model finishes its one-time local load. */
-  return browserSpeak(text,false);
+  var pendingNatural=naturalPromise;
+  try{return await browserSpeak(text,false);}
+  catch(deviceError){
+    /* Devices without a usable system voice must not require a second tap. Keep the
+       original narration pending and play it automatically when Kokoro is ready. */
+    if(pendingNatural){
+      try{await pendingNatural;return await naturalSpeak(text);}
+      catch(naturalFailure){throw fault('VOICE_UNAVAILABLE','The free Sakhi voice could not finish loading. Check the connection and tap Hear again.',naturalFailure);}
+    }
+    throw deviceError;
+  }
 }
 async function speak(text){if(!enabled)throw fault('DISABLED','Spoken guidance is turned off in Parent Settings.');lastText=String(text||'');return speakText(lastText);}
 async function narrate(question){

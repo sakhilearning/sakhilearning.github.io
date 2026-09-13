@@ -10,7 +10,7 @@ if(!/window\.SAKHI_SIX_MONTH_PLAN=/.test(html))throw new Error('Embedded six-mon
 if(!/window\.SakhiApp=/.test(html))throw new Error('App runtime not embedded');
 if(!/\.today-card\{/.test(html))throw new Error('Compiled CSS not embedded');
 if(/@layer\s/.test(html))throw new Error('Deployment CSS still contains @layer and may fail on older browsers');
-if(!/3\.1\.2/.test(html))throw new Error('3.1.2 build marker missing');
+if(!/3\.1\.3/.test(html))throw new Error('3.1.3 build marker missing');
 if(html.includes('/*__SAKHI_'))throw new Error('Unresolved build placeholder in deployment HTML');
 if(!/class=\"world-art\"/.test(html)||!/mission-story/.test(html))throw new Error('Immersive world presentation missing from deployment');
 if(!/KokoroTTS\.from_pretrained/.test(html)||!/af_heart/.test(html)||!/browserSpeak/.test(html)||!/playWithHtmlAudio/.test(html))throw new Error('Free resilient audio hardening missing from deployment');
@@ -23,4 +23,4 @@ console.log(' - self-contained CSS + runtime JS');
 console.log(' - embedded curriculum + six-month plan fallbacks');
 console.log(' - no CSS @layer dependency in shipped HTML');
 console.log(' - 130 learning days present');
-console.log(' - 3.1.2 screenshot-matched cinematic themes embedded');
+console.log(' - 3.1.3 screenshot-matched cinematic themes embedded');

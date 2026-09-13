@@ -42,7 +42,7 @@ if (!manifest.verified.includes('p') || !manifest.verified.includes('t')) {
 }
 
 const sw = read('sw.js');
-if (!/sakhi-v3-3\.1\.2/.test(sw)) throw new Error('Service worker cache was not bumped');
+if (!/sakhi-v3-3\.1\.3/.test(sw)) throw new Error('Service worker cache was not bumped');
 if (!sw.includes("cache:'no-store'")) throw new Error('Navigation requests should bypass stale HTTP caches');
 for (const file of [
   'assets/theme-media/generated/home-unicorn-storytime.webp',
