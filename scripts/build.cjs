@@ -1,8 +1,9 @@
 const fs=require('fs');
 const path=require('path');
+const esbuild=require('esbuild');
 const root=path.join(__dirname,'..');
 const dist=path.join(root,'dist');
-const buildId='3.2.0';
+const buildId='3.3.0';
 const moduleOrder=[
   'supabase-config.js',
   'sakhi-cloud.js',
@@ -36,6 +37,21 @@ function flattenLayers(css){
   return out.trim()+'\n';
 }
 function dataUri(file,mime){return `data:${mime};base64,${read(file,null).toString('base64')}`;}
+const vendor=path.join(root,'vendor');
+fs.mkdirSync(vendor,{recursive:true});
+esbuild.buildSync({
+  entryPoints:[path.join(root,'scripts/kokoro-browser-entry.js')],
+  outfile:path.join(vendor,'kokoro-runtime.js'),
+  bundle:true,
+  format:'esm',
+  platform:'browser',
+  target:['safari16.4'],
+  mainFields:['browser','module','main'],
+  conditions:['browser','import','default'],
+  minify:true,
+  legalComments:'none',
+  define:{'process.env.NODE_ENV':'"production"'}
+});
 const curriculum=JSON.parse(read('data/curriculum-v3.json'));
 const sixMonth=JSON.parse(read('data/six-month-plan.json'));
 let phonemes={required:[],verified:[]};
@@ -58,7 +74,7 @@ fs.writeFileSync(path.join(root,'index.html'),html);
 fs.rmSync(dist,{recursive:true,force:true});fs.mkdirSync(dist,{recursive:true});
 fs.writeFileSync(path.join(dist,'index.html'),html);
 for(const f of ['manifest.json','sw.js','icon-180.png','icon-192.png','icon-512.png'])fs.copyFileSync(path.join(root,f),path.join(dist,f));
-for(const dir of ['data','assets']){if(fs.existsSync(path.join(root,dir)))fs.cpSync(path.join(root,dir),path.join(dist,dir),{recursive:true});}
+for(const dir of ['data','assets','vendor']){if(fs.existsSync(path.join(root,dir)))fs.cpSync(path.join(root,dir),path.join(dist,dir),{recursive:true});}
 fs.writeFileSync(path.join(dist,'BUILD.txt'),`Sakhi Learning Trails ${buildId}\nSelf-contained runtime: index.html\n`);
 console.log(`Built self-contained ${buildId}: index.html + dist/`);
 console.log(`  runtime modules: ${moduleOrder.length}`);

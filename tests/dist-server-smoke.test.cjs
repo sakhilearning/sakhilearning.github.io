@@ -65,6 +65,7 @@ function get(base, route) {
       ['/', 'text/html'],
       ['/sw.js', 'text/javascript'],
       ['/manifest.json', 'application/json'],
+      ['/vendor/kokoro-runtime.js', 'text/javascript'],
       ['/assets/theme-media/generated/home-unicorn-storytime.webp', 'image/webp'],
       ['/assets/theme-media/generated/reading-enchanted-library.webp', 'image/webp'],
       ['/assets/theme-media/generated/math-ice-gems.webp', 'image/webp'],
@@ -92,7 +93,7 @@ function get(base, route) {
     if (!index.includes('science-mermaid-lagoon.webp')) throw new Error('Built index is missing subject-world artwork');
 
     const sw = (await get(base, '/sw.js')).body.toString('utf8');
-    if (!sw.includes('sakhi-v3-3.2.0')) throw new Error('Built service worker cache is stale');
+    if (!sw.includes('sakhi-v3-3.3.0')) throw new Error('Built service worker cache is stale');
 
     console.log('Dist server smoke passed: self-contained app, generated artwork, audio, and fresh service worker are reachable');
   } finally {

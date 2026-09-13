@@ -1,4 +1,4 @@
-const CACHE='sakhi-v3-3.2.0';
+const CACHE='sakhi-v3-3.3.0';
 self.addEventListener('install',event=>{self.skipWaiting();event.waitUntil(caches.open(CACHE).then(cache=>cache.add('./').catch(()=>null)));});
 self.addEventListener('activate',event=>{event.waitUntil(Promise.all([self.clients.claim(),caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('sakhi-')&&k!==CACHE).map(k=>caches.delete(k))))]));});
 self.addEventListener('fetch',event=>{
