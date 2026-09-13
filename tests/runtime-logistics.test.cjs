@@ -15,12 +15,10 @@ if (!cloud.includes('httpStatus:r.status') || !cloud.includes("mime:mime||'audio
 }
 
 const audio = read('sakhi-audio.js');
-if (/speechSynthesis|SpeechSynthesisUtterance|webkitSpeech/i.test(audio)) {
-  throw new Error('Browser or system TTS must not appear in production audio');
+for (const token of ['KokoroTTS.from_pretrained', 'af_heart', 'browserSpeak', 'playWithHtmlAudio', 'decodeAudioData']) {
+  if (!audio.includes(token)) throw new Error(`Resilient free audio path is missing ${token}`);
 }
-for (const token of ['SakhiCloud.speak', 'playWithHtmlAudio', 'premiumCache', 'decodeAudioData']) {
-  if (!audio.includes(token)) throw new Error(`Premium audio path is missing ${token}`);
-}
+if (/SakhiCloud\.speak\(/.test(audio)) throw new Error('Normal narration still depends on paid cloud speech');
 
 const app = read('sakhi-app.js');
 if (!app.includes("answer==='071621'")) throw new Error('Parent passcode changed');
@@ -44,7 +42,7 @@ if (!manifest.verified.includes('p') || !manifest.verified.includes('t')) {
 }
 
 const sw = read('sw.js');
-if (!/sakhi-v3-3\.1\.1/.test(sw)) throw new Error('Service worker cache was not bumped');
+if (!/sakhi-v3-3\.1\.2/.test(sw)) throw new Error('Service worker cache was not bumped');
 if (!sw.includes("cache:'no-store'")) throw new Error('Navigation requests should bypass stale HTTP caches');
 for (const file of [
   'assets/theme-media/generated/home-unicorn-storytime.webp',
@@ -64,4 +62,4 @@ if (!sw.includes('self.skipWaiting()') || !sw.includes('self.clients.claim()')) 
   throw new Error('Service worker should activate fresh deployment assets immediately');
 }
 
-console.log('Runtime logistics passed: premium-only audio, clickable trails, protected parent gate, fresh navigation, and generated scenes are deploy-safe');
+console.log('Runtime logistics passed: free resilient audio, clickable trails, protected parent gate, fresh navigation, and generated scenes are deploy-safe');
