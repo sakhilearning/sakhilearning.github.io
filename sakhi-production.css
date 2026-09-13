@@ -147,3 +147,14 @@ body{padding:0;background:#2b1744}#app{padding:0}.topbar{position:absolute;top:1
    adventure switch remains available only on Home. */
 body[data-view="activity"]{background:linear-gradient(180deg,rgba(43,22,65,.08),rgba(42,21,64,.62)),var(--world-image,var(--home-world)) center/cover fixed}
 body[data-view="activity"] .adventure-switch{display:none}
+
+@layer states{
+.voice-prepare{z-index:90}
+.voice-ready-card{min-height:330px}
+.voice-ready-icon{display:grid;place-items:center;width:104px;height:104px;margin:0 0 22px;border-radius:50%;background:linear-gradient(145deg,#fff5bd,#f1b8ff);color:#633771;font-size:58px;box-shadow:0 14px 42px rgba(15,5,28,.28)}
+.voice-ready-card h2{margin-bottom:10px}
+.voice-ready-card p{margin:0 0 22px}
+.voice-load-track{width:min(360px,100%);height:14px;overflow:hidden;border:1px solid rgba(255,255,255,.44);border-radius:999px;background:rgba(255,255,255,.2)}
+.voice-load-track i{display:block;width:2%;height:100%;border-radius:inherit;background:linear-gradient(90deg,#ffe894,#f0a9f4);transition:width .3s ease}
+.voice-ready-card>small{margin-top:16px;color:rgba(255,255,255,.82)}
+}

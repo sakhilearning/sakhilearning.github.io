@@ -15,14 +15,16 @@ if (!cloud.includes('httpStatus:r.status') || !cloud.includes("mime:mime||'audio
 }
 
 const audio = read('sakhi-audio.js');
-for (const token of ['KokoroTTS.from_pretrained', 'af_heart', 'browserSpeak', 'playWithHtmlAudio', 'decodeAudioData']) {
+for (const token of ['KokoroTTS.from_pretrained', 'af_heart', 'prepare:loadNaturalVoice', 'playWithHtmlAudio', 'decodeAudioData']) {
   if (!audio.includes(token)) throw new Error(`Resilient free audio path is missing ${token}`);
 }
+if (/speechSynthesis|SpeechSynthesisUtterance|webkitSpeech|browserSpeak/.test(audio)) throw new Error('Robotic browser speech is present');
 if (/SakhiCloud\.speak\(/.test(audio)) throw new Error('Normal narration still depends on paid cloud speech');
 
 const app = read('sakhi-app.js');
 if (!app.includes("answer==='071621'")) throw new Error('Parent passcode changed');
 if (!app.includes('[data-trail-domain]') || !app.includes('startTrail')) throw new Error('Trail cards are not wired for interaction');
+if (!app.includes('ensureVoiceReady') || !app.includes('voicePrepare') || app.includes('Starting voice')) throw new Error('Kokoro readiness gate is incomplete');
 
 const speechFunction = read('supabase/functions/sakhi-speech/index.ts');
 for (const token of ['PROD_ORIGIN', 'originOK', 'keyOK', 'authorization, apikey', 'SAKHI_VOICE_ID', 'response.ok']) {
@@ -42,7 +44,7 @@ if (!manifest.verified.includes('p') || !manifest.verified.includes('t')) {
 }
 
 const sw = read('sw.js');
-if (!/sakhi-v3-3\.1\.3/.test(sw)) throw new Error('Service worker cache was not bumped');
+if (!/sakhi-v3-3\.2\.0/.test(sw)) throw new Error('Service worker cache was not bumped');
 if (!sw.includes("cache:'no-store'")) throw new Error('Navigation requests should bypass stale HTTP caches');
 for (const file of [
   'assets/theme-media/generated/home-unicorn-storytime.webp',
@@ -62,4 +64,4 @@ if (!sw.includes('self.skipWaiting()') || !sw.includes('self.clients.claim()')) 
   throw new Error('Service worker should activate fresh deployment assets immediately');
 }
 
-console.log('Runtime logistics passed: free resilient audio, clickable trails, protected parent gate, fresh navigation, and generated scenes are deploy-safe');
+console.log('Runtime logistics passed: Kokoro-only gated audio, clickable trails, protected parent gate, fresh navigation, and generated scenes are deploy-safe');
