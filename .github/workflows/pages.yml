@@ -1,10 +1,10 @@
-name: Deploy Sakhi V3.1.1
+name: Deploy Sakhi V3.3.0
 on:
   push:
     branches: [ main, upgrade/sakhi-v3 ]
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 concurrency:
@@ -15,12 +15,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
       - run: npm ci
       - run: npm run release
+      - name: Persist generated Kokoro runtime
+        if: github.ref == 'refs/heads/main'
+        run: |
+          if ! git diff --quiet -- vendor/kokoro-runtime.js dist/vendor/kokoro-runtime.js; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add vendor/kokoro-runtime.js dist/vendor/kokoro-runtime.js
+            git commit -m "Repair deployed Kokoro runtime bundle [skip ci]"
+            git push origin HEAD:main
+          fi
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
