@@ -93,7 +93,7 @@ function get(base, route) {
     if (!index.includes('science-mermaid-lagoon.webp')) throw new Error('Built index is missing subject-world artwork');
 
     const sw = (await get(base, '/sw.js')).body.toString('utf8');
-    if (!sw.includes('sakhi-v3-3.3.0')) throw new Error('Built service worker cache is stale');
+    if (!sw.includes('sakhi-v3-3.4.0') || !sw.includes("client.navigate")) throw new Error('Built service worker update activation is stale');
 
     console.log('Dist server smoke passed: self-contained app, generated artwork, audio, and fresh service worker are reachable');
   } finally {

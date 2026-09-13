@@ -1,4 +1,4 @@
-name: Deploy Sakhi V3.3.0
+name: Deploy Sakhi V3.4.0
 on:
   push:
     branches: [ main, upgrade/sakhi-v3 ]
@@ -26,11 +26,11 @@ jobs:
       - name: Persist generated Kokoro runtime
         if: github.ref == 'refs/heads/main'
         run: |
-          if ! git diff --quiet -- vendor/kokoro-runtime.js dist/vendor/kokoro-runtime.js; then
+          if ! git diff --quiet -- index.html manifest.json sw.js vendor/kokoro-runtime.js dist; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add vendor/kokoro-runtime.js dist/vendor/kokoro-runtime.js
-            git commit -m "Repair deployed Kokoro runtime bundle [skip ci]"
+            git add index.html manifest.json sw.js vendor/kokoro-runtime.js dist
+            git commit -m "Persist Sakhi 3.4.0 deployment build [skip ci]"
             git push origin HEAD:main
           fi
       - uses: actions/configure-pages@v5

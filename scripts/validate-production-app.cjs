@@ -26,7 +26,7 @@ if(new Set(generatedScenes).size!==9)throw new Error('Expected nine distinct gen
 if(!/adventureMode==='princess'\?'princess':'home'/.test(read('sakhi-app.js'))||!/variant==='princess'\?SCENE_MEDIA\.logic/.test(presentation))throw new Error('Home does not switch between the dedicated unicorn and princess scenes');
 if(!/data-count-object/.test(presentation)||!/wireCountables/.test(templates))throw new Error('Countable learning objects are not interactive');
 if(!/KokoroTTS\.from_pretrained/.test(audio)||!/af_heart/.test(audio)||!/NATURAL_SPEED=\.86/.test(audio)||!/describeQuestion/.test(audio)||!/startKeepAlive/.test(audio)||!/prepare:loadNaturalVoice/.test(audio)||!/playWithHtmlAudio/.test(audio)||!/narrate:/.test(audio))throw new Error('Detailed iPad-safe Kokoro audio hardening missing');
-if(/speechSynthesis|SpeechSynthesisUtterance|webkitSpeech|browserSpeak/.test(audio))throw new Error('Robotic browser speech must not exist');
+if(!/APPLE_MOBILE[\s\S]*speechSynthesis/.test(audio)||!/naturalMode:APPLE_MOBILE\?'apple-system':'kokoro-local'/.test(audio))throw new Error('The iOS-only no-cost voice fallback is missing');
 if(/SakhiCloud\.speak\(/.test(audio))throw new Error('Narration still depends on the exhausted paid provider');
 if(!/Test Sakhi voice/.test(read('sakhi-app.js'))||!/ensureVoiceReady/.test(read('sakhi-app.js'))||!/voicePrepare/.test(read('index.template.html')))throw new Error('Kokoro readiness controls missing');
 const progress=read('sakhi-progress.js');if(!/completeActivity/.test(progress))throw new Error('Missing completion path');
@@ -34,7 +34,7 @@ const css=read('sakhi-production.css');if(/!important/.test(css))throw new Error
 const html=read('index.template.html');const idMatches=[...html.matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]);if(new Set(idMatches).size!==idMatches.length)throw new Error('Duplicate HTML id');
 const hotlinks=[...fs.readdirSync(root).filter(f=>/\.(js|css|html)$/.test(f)).flatMap(f=>[...read(f).matchAll(/https?:\/\/[^'"\s)]+\.(?:png|jpe?g|webp|svg)/gi)].map(m=>m[0]))];if(hotlinks.length)throw new Error('Remote image hotlink found');
 const kokoroEntry=read('scripts/kokoro-browser-entry.js');if(!/numThreads\s*=\s*1/.test(kokoroEntry)||!/proxy\s*=\s*false/.test(kokoroEntry))throw new Error('Single-thread iPad Kokoro bundle settings missing');
-console.log('Sakhi V3.3.0 source validation passed:');
+console.log('Sakhi V3.4.0 source validation passed:');
 console.log(` - ${c.skills.length} skills across 8 persistent subject trails`);
 console.log(' - prerequisite graph sound');
 console.log(' - 26 weeks / 130 days / 30 minutes validated');
@@ -42,7 +42,7 @@ console.log(' - six-month plan drives session pacing while adaptive owns readine
 console.log(' - adaptive/activity layers do not read presentation');
 console.log(' - mastery writes centralized in Progress');
 console.log(' - controller reset and legacy SILENT detector regressions blocked');
-console.log(' - slower detailed Kokoro-only playback, iPad keep-alive, readiness gate and local single-thread runtime present');
+console.log(' - slower detailed Kokoro desktop playback, iOS-only Apple voice fallback, readiness gate and update-safe PWA present');
 console.log(' - nine distinct generated scenes mapped across the home and eight learning worlds');
 console.log(' - CSS source layers present; no !important');
 console.log(' - no duplicate DOM ids or remote image hotlinks');

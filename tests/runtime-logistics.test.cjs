@@ -18,7 +18,7 @@ const audio = read('sakhi-audio.js');
 for (const token of ['KokoroTTS.from_pretrained', 'af_heart', 'NATURAL_SPEED=.86', 'describeQuestion', 'startKeepAlive', 'prepare:loadNaturalVoice', 'playWithHtmlAudio', 'decodeAudioData']) {
   if (!audio.includes(token)) throw new Error(`Resilient free audio path is missing ${token}`);
 }
-if (/speechSynthesis|SpeechSynthesisUtterance|webkitSpeech|browserSpeak/.test(audio)) throw new Error('Robotic browser speech is present');
+if (!/APPLE_MOBILE[\s\S]*speechSynthesis/.test(audio)||!/naturalMode:APPLE_MOBILE\?'apple-system':'kokoro-local'/.test(audio)) throw new Error('The iOS-only no-cost voice fallback is missing');
 if (/SakhiCloud\.speak\(/.test(audio)) throw new Error('Normal narration still depends on paid cloud speech');
 
 const app = read('sakhi-app.js');
@@ -47,7 +47,7 @@ const kokoroEntry = read('scripts/kokoro-browser-entry.js');
 if (!/numThreads\s*=\s*1/.test(kokoroEntry) || !/proxy\s*=\s*false/.test(kokoroEntry)) throw new Error('iPad-safe Kokoro runtime settings are missing');
 
 const sw = read('sw.js');
-if (!/sakhi-v3-3\.3\.0/.test(sw)) throw new Error('Service worker cache was not bumped');
+if (!/sakhi-v3-3\.4\.0/.test(sw)||!/client\.navigate/.test(sw)) throw new Error('Service worker cache/update navigation was not bumped');
 if (!sw.includes("cache:'no-store'")) throw new Error('Navigation requests should bypass stale HTTP caches');
 for (const file of [
   'assets/theme-media/generated/home-unicorn-storytime.webp',
@@ -67,4 +67,4 @@ if (!sw.includes('self.skipWaiting()') || !sw.includes('self.clients.claim()')) 
   throw new Error('Service worker should activate fresh deployment assets immediately');
 }
 
-console.log('Runtime logistics passed: slower detailed iPad-safe Kokoro audio, clickable trails, protected parent gate, fresh navigation, and generated scenes are deploy-safe');
+console.log('Runtime logistics passed: detailed free desktop Kokoro plus iOS voice fallback, clickable trails, protected parent gate, forced PWA refresh, and generated scenes are deploy-safe');

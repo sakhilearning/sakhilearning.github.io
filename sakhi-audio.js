@@ -2,7 +2,7 @@ window.SakhiAudio=(function(){
 'use strict';
 var enabled=true,unlocked=false,ctx=null,currentSource=null,currentAudio=null,currentObjectUrl=null,keepAliveSource=null,keepAliveGain=null,lastText='',listeners=[],manifest=null;
 var lastProvider='none',lastError=null;
-var naturalTts=null,naturalPromise=null,naturalState='idle',naturalError=null,naturalProgress=0,naturalCache={};
+var naturalTts=null,naturalPromise=null,naturalState='idle',naturalError=null,naturalProgress=0,naturalCache={},appleVoice=null;
 var lastDiag={provider:'none',engine:'none',httpStatus:null,mime:'',bytes:0,decode:false,playbackStarted:false,cached:false,lastError:null};
 var AC=window.AudioContext||window.webkitAudioContext;
 var NATURAL_IMPORT='./vendor/kokoro-runtime.js';
@@ -39,6 +39,7 @@ async function unlock(){
 function stopAll(){
   try{if(currentSource&&currentSource.stop)currentSource.stop(0);}catch(e){}currentSource=null;
   try{if(currentAudio){currentAudio.pause();currentAudio.src='';}}catch(e){}currentAudio=null;
+  if(APPLE_MOBILE&&typeof speechSynthesis!=='undefined'){try{speechSynthesis.cancel();}catch(e){}}
   if(currentObjectUrl){try{URL.revokeObjectURL(currentObjectUrl);}catch(e){}currentObjectUrl=null;}
 }
 function stopKeepAlive(){try{if(keepAliveSource)keepAliveSource.stop(0);}catch(e){}keepAliveSource=null;keepAliveGain=null;}
@@ -77,10 +78,27 @@ async function playBytes(bytes,meta,provider){
   return playWithHtmlAudio(bytes,meta.mime||'audio/mpeg',provider);
 }
 function canUseNatural(){return typeof document!=='undefined'&&typeof location!=='undefined'&&location.protocol!=='file:'&&typeof Promise!=='undefined';}
+function chooseAppleVoice(){
+  if(typeof speechSynthesis==='undefined')return null;
+  var voices=speechSynthesis.getVoices?speechSynthesis.getVoices():[],preferred=['Ava','Samantha','Serena','Tessa','Karen','Moira','Nicky'];
+  for(var i=0;i<preferred.length;i++){var exact=voices.find(function(v){return v.name===preferred[i]&&/^en[-_]/i.test(v.lang||'');});if(exact)return exact;}
+  return voices.find(function(v){return /^en[-_](US|GB|AU|IE|ZA)/i.test(v.lang||'');})||voices.find(function(v){return /^en/i.test(v.lang||'');})||null;
+}
+function prepareAppleVoice(){
+  if(typeof speechSynthesis==='undefined'||typeof SpeechSynthesisUtterance==='undefined')return Promise.reject(new Error('Apple speech playback is unavailable.'));
+  naturalState='loading';naturalProgress=25;
+  return new Promise(function(resolve){
+    var done=false,finish=function(){if(done)return;done=true;appleVoice=chooseAppleVoice();naturalTts={kind:'apple-system',voice:appleVoice};naturalState='ready';naturalError=null;naturalProgress=100;resolve(naturalTts);};
+    if(chooseAppleVoice())return finish();
+    try{speechSynthesis.addEventListener('voiceschanged',finish,{once:true});}catch(e){}
+    setTimeout(finish,700);
+  });
+}
 function loadNaturalVoice(){
   if(naturalTts)return Promise.resolve(naturalTts);
   if(naturalPromise)return naturalPromise;
   if(!canUseNatural())return Promise.reject(new Error('Local voice is unavailable in this environment.'));
+  if(APPLE_MOBILE){naturalPromise=prepareAppleVoice().catch(function(e){naturalState='failed';naturalError=e;naturalPromise=null;throw e;});return naturalPromise;}
   naturalState='loading';naturalError=null;naturalProgress=1;
   naturalPromise=import(NATURAL_IMPORT).then(function(mod){
     if(!mod||!mod.KokoroTTS)throw new Error('Kokoro voice engine did not load.');
@@ -104,6 +122,17 @@ async function playNaturalResult(audio){
   if(audio&&typeof audio.toBlob==='function'){var blob=audio.toBlob();return playWithHtmlAudio(await blob.arrayBuffer(),blob.type||'audio/wav','kokoro');}
   throw fault('PLAYBACK','Sakhi local voice returned no playable audio.');
 }
+function speakApplePart(text){
+  return new Promise(function(resolve,reject){
+    if(typeof speechSynthesis==='undefined'||typeof SpeechSynthesisUtterance==='undefined')return reject(fault('VOICE_UNAVAILABLE','The iPad voice is unavailable.'));
+    var settled=false,u=new SpeechSynthesisUtterance(text),timer;
+    u.voice=appleVoice||chooseAppleVoice();u.lang=u.voice&&u.voice.lang||'en-US';u.rate=.78;u.pitch=1.08;u.volume=1;
+    function finish(error){if(settled)return;settled=true;clearTimeout(timer);if(error)reject(fault('PLAYBACK','Tap Hear again once to start Sakhi voice.',error));else{finishPlayback('apple-voice','ios-speech');resolve(true);}}
+    u.onend=function(){finish();};u.onerror=function(e){finish(e);};
+    timer=setTimeout(function(){finish(new Error('iPad narration timed out.'));},Math.max(15000,text.length*140));
+    try{speechSynthesis.speak(u);}catch(e){finish(e);}
+  });
+}
 function childChunks(text){
   var sentences=String(text||'').match(/[^.!?]+[.!?]+|[^.!?]+$/g)||[],chunks=[],part='';
   sentences.forEach(function(sentence){sentence=sentence.trim();if(!sentence)return;if(part&&(part.length+sentence.length+1)>210){chunks.push(part);part=sentence;}else part+=(part?' ':'')+sentence;});
@@ -111,6 +140,7 @@ function childChunks(text){
 }
 async function naturalSpeak(text){
   var tts=await loadNaturalVoice(),chunks=childChunks(text),allCached=true;
+  if(APPLE_MOBILE){for(var a=0;a<chunks.length;a++){await speakApplePart(chunks[a]);if(a<chunks.length-1)await new Promise(function(resolve){setTimeout(resolve,180);});}lastDiag.cached=false;return true;}
   for(var i=0;i<chunks.length;i++){var part=chunks[i],audio=naturalCache[part];if(!audio){allCached=false;audio=await tts.generate(part,{voice:NATURAL_VOICE,speed:NATURAL_SPEED});naturalCache[part]=audio;}await playNaturalResult(audio);if(i<chunks.length-1)await new Promise(function(resolve){setTimeout(resolve,180);});}
   lastDiag.cached=allCached;return true;
 }
@@ -169,7 +199,7 @@ async function playPhoneme(symbol){
 }
 async function report(){var m=await loadManifest();return{required:m.required.length,present:m.verified.length,missing:m.required.filter(function(x){return m.verified.indexOf(x)<0;}),complete:m.required.every(function(x){return m.verified.indexOf(x)>=0;})};}
 function setEnabled(v){enabled=!!v;if(!enabled){stopAll();stopKeepAlive();}}
-function status(){return{enabled:enabled,unlocked:unlocked,provider:lastProvider,lastError:lastError,engine:lastDiag.engine,httpStatus:lastDiag.httpStatus,mime:lastDiag.mime,bytes:lastDiag.bytes,decode:lastDiag.decode,playbackStarted:lastDiag.playbackStarted,cached:lastDiag.cached,naturalState:naturalState,naturalVoice:NATURAL_VOICE,naturalSpeed:NATURAL_SPEED,naturalProgress:naturalProgress,naturalError:naturalError&&naturalError.message||null,appleMobile:APPLE_MOBILE};}
+function status(){return{enabled:enabled,unlocked:unlocked,provider:lastProvider,lastError:lastError,engine:lastDiag.engine,httpStatus:lastDiag.httpStatus,mime:lastDiag.mime,bytes:lastDiag.bytes,decode:lastDiag.decode,playbackStarted:lastDiag.playbackStarted,cached:lastDiag.cached,naturalState:naturalState,naturalMode:APPLE_MOBILE?'apple-system':'kokoro-local',naturalVoice:APPLE_MOBILE?(appleVoice&&appleVoice.name||'Apple English voice'):NATURAL_VOICE,naturalSpeed:APPLE_MOBILE?0.78:NATURAL_SPEED,naturalProgress:naturalProgress,naturalError:naturalError&&naturalError.message||null,appleMobile:APPLE_MOBILE};}
 if(typeof document!=='undefined')document.addEventListener('touchend',function(){if(enabled&&ctx&&ctx.state==='suspended')ctx.resume().then(startKeepAlive).catch(function(){});},{passive:true});
 return{unlock:unlock,prepare:loadNaturalVoice,warm:warmNaturalVoice,speak:speak,narrate:narrate,repeat:repeat,describeQuestion:describeQuestion,stopAll:stopAll,playPhoneme:playPhoneme,phonemeReport:report,onFault:onFault,setEnabled:setEnabled,isEnabled:function(){return enabled;},isUnlocked:function(){return unlocked;},status:status};
 })();
