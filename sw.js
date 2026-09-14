@@ -1,6 +1,6 @@
-const CACHE='sakhi-v3-3.7.0';
+const CACHE='sakhi-v3-3.8.0';
 self.addEventListener('install',event=>{self.skipWaiting();event.waitUntil(caches.open(CACHE).then(cache=>cache.add('./').catch(()=>null)));});
-self.addEventListener('activate',event=>{event.waitUntil((async()=>{await caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('sakhi-')&&k!==CACHE).map(k=>caches.delete(k))));await self.clients.claim();const fresh=new URL('./?v=3.7.0',self.registration.scope).href;const windows=await self.clients.matchAll({type:'window',includeUncontrolled:true});await Promise.all(windows.map(client=>client.navigate?client.navigate(fresh).catch(()=>null):null));})());});
+self.addEventListener('activate',event=>{event.waitUntil((async()=>{await caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('sakhi-')&&k!==CACHE).map(k=>caches.delete(k))));await self.clients.claim();})());});
 self.addEventListener('fetch',event=>{
   if(event.request.method!=='GET')return;
   const req=event.request;

@@ -26,5 +26,14 @@ if (!/function mediaFor\(domain,skill,template,index\)/.test(presentation) || !/
 if (!/body\[data-view="activity"\] #activityScene\{display:block/.test(css)) {
   throw new Error('Generated activity scenes must be visible, not hidden as background-only media');
 }
+if (!/@media \(pointer:coarse\) and \(max-width:1400px\)[\s\S]*\.quest-card\{width:100%[\s\S]*\.activity-actions\{position:sticky/.test(css)) {
+  throw new Error('Touch-tablet activity layout must keep the question and Next action inside the viewport');
+}
+if (/Audio\.warm\(\)/.test(app) || /controllerchange|location\.replace/.test(app)) {
+  throw new Error('Boot must not preload the voice model or reload the page during service-worker activation');
+}
+if (/async function start\(\)[\s\S]{0,180}await ensureVoiceReady/.test(app) || /async function startTrail\(domain\)[\s\S]{0,180}await ensureVoiceReady/.test(app)) {
+  throw new Error('Opening an activity must not wait for voice preparation');
+}
 
-console.log('Interaction regression passed: guarded next-adventure flow, single-play narration, and visible contextual scenes');
+console.log('Interaction regression passed: instant activity open, tablet-safe controls, guarded transitions, and single-play narration');

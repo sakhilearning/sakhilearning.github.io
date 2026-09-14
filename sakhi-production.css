@@ -170,3 +170,26 @@ body[data-view="activity"] .quest-card{margin-top:18px}
 .view.active{animation:pageIn .24s ease-out both}
 @keyframes pageIn{from{opacity:.82;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:980px){body[data-view="activity"] #activityScene{width:100%;margin:34px 0 0}body[data-view="activity"] #activityScene .scene-card{height:190px;min-height:190px;border-radius:24px}body[data-view="activity"] #activityScene .scene-copy{max-width:82%;left:18px;bottom:16px}body[data-view="activity"] #activityScene .scene-copy b{font-size:24px}}
+
+/* iPad and other touch tablets must never inherit the wide desktop activity
+   rail. Keep the question, choices, and Next action inside the viewport even
+   with Safari page zoom or larger accessibility text. */
+@media (pointer:coarse) and (max-width:1400px){
+body[data-view="activity"] .view[data-view="activity"]{padding:104px clamp(14px,3vw,30px) 126px}
+body[data-view="activity"] .activity-shell{width:100%;max-width:960px}
+body[data-view="activity"] #activityScene{width:100%;margin:28px 0 0}
+body[data-view="activity"] #activityScene .scene-card{height:180px;min-height:180px;border-radius:24px}
+body[data-view="activity"] .quest-card{width:100%;margin:16px 0 0;padding:clamp(22px,4vw,34px);overflow:hidden}
+body[data-view="activity"] .mission-story{position:relative;left:auto;top:auto;width:100%;min-height:84px;display:grid;grid-template-columns:64px minmax(0,1fr);margin:0 0 22px;padding:12px 14px;text-align:left;border-radius:24px}
+body[data-view="activity"] .mission-avatar{position:static;transform:none;grid-row:1/3}
+body[data-view="activity"] .quest-card h1{max-width:100%;font-size:clamp(26px,4.4vw,38px);overflow-wrap:anywhere}
+body[data-view="activity"] .answer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+body[data-view="activity"] .answer{min-width:0;overflow-wrap:anywhere}
+body[data-view="activity"] .activity-actions{position:sticky;bottom:12px;z-index:12;margin:22px -8px -8px;padding:12px;border:1px solid rgba(255,255,255,.72);border-radius:20px;background:rgba(240,222,251,.94);box-shadow:0 14px 34px rgba(34,15,52,.22);backdrop-filter:blur(12px)}
+body[data-view="activity"] .activity-actions .primary{min-width:190px;margin-left:auto}
+}
+@media (pointer:coarse) and (max-width:720px){
+body[data-view="activity"] .answer-grid{grid-template-columns:1fr}
+body[data-view="activity"] .activity-actions .soft{flex:1}
+body[data-view="activity"] .activity-actions .primary{width:100%;margin-left:0}
+}

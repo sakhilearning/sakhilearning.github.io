@@ -48,7 +48,7 @@ const kokoroEntry = read('scripts/kokoro-browser-entry.js');
 if (!/numThreads\s*=\s*1/.test(kokoroEntry) || !/proxy\s*=\s*false/.test(kokoroEntry)) throw new Error('iPad-safe Kokoro runtime settings are missing');
 
 const sw = read('sw.js');
-if (!/sakhi-v3-3\.7\.0/.test(sw)||!/client\.navigate/.test(sw)) throw new Error('Service worker cache/update navigation was not bumped');
+if (!/sakhi-v3-3\.8\.0/.test(sw)||/client\.navigate|clients\.matchAll/.test(sw)) throw new Error('Service worker must refresh caches without navigating clients');
 if (!sw.includes("cache:'no-store'")) throw new Error('Navigation requests should bypass stale HTTP caches');
 for (const file of [
   'assets/theme-media/generated/home-unicorn-storytime.webp',
@@ -68,4 +68,4 @@ if (!sw.includes('self.skipWaiting()') || !sw.includes('self.clients.claim()')) 
   throw new Error('Service worker should activate fresh deployment assets immediately');
 }
 
-console.log('Runtime logistics passed: detailed free desktop Kokoro plus server af_heart on iOS, clickable trails, protected parent gate, forced PWA refresh, and generated scenes are deploy-safe');
+console.log('Runtime logistics passed: detailed free desktop Kokoro plus server af_heart on iOS, clickable trails, protected parent gate, reload-safe PWA updates, and generated scenes are deploy-safe');

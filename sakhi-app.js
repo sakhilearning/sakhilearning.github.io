@@ -32,7 +32,7 @@ function renderHome(){
   var grid=$('#trailPreview');grid.innerHTML=order.map(function(id){return domains.find(function(d){return d.domain_id===id;});}).filter(Boolean).map(trailCard).join('');
 }
 function renderMap(){var g=$('#mapGrid');g.innerHTML=Cur.domains().map(function(d){return trailCard(d);}).join('');}
-async function startTrail(domain){try{await ensureVoiceReady();plan=Plan.build();var idx=plan.missions.findIndex(function(m){var s=Cur.skill(m.pick.skill_id);return s&&s.domain_id===domain;});if(idx<0){toast('That trail is getting ready. Try another world.');return;}session=Prog.startSession(plan);missionIndex=idx;await loadMission();}catch(e){console.error('[Sakhi trail]',e);toast('Sakhi’s real voice could not load. Check the connection and try again.');}}
+async function startTrail(domain){try{Audio.unlock().catch(function(){});plan=Plan.build();var idx=plan.missions.findIndex(function(m){var s=Cur.skill(m.pick.skill_id);return s&&s.domain_id===domain;});if(idx<0){toast('That trail is getting ready. Try another world.');return;}session=Prog.startSession(plan);missionIndex=idx;await loadMission();}catch(e){console.error('[Sakhi trail]',e);toast('That trail could not open. Tap once more to try again.');}}
 function renderRewards(){var s=Prog.load();$('#rewardTotal').textContent=Prog.stars();var box=$('#rewardRecent'),recent=s.rewards.slice(-10).reverse();box.innerHTML=recent.length?recent.map(function(r){var sk=Cur.skill(r.skill_id);return '<div class="reward-row"><span>⭐ +'+r.amount+' '+r.label+'</span><span class="muted">'+(sk?sk.title:'practice')+'</span></div>';}).join(''):'<p class="center muted">Complete an adventure to collect your first Trail Stars.</p>';}
 function parentMetric(label,value,sub){return '<article class="parent-card"><small>'+label+'</small><h2>'+value+'</h2><p class="muted">'+sub+'</p></article>';}
 async function renderParent(){
@@ -53,8 +53,8 @@ async function renderParent(){
 }
 async function start(){
   $('#startBtn').disabled=true;
-  try{await ensureVoiceReady();plan=Plan.build();session=Prog.startSession(plan);missionIndex=0;await loadMission();}
-  catch(e){console.error('[Sakhi start]',e);toast('Sakhi’s real voice could not load. Check the connection and try again.');}
+  try{Audio.unlock().catch(function(){});plan=Plan.build();session=Prog.startSession(plan);missionIndex=0;await loadMission();}
+  catch(e){console.error('[Sakhi start]',e);toast('The adventure could not open. Tap once more to try again.');}
   finally{$('#startBtn').disabled=false;}
 }
 async function loadMission(){
@@ -103,7 +103,7 @@ function bootFailure(e){
   console.error('[Sakhi boot failed]',e);window.__SAKHI_BOOT_ERROR=String(e&&e.message||e);var box=$('#bootFallback');if(box){box.hidden=false;var detail=box.querySelector('[data-boot-detail]');if(detail)detail.textContent='Build '+(window.SAKHI_BUILD_ID||'unknown')+' · '+window.__SAKHI_BOOT_ERROR;}
 }
 async function boot(){
-  try{await Cur.load();Prog.load();Audio.setEnabled(Prog.load().settings.voice!==false);bind();renderHome();renderStats();if(Audio.isEnabled()&&Audio.warm)Audio.warm().catch(function(e){console.warn('[Sakhi] Voice preload',e&&e.message||e);});window.__SAKHI_BOOTED=true;document.documentElement.classList.add('sakhi-ready');if(Cloud&&Cloud.probe)Cloud.probe().catch(function(e){console.warn('Cloud probe',e.message);});if('serviceWorker'in navigator&&location.protocol!=='file:'){var reloading=false;navigator.serviceWorker.addEventListener('controllerchange',function(){if(reloading)return;reloading=true;location.replace('./?v=3.7.0');});navigator.serviceWorker.register('./sw.js?v=3.7.0',{updateViaCache:'none'}).then(function(r){r.update().catch(function(){});}).catch(function(e){console.warn('SW',e.message);});}}
+  try{await Cur.load();Prog.load();Audio.setEnabled(Prog.load().settings.voice!==false);bind();renderHome();renderStats();window.__SAKHI_BOOTED=true;document.documentElement.classList.add('sakhi-ready');if(Cloud&&Cloud.probe)Cloud.probe().catch(function(e){console.warn('Cloud probe',e.message);});if('serviceWorker'in navigator&&location.protocol!=='file:'){navigator.serviceWorker.register('./sw.js?v=3.8.0',{updateViaCache:'none'}).then(function(r){r.update().catch(function(){});}).catch(function(e){console.warn('SW',e.message);});}}
   catch(e){bootFailure(e);}
 }
 window.SakhiApp={boot:boot,show:show};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
