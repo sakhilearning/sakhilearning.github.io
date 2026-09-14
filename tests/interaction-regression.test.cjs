@@ -8,7 +8,7 @@ const audio = read('sakhi-audio.js');
 const presentation = read('sakhi-presentation.js');
 const css = read('sakhi-production.css');
 
-if (!/async function continueAfter\(\)[\s\S]*if\(transitioning\)return[\s\S]*missionIndex=previousIndex\+1[\s\S]*await loadMission\(\)/.test(app)) {
+if (!/async function continueAfter\(\)[\s\S]*if\(transitioning\|\|!overlay\.classList\.contains\('show'\)\)return[\s\S]*missionIndex=previousIndex\+1[\s\S]*await loadMission\(\)/.test(app)) {
   throw new Error('Next-adventure transition must be guarded, advance its index, and await the next mission');
 }
 if (!/if\(activityCompleted\)return;activityCompleted=true/.test(app)) {

@@ -87,11 +87,11 @@ function finishActivity(){
   var rewardMedia=Pres.mediaFor&&Pres.mediaFor(current.domain_id,current.skill_title,q().template,qIndex);if(rewardMedia)$('#celebrateIcon').innerHTML='<img src="'+rewardMedia.src+'" alt="'+rewardMedia.alt+'">';
 }
 async function continueAfter(){
-  if(transitioning)return;transitioning=true;var button=$('#continueBtn'),overlay=$('#celebrate'),previousIndex=missionIndex;
+  var button=$('#continueBtn'),overlay=$('#celebrate');if(transitioning||!overlay.classList.contains('show'))return;transitioning=true;var previousIndex=missionIndex;
   button.disabled=true;button.setAttribute('aria-busy','true');Audio.stopAll();narrationRun++;overlay.classList.remove('show');
   try{
     missionIndex=previousIndex+1;
-    if(missionIndex>plan.missions.length){Prog.endSession(session.session_id);session=null;show('rewards');}
+    if(missionIndex>plan.missions.length){if(session)Prog.endSession(session.session_id);session=null;show('rewards');}
     else{await loadMission();if(missionIndex===previousIndex)throw new Error('Adventure did not advance');window.scrollTo(0,0);}
   }catch(e){console.error('[Sakhi next adventure]',e);missionIndex=previousIndex;overlay.classList.add('show');toast('That adventure paused. Tap once more to continue.');}
   finally{transitioning=false;button.disabled=false;button.removeAttribute('aria-busy');}
@@ -103,7 +103,7 @@ function bootFailure(e){
   console.error('[Sakhi boot failed]',e);window.__SAKHI_BOOT_ERROR=String(e&&e.message||e);var box=$('#bootFallback');if(box){box.hidden=false;var detail=box.querySelector('[data-boot-detail]');if(detail)detail.textContent='Build '+(window.SAKHI_BUILD_ID||'unknown')+' · '+window.__SAKHI_BOOT_ERROR;}
 }
 async function boot(){
-  try{await Cur.load();Prog.load();Audio.setEnabled(Prog.load().settings.voice!==false);bind();renderHome();renderStats();if(Audio.isEnabled()&&Audio.warm)Audio.warm().catch(function(e){console.warn('[Sakhi] Voice preload',e&&e.message||e);});window.__SAKHI_BOOTED=true;document.documentElement.classList.add('sakhi-ready');if(Cloud&&Cloud.probe)Cloud.probe().catch(function(e){console.warn('Cloud probe',e.message);});if('serviceWorker'in navigator&&location.protocol!=='file:'){var reloading=false;navigator.serviceWorker.addEventListener('controllerchange',function(){if(reloading)return;reloading=true;location.replace('./?v=3.6.0');});navigator.serviceWorker.register('./sw.js?v=3.6.0',{updateViaCache:'none'}).then(function(r){r.update().catch(function(){});}).catch(function(e){console.warn('SW',e.message);});}}
+  try{await Cur.load();Prog.load();Audio.setEnabled(Prog.load().settings.voice!==false);bind();renderHome();renderStats();if(Audio.isEnabled()&&Audio.warm)Audio.warm().catch(function(e){console.warn('[Sakhi] Voice preload',e&&e.message||e);});window.__SAKHI_BOOTED=true;document.documentElement.classList.add('sakhi-ready');if(Cloud&&Cloud.probe)Cloud.probe().catch(function(e){console.warn('Cloud probe',e.message);});if('serviceWorker'in navigator&&location.protocol!=='file:'){var reloading=false;navigator.serviceWorker.addEventListener('controllerchange',function(){if(reloading)return;reloading=true;location.replace('./?v=3.7.0');});navigator.serviceWorker.register('./sw.js?v=3.7.0',{updateViaCache:'none'}).then(function(r){r.update().catch(function(){});}).catch(function(e){console.warn('SW',e.message);});}}
   catch(e){bootFailure(e);}
 }
 window.SakhiApp={boot:boot,show:show};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
