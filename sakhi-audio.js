@@ -5,8 +5,6 @@ var lastProvider='none',lastError=null;
 var naturalTts=null,naturalPromise=null,naturalState='idle',naturalError=null,naturalProgress=0,naturalCache={};
 var lastDiag={provider:'none',engine:'none',httpStatus:null,mime:'',bytes:0,decode:false,playbackStarted:false,cached:false,lastError:null};
 var AC=window.AudioContext||window.webkitAudioContext;
-var NATURAL_IMPORT='./vendor/kokoro-runtime.js';
-var NATURAL_MODEL='onnx-community/Kokoro-82M-v1.0-ONNX';
 var NATURAL_VOICE='af_heart';
 var NATURAL_SPEED=.86;
 var SAKHI_TTS_URL='https://interview.amarikit.com/api/sakhi-tts';
@@ -101,31 +99,15 @@ async function prepareServerVoice(){
 function loadNaturalVoice(){
   if(naturalTts)return Promise.resolve(naturalTts);
   if(naturalPromise)return naturalPromise;
-  if(!canUseNatural())return Promise.reject(new Error('Local voice is unavailable in this environment.'));
-  if(APPLE_MOBILE){naturalPromise=prepareServerVoice().catch(function(e){naturalState='failed';naturalError=e;naturalPromise=null;throw e;});return naturalPromise;}
-  naturalState='loading';naturalError=null;naturalProgress=1;
-  naturalPromise=import(NATURAL_IMPORT).then(function(mod){
-    if(!mod||!mod.KokoroTTS)throw new Error('Kokoro voice engine did not load.');
-    return mod.KokoroTTS.from_pretrained(NATURAL_MODEL,{dtype:'q8',device:'wasm',progress_callback:function(p){if(p&&typeof p.progress==='number')naturalProgress=Math.max(naturalProgress,Math.min(99,Math.round(p.progress)));}});
-  }).then(function(tts){naturalTts=tts;naturalState='ready';naturalError=null;naturalProgress=100;return tts;}).catch(function(e){naturalState='failed';naturalError=e;naturalPromise=null;throw e;});
+  if(!canUseNatural())return Promise.reject(new Error('Sakhi server voice is unavailable in this environment.'));
+  naturalPromise=prepareServerVoice().catch(function(e){naturalState='failed';naturalError=e;naturalPromise=null;throw e;});
   return naturalPromise;
 }
 function warmNaturalVoice(){
-  if(!canUseNatural())return Promise.reject(new Error('Local voice is unavailable in this environment.'));
+  if(!canUseNatural())return Promise.reject(new Error('Sakhi server voice is unavailable in this environment.'));
   if(naturalState==='ready')return Promise.resolve(naturalTts);
   if(naturalState==='loading')return naturalPromise;
   return loadNaturalVoice();
-}
-async function playNaturalResult(audio,requestId){
-  if(!isCurrent(requestId))return false;
-  ensureContext();if(ctx&&ctx.state==='suspended')await ctx.resume();if(ctx)startKeepAlive();
-  var samples=audio&&(audio.audio||audio.data),rate=audio&&(audio.sampling_rate||audio.sample_rate||24000);
-  if(samples&&ctx){
-    var buf=ctx.createBuffer(1,samples.length,rate);buf.getChannelData(0).set(samples);
-    return new Promise(function(resolve,reject){if(!isCurrent(requestId)){resolve(false);return;}var src=ctx.createBufferSource(),gain=ctx.createGain(),now=ctx.currentTime||0,duration=buf.duration||samples.length/rate;currentSource=src;src.buffer=buf;src.connect(gain);gain.connect(ctx.destination);if(gain.gain&&gain.gain.setValueAtTime){gain.gain.setValueAtTime(.01,now);gain.gain.linearRampToValueAtTime(1,now+.035);gain.gain.setValueAtTime(1,Math.max(now+.04,now+duration-.05));gain.gain.linearRampToValueAtTime(.01,now+duration);}else gain.gain.value=1;src.onended=function(){if(currentSource===src)currentSource=null;resolve(true);};try{src.start(0);finishPlayback('kokoro','webaudio-local');lastDiag.mime='audio/pcm';lastDiag.bytes=samples.byteLength||samples.length*4;lastDiag.decode=true;}catch(e){reject(fault('PLAYBACK','Sakhi local voice could not start.',e));}});
-  }
-  if(audio&&typeof audio.toBlob==='function'){var blob=audio.toBlob();return playWithHtmlAudio(await blob.arrayBuffer(),blob.type||'audio/wav','kokoro',requestId);}
-  throw fault('PLAYBACK','Sakhi local voice returned no playable audio.');
 }
 async function speakServerPart(text,requestId){
   var cached=naturalCache[text];
@@ -143,10 +125,10 @@ function childChunks(text){
   if(part)chunks.push(part);return chunks.length?chunks:[String(text||'')];
 }
 async function naturalSpeak(text,requestId){
-  var tts=await loadNaturalVoice(),chunks=childChunks(text),allCached=true;
-  if(APPLE_MOBILE){for(var a=0;a<chunks.length;a++){if(!isCurrent(requestId))return false;await speakServerPart(chunks[a],requestId);if(a<chunks.length-1)await delay(180);}return isCurrent(requestId);}
-  for(var i=0;i<chunks.length;i++){if(!isCurrent(requestId))return false;var part=chunks[i],audio=naturalCache[part];if(!audio){allCached=false;audio=await tts.generate(part,{voice:NATURAL_VOICE,speed:NATURAL_SPEED});naturalCache[part]=audio;}if(!isCurrent(requestId))return false;await playNaturalResult(audio,requestId);if(i<chunks.length-1)await delay(180);}
-  lastDiag.cached=allCached;return true;
+  await loadNaturalVoice();
+  var chunks=childChunks(text);
+  for(var i=0;i<chunks.length;i++){if(!isCurrent(requestId))return false;await speakServerPart(chunks[i],requestId);if(i<chunks.length-1)await delay(180);}
+  return isCurrent(requestId);
 }
 async function speakText(text){
   text=String(text||'').trim();if(!text)return true;
@@ -203,7 +185,7 @@ async function playPhoneme(symbol){
 }
 async function report(){var m=await loadManifest();return{required:m.required.length,present:m.verified.length,missing:m.required.filter(function(x){return m.verified.indexOf(x)<0;}),complete:m.required.every(function(x){return m.verified.indexOf(x)>=0;})};}
 function setEnabled(v){enabled=!!v;if(!enabled){stopAll();stopKeepAlive();}}
-function status(){return{enabled:enabled,unlocked:unlocked,provider:lastProvider,lastError:lastError,engine:lastDiag.engine,httpStatus:lastDiag.httpStatus,mime:lastDiag.mime,bytes:lastDiag.bytes,decode:lastDiag.decode,playbackStarted:lastDiag.playbackStarted,cached:lastDiag.cached,naturalState:naturalState,naturalMode:APPLE_MOBILE?'kokoro-server':'kokoro-local',naturalVoice:NATURAL_VOICE,naturalSpeed:NATURAL_SPEED,naturalProgress:naturalProgress,naturalError:naturalError&&naturalError.message||null,appleMobile:APPLE_MOBILE};}
+function status(){return{enabled:enabled,unlocked:unlocked,provider:lastProvider,lastError:lastError,engine:lastDiag.engine,httpStatus:lastDiag.httpStatus,mime:lastDiag.mime,bytes:lastDiag.bytes,decode:lastDiag.decode,playbackStarted:lastDiag.playbackStarted,cached:lastDiag.cached,naturalState:naturalState,naturalMode:'kokoro-server',naturalVoice:NATURAL_VOICE,naturalSpeed:NATURAL_SPEED,naturalProgress:naturalProgress,naturalError:naturalError&&naturalError.message||null,appleMobile:APPLE_MOBILE};}
 if(typeof document!=='undefined')document.addEventListener('touchend',function(){if(enabled&&ctx&&ctx.state==='suspended')ctx.resume().then(startKeepAlive).catch(function(){});},{passive:true});
 return{unlock:unlock,prepare:loadNaturalVoice,warm:warmNaturalVoice,speak:speak,narrate:narrate,repeat:repeat,describeQuestion:describeQuestion,stopAll:stopAll,playPhoneme:playPhoneme,phonemeReport:report,onFault:onFault,setEnabled:setEnabled,isEnabled:function(){return enabled;},isUnlocked:function(){return unlocked;},status:status};
 })();

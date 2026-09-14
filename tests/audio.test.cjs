@@ -12,7 +12,7 @@ function src(f){return fs.readFileSync(path.join(root,f),'utf8');}
     if(url.endsWith('/speak')){speechCalls++;const body=JSON.parse(opts.body);if(body.voice!=='af_heart'||body.speed!==.86)throw new Error('Wrong server voice request');if(body.text.includes('Slow request'))await new Promise(resolve=>setTimeout(resolve,20));return {ok:true,status:200,headers:{get:()=> 'audio/wav'},arrayBuffer:async()=>new ArrayBuffer(512),text:async()=>''};}
     throw new Error('Unexpected fetch '+url);
   }
-  const ctx={window:{},document:{addEventListener(){}},location:{protocol:'https:'},console,setTimeout,clearTimeout,Promise,ArrayBuffer,URL:{revokeObjectURL(){},createObjectURL(){return'blob:test';}},Blob:function(){},AudioContext:AC,fetch,navigator:{userAgent:'Mozilla/5.0 (iPad; CPU OS 18_0 like Mac OS X)',platform:'iPad',maxTouchPoints:5}};
+  const ctx={window:{},document:{addEventListener(){}},location:{protocol:'https:'},console,setTimeout,clearTimeout,Promise,ArrayBuffer,URL:{revokeObjectURL(){},createObjectURL(){return'blob:test';}},Blob:function(){},AudioContext:AC,fetch,navigator:{userAgent:'Mozilla/5.0 (Macintosh; Intel Mac OS X)',platform:'MacIntel',maxTouchPoints:0}};
   ctx.window=ctx;ctx.SAKHI_PHONEME_MANIFEST={required:['m'],verified:[]};
   ctx.SakhiCloud={state:()=>({configured:true}),speak:async()=>{cloudCalls++;throw new Error('quota exhausted');}};
   vm.createContext(ctx);vm.runInContext(src('sakhi-audio.js'),ctx,{filename:'sakhi-audio.js'});
@@ -20,8 +20,8 @@ function src(f){return fs.readFileSync(path.join(root,f),'utf8');}
   await ctx.SakhiAudio.prepare();
   await ctx.SakhiAudio.speak('Which answer is best? Choice one is left. Choice two is right.');
   const st=ctx.SakhiAudio.status();
-  if(st.provider!=='kokoro-server'||st.naturalMode!=='kokoro-server'||st.naturalVoice!=='af_heart'||st.naturalSpeed!==.86||!st.appleMobile||healthCalls<1||speechCalls!==1)throw new Error('iPad Kokoro diagnostics incorrect: '+JSON.stringify(st));
-  if(started<2)throw new Error('Expected the iPad WebAudio unlock and keep-alive buffers');
+  if(st.provider!=='kokoro-server'||st.naturalMode!=='kokoro-server'||st.naturalVoice!=='af_heart'||st.naturalSpeed!==.86||st.appleMobile||healthCalls<1||speechCalls!==1)throw new Error('cross-device server Kokoro diagnostics incorrect: '+JSON.stringify(st));
+  if(started<1)throw new Error('Expected the WebAudio unlock buffer');
   if(cloudCalls!==0)throw new Error('The zero-credit cloud provider should not be required for narration');
   const audibleBefore=audibleStarted;
   const stale=ctx.SakhiAudio.speak('Slow request should be cancelled.');
@@ -33,5 +33,5 @@ function src(f){return fs.readFileSync(path.join(root,f),'utf8');}
   for(const phrase of ['Which number comes next?','Look at the pattern.','Choice 1 is 2.','Choice 2 is 3.','Choice 3 is 4.','tap the best answer'])if(!detailed.includes(phrase))throw new Error('Detailed child narration is missing: '+phrase+' in '+detailed);
   let phonemeBlocked=false;try{await ctx.SakhiAudio.playPhoneme('m');}catch(e){phonemeBlocked=e.kind==='MISSING_PHONEME';}
   if(!phonemeBlocked)throw new Error('Unverified isolated phoneme was not blocked');
-  console.log('Audio core passed: detailed Kokoro desktop narration and server af_heart on iPad avoid cloud credits; unverified phonemes are blocked.');
+  console.log('Audio core passed: server af_heart narration on every device avoids browser freezes and cloud credits; unverified phonemes are blocked.');
 })().catch(e=>{console.error(e);process.exit(1);});

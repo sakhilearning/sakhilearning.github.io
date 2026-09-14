@@ -15,10 +15,10 @@ if (!cloud.includes('httpStatus:r.status') || !cloud.includes("mime:mime||'audio
 }
 
 const audio = read('sakhi-audio.js');
-for (const token of ['KokoroTTS.from_pretrained', 'af_heart', 'NATURAL_SPEED=.86', 'describeQuestion', 'startKeepAlive', 'prepare:loadNaturalVoice', 'playWithHtmlAudio', 'decodeAudioData']) {
+for (const token of ['af_heart', 'NATURAL_SPEED=.86', 'describeQuestion', 'startKeepAlive', 'prepare:loadNaturalVoice', 'playWithHtmlAudio', 'decodeAudioData']) {
   if (!audio.includes(token)) throw new Error(`Resilient free audio path is missing ${token}`);
 }
-if (!/SAKHI_TTS_URL[\s\S]*kokoro-server/.test(audio)||!/naturalMode:APPLE_MOBILE\?'kokoro-server':'kokoro-local'/.test(audio)) throw new Error('The iOS server-side Kokoro path is missing');
+if (!/SAKHI_TTS_URL[\s\S]*kokoro-server/.test(audio)||!/naturalMode:'kokoro-server'/.test(audio)||/NATURAL_IMPORT|KokoroTTS|from_pretrained|tts\.generate/.test(audio)) throw new Error('The all-device server-side Kokoro path is missing or browser model loading remains');
 if (/speechSynthesis|SpeechSynthesisUtterance|apple-system/.test(audio)) throw new Error('Robotic browser speech remains in the narration runtime');
 if (/SakhiCloud\.speak\(/.test(audio)) throw new Error('Normal narration still depends on paid cloud speech');
 
@@ -68,4 +68,4 @@ if (!sw.includes('self.skipWaiting()') || !sw.includes('self.clients.claim()')) 
   throw new Error('Service worker should activate fresh deployment assets immediately');
 }
 
-console.log('Runtime logistics passed: detailed free desktop Kokoro plus server af_heart on iOS, clickable trails, protected parent gate, reload-safe PWA updates, and generated scenes are deploy-safe');
+console.log('Runtime logistics passed: server af_heart Kokoro on every device without browser model compilation, clickable trails, protected parent gate, reload-safe PWA updates, and generated scenes are deploy-safe');

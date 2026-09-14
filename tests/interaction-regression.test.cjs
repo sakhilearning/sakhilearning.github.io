@@ -29,11 +29,14 @@ if (!/body\[data-view="activity"\] #activityScene\{display:block/.test(css)) {
 if (!/@media \(pointer:coarse\) and \(max-width:1400px\)[\s\S]*\.quest-card\{width:100%[\s\S]*\.activity-actions\{position:sticky/.test(css)) {
   throw new Error('Touch-tablet activity layout must keep the question and Next action inside the viewport');
 }
-if (/Audio\.warm\(\)/.test(app) || /controllerchange|location\.replace/.test(app)) {
-  throw new Error('Boot must not preload the voice model or reload the page during service-worker activation');
+if (!/Audio\.warm\(\)\.catch/.test(app) || /controllerchange|location\.replace/.test(app)) {
+  throw new Error('Boot must warm the server voice in the background without reloading the page');
+}
+if (/NATURAL_IMPORT|KokoroTTS|from_pretrained|tts\.generate/.test(audio)) {
+  throw new Error('The learning page must never initialize a browser-side Kokoro model');
 }
 if (/async function start\(\)[\s\S]{0,180}await ensureVoiceReady/.test(app) || /async function startTrail\(domain\)[\s\S]{0,180}await ensureVoiceReady/.test(app)) {
   throw new Error('Opening an activity must not wait for voice preparation');
 }
 
-console.log('Interaction regression passed: instant activity open, tablet-safe controls, guarded transitions, and single-play narration');
+console.log('Interaction regression passed: background server voice warm-up, instant activity open, tablet-safe controls, guarded transitions, and single-play narration');
