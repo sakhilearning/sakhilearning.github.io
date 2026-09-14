@@ -23,7 +23,7 @@ const presentation=read('sakhi-presentation.js');
 if(!/world-art/.test(presentation)||!/objectSet/.test(presentation)||!/storyCue/.test(presentation))throw new Error('Immersive presentation engine missing');
 const generatedScenes=[...presentation.matchAll(/\.\/assets\/theme-media\/generated\/[^'"]+\.webp/g)].map(m=>m[0]);
 if(new Set(generatedScenes).size!==9)throw new Error('Expected nine distinct generated world scenes');
-if(!/adventureMode==='princess'\?'princess':'home'/.test(read('sakhi-app.js'))||!/variant==='princess'\?SCENE_MEDIA\.logic/.test(presentation))throw new Error('Home does not switch between the dedicated unicorn and princess scenes');
+if(!/adventureMode==='princess'\?'princess':'home'/.test(read('sakhi-app.js'))||!/variant==='princess'\?SCENE_MEDIA\.language/.test(presentation))throw new Error('Home does not switch between the dedicated unicorn and princess scenes');
 if(!/data-count-object/.test(presentation)||!/wireCountables/.test(templates))throw new Error('Countable learning objects are not interactive');
 if(!/KokoroTTS\.from_pretrained/.test(audio)||!/af_heart/.test(audio)||!/NATURAL_SPEED=\.86/.test(audio)||!/describeQuestion/.test(audio)||!/startKeepAlive/.test(audio)||!/prepare:loadNaturalVoice/.test(audio)||!/playWithHtmlAudio/.test(audio)||!/narrate:/.test(audio))throw new Error('Detailed iPad-safe Kokoro audio hardening missing');
 if(!/SAKHI_TTS_URL[\s\S]*kokoro-server/.test(audio)||!/naturalMode:APPLE_MOBILE\?'kokoro-server':'kokoro-local'/.test(audio))throw new Error('The iOS server-side Kokoro path is missing');
@@ -35,7 +35,7 @@ const css=read('sakhi-production.css');if(/!important/.test(css))throw new Error
 const html=read('index.template.html');const idMatches=[...html.matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]);if(new Set(idMatches).size!==idMatches.length)throw new Error('Duplicate HTML id');
 const hotlinks=[...fs.readdirSync(root).filter(f=>/\.(js|css|html)$/.test(f)).flatMap(f=>[...read(f).matchAll(/https?:\/\/[^'"\s)]+\.(?:png|jpe?g|webp|svg)/gi)].map(m=>m[0]))];if(hotlinks.length)throw new Error('Remote image hotlink found');
 const kokoroEntry=read('scripts/kokoro-browser-entry.js');if(!/numThreads\s*=\s*1/.test(kokoroEntry)||!/proxy\s*=\s*false/.test(kokoroEntry))throw new Error('Single-thread iPad Kokoro bundle settings missing');
-console.log('Sakhi V3.5.0 source validation passed:');
+console.log('Sakhi V3.6.0 source validation passed:');
 console.log(` - ${c.skills.length} skills across 8 persistent subject trails`);
 console.log(' - prerequisite graph sound');
 console.log(' - 26 weeks / 130 days / 30 minutes validated');

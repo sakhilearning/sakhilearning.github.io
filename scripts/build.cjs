@@ -1,9 +1,9 @@
 const fs=require('fs');
 const path=require('path');
-const esbuild=require('esbuild');
+let esbuild=null;try{esbuild=require('esbuild');}catch(e){}
 const root=path.join(__dirname,'..');
 const dist=path.join(root,'dist');
-const buildId='3.5.0';
+const buildId='3.6.0';
 const moduleOrder=[
   'supabase-config.js',
   'sakhi-cloud.js',
@@ -39,19 +39,25 @@ function flattenLayers(css){
 function dataUri(file,mime){return `data:${mime};base64,${read(file,null).toString('base64')}`;}
 const vendor=path.join(root,'vendor');
 fs.mkdirSync(vendor,{recursive:true});
-esbuild.buildSync({
-  entryPoints:[path.join(root,'scripts/kokoro-browser-entry.js')],
-  outfile:path.join(vendor,'kokoro-runtime.js'),
-  bundle:true,
-  format:'esm',
-  platform:'browser',
-  target:['safari16.4'],
-  mainFields:['browser','module','main'],
-  conditions:['browser','import','default'],
-  minify:true,
-  legalComments:'none',
-  define:{'process.env.NODE_ENV':'"production"'}
-});
+if(esbuild){
+  esbuild.buildSync({
+    entryPoints:[path.join(root,'scripts/kokoro-browser-entry.js')],
+    outfile:path.join(vendor,'kokoro-runtime.js'),
+    bundle:true,
+    format:'esm',
+    platform:'browser',
+    target:['safari16.4'],
+    mainFields:['browser','module','main'],
+    conditions:['browser','import','default'],
+    minify:true,
+    legalComments:'none',
+    define:{'process.env.NODE_ENV':'"production"'}
+  });
+}else{
+  const existing=path.join(vendor,'kokoro-runtime.js');
+  if(!fs.existsSync(existing)||fs.statSync(existing).size<1000000)throw new Error('esbuild is unavailable and the verified Kokoro browser bundle is missing');
+  console.warn('esbuild unavailable; preserving the checked-in verified Kokoro browser bundle');
+}
 const curriculum=JSON.parse(read('data/curriculum-v3.json'));
 const sixMonth=JSON.parse(read('data/six-month-plan.json'));
 let phonemes={required:[],verified:[]};

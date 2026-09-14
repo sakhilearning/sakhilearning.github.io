@@ -1,6 +1,6 @@
 window.SakhiAudio=(function(){
 'use strict';
-var enabled=true,unlocked=false,ctx=null,currentSource=null,currentAudio=null,currentObjectUrl=null,keepAliveSource=null,keepAliveGain=null,lastText='',listeners=[],manifest=null;
+var enabled=true,unlocked=false,ctx=null,currentSource=null,currentAudio=null,currentObjectUrl=null,keepAliveSource=null,keepAliveGain=null,lastText='',listeners=[],manifest=null,playbackEpoch=0;
 var lastProvider='none',lastError=null;
 var naturalTts=null,naturalPromise=null,naturalState='idle',naturalError=null,naturalProgress=0,naturalCache={};
 var lastDiag={provider:'none',engine:'none',httpStatus:null,mime:'',bytes:0,decode:false,playbackStarted:false,cached:false,lastError:null};
@@ -38,17 +38,20 @@ async function unlock(){
   }catch(e){fault('BLOCKED','Tap Hear again once to enable Sakhi voice.',e);return false;}
 }
 function stopAll(){
+  playbackEpoch++;
   try{if(currentSource&&currentSource.stop)currentSource.stop(0);}catch(e){}currentSource=null;
   try{if(currentAudio){currentAudio.pause();currentAudio.src='';}}catch(e){}currentAudio=null;
   if(currentObjectUrl){try{URL.revokeObjectURL(currentObjectUrl);}catch(e){}currentObjectUrl=null;}
 }
 function stopKeepAlive(){try{if(keepAliveSource)keepAliveSource.stop(0);}catch(e){}keepAliveSource=null;keepAliveGain=null;}
 function finishPlayback(provider,engine){lastProvider=provider;lastError=null;lastDiag.provider=provider;lastDiag.engine=engine;lastDiag.playbackStarted=true;lastDiag.lastError=null;}
-function playWithHtmlAudio(bytes,mime,provider){
+function isCurrent(requestId){return requestId===undefined||requestId===playbackEpoch;}
+function playWithHtmlAudio(bytes,mime,provider,requestId){
+  if(!isCurrent(requestId))return Promise.resolve(false);
   if(typeof Audio==='undefined'||typeof Blob==='undefined'||!window.URL||!URL.createObjectURL)throw fault('UNSUPPORTED','This browser cannot play Sakhi narration.');
   return new Promise(function(resolve,reject){
     try{
-      var blob=new Blob([bytes],{type:mime||'audio/mpeg'}),url=URL.createObjectURL(blob),a=new Audio();
+      if(!isCurrent(requestId)){resolve(false);return;}var blob=new Blob([bytes],{type:mime||'audio/mpeg'}),url=URL.createObjectURL(blob),a=new Audio();
       currentAudio=a;currentObjectUrl=url;a.preload='auto';a.src=url;
       a.onplaying=function(){finishPlayback(provider,'html-audio');};
       a.onended=function(){if(currentAudio===a)currentAudio=null;if(currentObjectUrl===url){try{URL.revokeObjectURL(url);}catch(e){}currentObjectUrl=null;}resolve(true);};
@@ -57,25 +60,26 @@ function playWithHtmlAudio(bytes,mime,provider){
     }catch(e){reject(fault('PLAYBACK','Sakhi narration could not start.',e));}
   });
 }
-async function playBytes(bytes,meta,provider){
+async function playBytes(bytes,meta,provider,requestId){
   meta=meta||{};provider=provider||'recording';
+  if(!isCurrent(requestId))return false;
   lastDiag.provider=provider;lastDiag.httpStatus=meta.httpStatus||null;lastDiag.mime=meta.mime||'';lastDiag.bytes=bytes&&bytes.byteLength||0;lastDiag.cached=!!meta.cached;lastDiag.decode=false;lastDiag.playbackStarted=false;lastDiag.lastError=null;
   if(!bytes||bytes.byteLength<100)throw fault('EMPTY_AUDIO','Sakhi voice returned no playable audio.');
   ensureContext();
   if(ctx){
     try{
       if(ctx.state==='suspended')await ctx.resume();
-      var buf=await ctx.decodeAudioData(bytes.slice(0));lastDiag.decode=true;
+      var buf=await ctx.decodeAudioData(bytes.slice(0));if(!isCurrent(requestId))return false;lastDiag.decode=true;
       return await new Promise(function(resolve,reject){
         var src=ctx.createBufferSource();currentSource=src;src.buffer=buf;src.connect(ctx.destination);
         src.onended=function(){if(currentSource===src)currentSource=null;resolve(true);};
-        try{src.start(0);finishPlayback(provider,'webaudio');}catch(e){reject(fault('PLAYBACK','Sakhi narration could not start.',e));}
+        try{if(!isCurrent(requestId)){resolve(false);return;}src.start(0);finishPlayback(provider,'webaudio');}catch(e){reject(fault('PLAYBACK','Sakhi narration could not start.',e));}
       });
     }catch(e){
       console.warn('[Sakhi audio] WebAudio playback failed; trying HTML Audio.',e&&e.message||e);
     }
   }
-  return playWithHtmlAudio(bytes,meta.mime||'audio/mpeg',provider);
+  return playWithHtmlAudio(bytes,meta.mime||'audio/mpeg',provider,requestId);
 }
 function canUseNatural(){return typeof document!=='undefined'&&typeof location!=='undefined'&&location.protocol!=='file:'&&typeof Promise!=='undefined';}
 function delay(ms){return new Promise(function(resolve){setTimeout(resolve,ms);});}
@@ -112,42 +116,43 @@ function warmNaturalVoice(){
   if(naturalState==='loading')return naturalPromise;
   return loadNaturalVoice();
 }
-async function playNaturalResult(audio){
+async function playNaturalResult(audio,requestId){
+  if(!isCurrent(requestId))return false;
   ensureContext();if(ctx&&ctx.state==='suspended')await ctx.resume();if(ctx)startKeepAlive();
   var samples=audio&&(audio.audio||audio.data),rate=audio&&(audio.sampling_rate||audio.sample_rate||24000);
   if(samples&&ctx){
     var buf=ctx.createBuffer(1,samples.length,rate);buf.getChannelData(0).set(samples);
-    return new Promise(function(resolve,reject){var src=ctx.createBufferSource(),gain=ctx.createGain(),now=ctx.currentTime||0,duration=buf.duration||samples.length/rate;currentSource=src;src.buffer=buf;src.connect(gain);gain.connect(ctx.destination);if(gain.gain&&gain.gain.setValueAtTime){gain.gain.setValueAtTime(.01,now);gain.gain.linearRampToValueAtTime(1,now+.035);gain.gain.setValueAtTime(1,Math.max(now+.04,now+duration-.05));gain.gain.linearRampToValueAtTime(.01,now+duration);}else gain.gain.value=1;src.onended=function(){if(currentSource===src)currentSource=null;resolve(true);};try{src.start(0);finishPlayback('kokoro','webaudio-local');lastDiag.mime='audio/pcm';lastDiag.bytes=samples.byteLength||samples.length*4;lastDiag.decode=true;}catch(e){reject(fault('PLAYBACK','Sakhi local voice could not start.',e));}});
+    return new Promise(function(resolve,reject){if(!isCurrent(requestId)){resolve(false);return;}var src=ctx.createBufferSource(),gain=ctx.createGain(),now=ctx.currentTime||0,duration=buf.duration||samples.length/rate;currentSource=src;src.buffer=buf;src.connect(gain);gain.connect(ctx.destination);if(gain.gain&&gain.gain.setValueAtTime){gain.gain.setValueAtTime(.01,now);gain.gain.linearRampToValueAtTime(1,now+.035);gain.gain.setValueAtTime(1,Math.max(now+.04,now+duration-.05));gain.gain.linearRampToValueAtTime(.01,now+duration);}else gain.gain.value=1;src.onended=function(){if(currentSource===src)currentSource=null;resolve(true);};try{src.start(0);finishPlayback('kokoro','webaudio-local');lastDiag.mime='audio/pcm';lastDiag.bytes=samples.byteLength||samples.length*4;lastDiag.decode=true;}catch(e){reject(fault('PLAYBACK','Sakhi local voice could not start.',e));}});
   }
-  if(audio&&typeof audio.toBlob==='function'){var blob=audio.toBlob();return playWithHtmlAudio(await blob.arrayBuffer(),blob.type||'audio/wav','kokoro');}
+  if(audio&&typeof audio.toBlob==='function'){var blob=audio.toBlob();return playWithHtmlAudio(await blob.arrayBuffer(),blob.type||'audio/wav','kokoro',requestId);}
   throw fault('PLAYBACK','Sakhi local voice returned no playable audio.');
 }
-async function speakServerPart(text){
+async function speakServerPart(text,requestId){
   var cached=naturalCache[text];
-  if(cached){await playBytes(cached.bytes,{httpStatus:200,mime:cached.mime,cached:true},'kokoro-server');return true;}
+  if(cached){return playBytes(cached.bytes,{httpStatus:200,mime:cached.mime,cached:true},'kokoro-server',requestId);}
   var r=await fetch(SAKHI_TTS_URL+'/speak',{method:'POST',mode:'cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:text,voice:NATURAL_VOICE,speed:NATURAL_SPEED})});
   var mime=(r.headers&&r.headers.get?r.headers.get('content-type'):'')||'audio/wav';
   if(!r.ok){var detail='';try{detail=await r.text();}catch(e){}throw new Error('Kokoro voice HTTP '+r.status+(detail?' · '+detail.slice(0,160):''));}
   if(mime.toLowerCase().indexOf('audio/')!==0)throw new Error('Kokoro voice returned '+mime);
-  var bytes=await r.arrayBuffer();naturalCache[text]={bytes:bytes,mime:mime};
-  await playBytes(bytes,{httpStatus:r.status,mime:mime,cached:false},'kokoro-server');return true;
+  var bytes=await r.arrayBuffer();naturalCache[text]={bytes:bytes,mime:mime};if(!isCurrent(requestId))return false;
+  return playBytes(bytes,{httpStatus:r.status,mime:mime,cached:false},'kokoro-server',requestId);
 }
 function childChunks(text){
   var sentences=String(text||'').match(/[^.!?]+[.!?]+|[^.!?]+$/g)||[],chunks=[],part='';
   sentences.forEach(function(sentence){sentence=sentence.trim();if(!sentence)return;if(part&&(part.length+sentence.length+1)>210){chunks.push(part);part=sentence;}else part+=(part?' ':'')+sentence;});
   if(part)chunks.push(part);return chunks.length?chunks:[String(text||'')];
 }
-async function naturalSpeak(text){
+async function naturalSpeak(text,requestId){
   var tts=await loadNaturalVoice(),chunks=childChunks(text),allCached=true;
-  if(APPLE_MOBILE){for(var a=0;a<chunks.length;a++){await speakServerPart(chunks[a]);if(a<chunks.length-1)await delay(180);}return true;}
-  for(var i=0;i<chunks.length;i++){var part=chunks[i],audio=naturalCache[part];if(!audio){allCached=false;audio=await tts.generate(part,{voice:NATURAL_VOICE,speed:NATURAL_SPEED});naturalCache[part]=audio;}await playNaturalResult(audio);if(i<chunks.length-1)await new Promise(function(resolve){setTimeout(resolve,180);});}
+  if(APPLE_MOBILE){for(var a=0;a<chunks.length;a++){if(!isCurrent(requestId))return false;await speakServerPart(chunks[a],requestId);if(a<chunks.length-1)await delay(180);}return isCurrent(requestId);}
+  for(var i=0;i<chunks.length;i++){if(!isCurrent(requestId))return false;var part=chunks[i],audio=naturalCache[part];if(!audio){allCached=false;audio=await tts.generate(part,{voice:NATURAL_VOICE,speed:NATURAL_SPEED});naturalCache[part]=audio;}if(!isCurrent(requestId))return false;await playNaturalResult(audio,requestId);if(i<chunks.length-1)await delay(180);}
   lastDiag.cached=allCached;return true;
 }
 async function speakText(text){
   text=String(text||'').trim();if(!text)return true;
-  stopAll();resetDiag();
+  stopAll();var requestId=playbackEpoch;resetDiag();
   if(!await unlock())throw fault('BLOCKED','Tap Hear again once to enable Sakhi voice.');
-  try{await loadNaturalVoice();return await naturalSpeak(text);}
+  try{await loadNaturalVoice();if(!isCurrent(requestId))return false;return await naturalSpeak(text,requestId);}
   catch(e){throw fault('VOICE_UNAVAILABLE','The free Sakhi voice could not finish loading. Check the connection and try again.',e);}
 }
 async function speak(text){if(!enabled)throw fault('DISABLED','Spoken guidance is turned off in Parent Settings.');lastText=String(text||'');return speakText(lastText);}
