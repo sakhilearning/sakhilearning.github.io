@@ -6,6 +6,10 @@ for(const f of ['sakhi-content.js','sakhi-activities.js'])vm.runInContext(fs.rea
 function same(a,b){return JSON.stringify(a)===JSON.stringify(b);}
 function bag(arr){const m=new Map();for(const v of arr){const k=String(v);m.set(k,(m.get(k)||0)+1);}return m;}
 function containsBag(container,needed){const c=bag(container),n=bag(needed);for(const [k,v] of n)if((c.get(k)||0)<v)return false;return true;}
+const printSkill=curriculum.skills.find(s=>s.kind==='print');
+if(!printSkill)throw new Error('Print-concepts skill missing');
+const printActivity=ctx.window.SakhiActivities.generate(printSkill.skill_id,1,'navigation-regression');
+if(new Set(printActivity.questions.map(q=>q.prompt)).size!==3)throw new Error('Print-concepts activity repeats the same question and appears stuck');
 let activities=0,questions=0;
 for(const s of curriculum.skills)for(let b=1;b<=5;b++)for(let seed=0;seed<50;seed++){
   const a=ctx.window.SakhiActivities.generate(s.skill_id,b,String(seed));

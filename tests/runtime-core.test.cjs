@@ -17,6 +17,7 @@ function src(f){return fs.readFileSync(path.join(root,f),'utf8');}
   if(ctx.SakhiCurriculum.version()!==curriculum.curriculum_version)throw new Error('Inline curriculum did not hydrate');
   vm.runInContext(src('sakhi-adaptive.js'),ctx,{filename:'sakhi-adaptive.js'});
   vm.runInContext(src('sakhi-plan.js'),ctx,{filename:'sakhi-plan.js'});
+  for(const domain of curriculum.domains){const pick=ctx.SakhiAdaptive.pick(domain.domain_id,[]);if(!pick)throw new Error('Trail has no launchable skill: '+domain.domain_id);const skill=ctx.SakhiCurriculum.skill(pick.skill_id);if(!skill||skill.domain_id!==domain.domain_id)throw new Error('Trail launch selected the wrong domain: '+domain.domain_id);}
   let built=ctx.SakhiPlan.build();
   if(built.program_day!==1)throw new Error('Fresh learner must start on program day 1');
   const expected=six.weeks[0].days[0].missions.map(m=>m.skill_id).join('|');

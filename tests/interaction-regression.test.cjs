@@ -8,6 +8,12 @@ const audio = read('sakhi-audio.js');
 const presentation = read('sakhi-presentation.js');
 const css = read('sakhi-production.css');
 
+if (!/Adaptive\.pick\(domain,\[\]\)/.test(app) || !/if\(launching\)return;launching=true/.test(app)) {
+  throw new Error('Every trail must launch a deterministic adaptive activity and reject duplicate launch taps');
+}
+if (!/advanceTimer=setTimeout[\s\S]*if\(awaitingNext\)[\s\S]*nextQuestion\(\)/.test(app) || !/function nextQuestion\(\)\{clearAdvance\(\)/.test(app)) {
+  throw new Error('Completed answers must advance automatically exactly once');
+}
 if (!/async function continueAfter\(\)[\s\S]*if\(transitioning\|\|!overlay\.classList\.contains\('show'\)\)return[\s\S]*missionIndex=previousIndex\+1[\s\S]*await loadMission\(\)/.test(app)) {
   throw new Error('Next-adventure transition must be guarded, advance its index, and await the next mission');
 }

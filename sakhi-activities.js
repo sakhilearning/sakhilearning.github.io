@@ -9,8 +9,8 @@ function shuffle(r,a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor
 function opts(r,a,pool,n){var out=[a];shuffle(r,pool.filter(function(x){return String(x)!==String(a);})).forEach(function(x){if(out.length<n&&out.indexOf(x)<0)out.push(x);});return shuffle(r,out);}
 function choice(prompt,a,options,narration,media){return{template:'choice',prompt:prompt,answer:a,choices:options,narration:narration||prompt,media:media||null,hints:['Look carefully.','Try saying or counting it slowly.','You can do this one step at a time.']};}
 function practice(prompt,narration,kind){return{template:kind||'practice',prompt:prompt,answer:'done',narration:narration||prompt,evidence_mode:'practice',hints:['Take your time.','Try your best, then tap Done.']};}
-function qFor(skill,band,r){var k=skill.kind,d=skill.domain_id,B=BANDS[band]||BANDS[3],n=B.choices;
- if(k==='print')return choice('Where do we start reading this sentence?','left',['left','right'],'Point to the side where reading begins.');
+function qFor(skill,band,r,questionIndex){var k=skill.kind,d=skill.domain_id,B=BANDS[band]||BANDS[3],n=B.choices;
+ if(k==='print'){var printQs=[choice('Where do we start reading this sentence?','left',['left','right'],'Point to the side where reading begins.'),choice('Which way do our eyes move as we read?','right',['left','right'],'Start on the left and move toward the right.'),choice('Which word would we read first: “Luna reads”?','Luna',['Luna','reads'],'Point to the first word in Luna reads.')];return printQs[(questionIndex||0)%printQs.length];}
  if(k==='letter_name'){var l=pick(r,C.LETTERS);return choice('Tap the letter '+l.toUpperCase()+'.',l.toUpperCase(),opts(r,l.toUpperCase(),C.UPPER,n),'Find uppercase '+l.toUpperCase()+'.');}
  if(k==='rhyme'){var sets=[['cat','hat','sun'],['pig','wig','map'],['log','frog','bed'],['cake','lake','fish']];var s=pick(r,sets);return choice('Which word rhymes with “'+s[0]+'”?',s[1],opts(r,s[1],[s[1],s[2],'top','run'],n));}
  if(k==='syllable'){var data=[['sun',1],['rainbow',2],['butterfly',3],['unicorn',3],['banana',3]];var x=pick(r,data);return choice('How many beats are in “'+x[0]+'”?',x[1],opts(r,x[1],[1,2,3,4],n),'Clap the word '+x[0]+'. How many parts?');}
@@ -52,6 +52,6 @@ function qFor(skill,band,r){var k=skill.kind,d=skill.domain_id,B=BANDS[band]||BA
  if(k==='movement')return practice('Movement mission: make a star shape, hop 5 times, then freeze.','Stand up and move safely with a grown-up nearby.','practice');
  return practice('Try this hands-on mission: '+skill.title+'.','Take your time and tap Done when you finish.','practice');
 }
-function generate(skillId,band,seed){var sk=window.SakhiCurriculum.skill(skillId);if(!sk)throw new Error('Unknown skill '+skillId);band=Math.max(1,Math.min(5,Number(band)||1));var r=rng(skillId+':'+band+':'+seed),qs=[];for(var i=0;i<3;i++)qs.push(qFor(sk,band,r));return{activity_id:skillId+':'+band+':'+seed,skill_id:skillId,skill_title:sk.title,domain_id:sk.domain_id,band:band,band_name:BANDS[band].name,evidence_mode:qs.every(function(q){return q.evidence_mode==='practice';})?'practice':'objective',questions:qs};}
+function generate(skillId,band,seed){var sk=window.SakhiCurriculum.skill(skillId);if(!sk)throw new Error('Unknown skill '+skillId);band=Math.max(1,Math.min(5,Number(band)||1));var r=rng(skillId+':'+band+':'+seed),qs=[];for(var i=0;i<3;i++)qs.push(qFor(sk,band,r,i));return{activity_id:skillId+':'+band+':'+seed,skill_id:skillId,skill_title:sk.title,domain_id:sk.domain_id,band:band,band_name:BANDS[band].name,evidence_mode:qs.every(function(q){return q.evidence_mode==='practice';})?'practice':'objective',questions:qs};}
 return{BANDS:BANDS,generate:generate};
 })();

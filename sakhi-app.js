@@ -1,11 +1,12 @@
 (function(){
 'use strict';
-var Cur=SakhiCurriculum,Prog=SakhiProgress,Plan=SakhiPlan,Trails=SakhiTrails,Pres=SakhiPresentation,Act=SakhiActivities,Audio=SakhiAudio,Tpl=SakhiTemplates,Cloud=SakhiCloud;
+var Cur=SakhiCurriculum,Prog=SakhiProgress,Plan=SakhiPlan,Adaptive=SakhiAdaptive,Trails=SakhiTrails,Pres=SakhiPresentation,Act=SakhiActivities,Audio=SakhiAudio,Tpl=SakhiTemplates,Cloud=SakhiCloud;
 var $=function(s){return document.querySelector(s);};
-var view='home',plan=null,session=null,missionIndex=0,current=null,qIndex=0,answers=[],controller=null,hintLevel=0,parentOpen=false,questionTries=0,awaitingNext=false,transitioning=false,activityCompleted=false,narrationRun=0,adventureMode=localStorage.getItem('sakhi_adventure_mode')==='princess'?'princess':'unicorn';
+var view='home',plan=null,session=null,missionIndex=0,current=null,qIndex=0,answers=[],controller=null,hintLevel=0,parentOpen=false,questionTries=0,awaitingNext=false,transitioning=false,activityCompleted=false,narrationRun=0,launching=false,answerLocked=false,advanceTimer=null,adventureMode=localStorage.getItem('sakhi_adventure_mode')==='princess'?'princess':'unicorn';
 function toast(m){var t=$('#toast');if(!t)return;t.textContent=m;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(function(){t.classList.remove('show');},2600);}
 function setWorld(domain){if(domain)document.body.dataset.domain=domain;else delete document.body.dataset.domain;}
-function show(v){Audio.stopAll();view=v;document.body.dataset.view=v;if(v!=='activity')setWorld(null);document.querySelectorAll('.view').forEach(function(n){n.classList.toggle('active',n.dataset.view===v);});document.querySelectorAll('[data-nav]').forEach(function(b){b.classList.toggle('active',b.dataset.nav===v);});render();window.scrollTo(0,0);}
+function clearAdvance(){if(advanceTimer){clearTimeout(advanceTimer);advanceTimer=null;}}
+function show(v){clearAdvance();Audio.stopAll();view=v;document.body.dataset.view=v;if(v!=='activity')setWorld(null);document.querySelectorAll('.view').forEach(function(n){n.classList.toggle('active',n.dataset.view===v);});document.querySelectorAll('[data-nav]').forEach(function(b){b.classList.toggle('active',b.dataset.nav===v);});render();window.scrollTo(0,0);}
 function setAdventureMode(mode){adventureMode=mode;localStorage.setItem('sakhi_adventure_mode',adventureMode);document.body.dataset.adventureMode=adventureMode;if(view==='activity'&&current)renderActivity();else renderHome();}
 function render(){renderStats();if(view==='home')renderHome();else if(view==='map')renderMap();else if(view==='rewards')renderRewards();else if(view==='parent')renderParent();else if(view==='activity')renderActivity();}
 function renderStats(){var n=$('#starStat');if(n)n.textContent='✦ '+Prog.stars();}
@@ -32,7 +33,7 @@ function renderHome(){
   var grid=$('#trailPreview');grid.innerHTML=order.map(function(id){return domains.find(function(d){return d.domain_id===id;});}).filter(Boolean).map(trailCard).join('');
 }
 function renderMap(){var g=$('#mapGrid');g.innerHTML=Cur.domains().map(function(d){return trailCard(d);}).join('');}
-async function startTrail(domain){try{Audio.unlock().catch(function(){});plan=Plan.build();var idx=plan.missions.findIndex(function(m){var s=Cur.skill(m.pick.skill_id);return s&&s.domain_id===domain;});if(idx<0){toast('That trail is getting ready. Try another world.');return;}session=Prog.startSession(plan);missionIndex=idx;await loadMission();}catch(e){console.error('[Sakhi trail]',e);toast('That trail could not open. Tap once more to try again.');}}
+async function startTrail(domain){if(launching)return;launching=true;try{Audio.unlock().catch(function(){});var daily=Plan.build(),idx=daily.missions.findIndex(function(m){var s=Cur.skill(m.pick.skill_id);return s&&s.domain_id===domain;});if(idx<0){var pick=Adaptive.pick(domain,[]);if(!pick)throw new Error('No available skill for '+domain);daily={date:daily.date,program_day:daily.program_day,minutes:daily.minutes,missions:[{domain:domain,minutes:Math.max(5,daily.minutes-5),pick:pick}],offscreen:{minutes:5,domain:domain,prompt:'Show a grown-up one thing you discovered on this trail.'},celebration_minutes:daily.celebration_minutes};idx=0;}if(session)Prog.endSession(session.session_id,'LEFT_EARLY');plan=daily;session=Prog.startSession(plan);missionIndex=idx;await loadMission();}catch(e){console.error('[Sakhi trail]',e);toast('That trail could not open. Tap once more to try again.');}finally{launching=false;}}
 function renderRewards(){var s=Prog.load();$('#rewardTotal').textContent=Prog.stars();var box=$('#rewardRecent'),recent=s.rewards.slice(-10).reverse();box.innerHTML=recent.length?recent.map(function(r){var sk=Cur.skill(r.skill_id);return '<div class="reward-row"><span>⭐ +'+r.amount+' '+r.label+'</span><span class="muted">'+(sk?sk.title:'practice')+'</span></div>';}).join(''):'<p class="center muted">Complete an adventure to collect your first Trail Stars.</p>';}
 function parentMetric(label,value,sub){return '<article class="parent-card"><small>'+label+'</small><h2>'+value+'</h2><p class="muted">'+sub+'</p></article>';}
 async function renderParent(){
@@ -53,7 +54,7 @@ async function renderParent(){
 }
 async function start(){
   $('#startBtn').disabled=true;
-  try{Audio.unlock().catch(function(){});plan=Plan.build();session=Prog.startSession(plan);missionIndex=0;await loadMission();}
+  try{Audio.unlock().catch(function(){});plan=Plan.build();if(session)Prog.endSession(session.session_id,'LEFT_EARLY');session=Prog.startSession(plan);missionIndex=0;await loadMission();}
   catch(e){console.error('[Sakhi start]',e);toast('The adventure could not open. Tap once more to try again.');}
   finally{$('#startBtn').disabled=false;}
 }
@@ -69,20 +70,20 @@ function q(){return current.questions[qIndex];}
 async function speak(){var run=++narrationRun,pill=$('#voicePill'),button=$('#hearBtn');if(pill)pill.textContent='✨ Sakhi voice';if(button)button.setAttribute('aria-busy','true');try{await Audio.narrate(q());}catch(e){if(run===narrationRun&&e.kind!=='DISABLED'){console.warn('[Sakhi voice]',e);if(pill)pill.textContent='🔊 Hear again';toast('Sakhi voice could not play. Tap Hear again.');}}finally{if(run===narrationRun&&button)button.removeAttribute('aria-busy');}}
 function renderActivity(){
   if(!current)return;var d=current.domain_id,p=Prog.domainProgress(d),t=Trails.get(d),cue=Pres.storyCue(d,current.skill_title,qIndex);setWorld(d);
-  activityCompleted=false;$('#activityTrail').textContent=t.name;$('#activitySkill').textContent=current.skill_title;$('#activityProgress').textContent=(missionIndex+1)+' of '+(plan.missions.length+1)+' quests';$('#activityScene').innerHTML=Pres.scene(d,p,{kind:'activity',skill:current.skill_title,template:q().template,question:qIndex});$('#missionEyebrow').textContent=t.companion;$('#missionStory').textContent=cue.text||'Take your time. I’m right here.';$('#missionStep').textContent=cue.step;$('#questLabel').textContent=current.evidence_mode==='practice'?'A little practice':'A little discovery';$('#questionPrompt').textContent=q().prompt;$('#hintArea').textContent=hintLevel?(q().hints||[]).slice(0,hintLevel).map(function(h){return'💡 '+h;}).join('  '):'';$('#checkBtn').textContent='Check ✓';awaitingNext=false;
+  clearAdvance();answerLocked=false;activityCompleted=false;$('#activityTrail').textContent=t.name;$('#activitySkill').textContent=current.skill_title;$('#activityProgress').textContent=(missionIndex+1)+' of '+(plan.missions.length+1)+' quests';$('#activityScene').innerHTML=Pres.scene(d,p,{kind:'activity',skill:current.skill_title,template:q().template,question:qIndex});$('#missionEyebrow').textContent=t.companion;$('#missionStory').textContent=cue.text||'Take your time. I’m right here.';$('#missionStep').textContent=cue.step;$('#questLabel').textContent=current.evidence_mode==='practice'?'A little practice':'A little discovery';$('#questionPrompt').textContent=q().prompt;$('#hintArea').textContent=hintLevel?(q().hints||[]).slice(0,hintLevel).map(function(h){return'💡 '+h;}).join('  '):'';$('#checkBtn').textContent='Check ✓';awaitingNext=false;
   controller=Tpl.render($('#interaction'),q(),{domain:d,onProgress:function(){if(controller)$('#checkBtn').disabled=!controller.isReady();}});$('#checkBtn').disabled=!controller.isReady();$('#hintBtn').disabled=!(q().hints||[]).length;
 }
 function hint(){var h=q().hints||[];if(hintLevel<h.length){hintLevel++;$('#hintArea').textContent=h.slice(0,hintLevel).map(function(x){return'💡 '+x;}).join('  ');Audio.speak(h[hintLevel-1]).catch(function(){});}if(hintLevel>=h.length)$('#hintBtn').disabled=true;}
 function check(){
-  if(awaitingNext){awaitingNext=false;nextQuestion();return;}
-  if(!controller)return;var r=controller.check();if(!r)return;questionTries++;
+  if(awaitingNext){clearAdvance();awaitingNext=false;nextQuestion();return;}
+  if(answerLocked||!controller)return;var r=controller.check();if(!r)return;questionTries++;
   if(!r.correct&&current.evidence_mode!=='practice'&&questionTries<2){toast('Good try — here is a clue.');if(hintLevel<(q().hints||[]).length)hint();setTimeout(function(){controller.reset();$('#checkBtn').disabled=true;},500);return;}
   answers.push({correct:r.correct,hintsUsed:hintLevel,response:r.response,tries:questionTries});
-  $('#hintArea').textContent=r.correct?'You found it! Ready for the next little adventure?':'We’ll practice that one again later.';$('#hintBtn').disabled=true;$('#checkBtn').disabled=false;$('#checkBtn').textContent='Next discovery →';awaitingNext=true;
+  $('#hintArea').textContent=r.correct?'You found it! Ready for the next little adventure?':'We’ll practice that one again later.';$('#hintBtn').disabled=true;$('#checkBtn').disabled=false;$('#checkBtn').textContent='Next discovery →';awaitingNext=true;answerLocked=true;advanceTimer=setTimeout(function(){advanceTimer=null;if(awaitingNext){awaitingNext=false;nextQuestion();}},700);
 }
-function nextQuestion(){if(qIndex<current.questions.length-1){qIndex++;hintLevel=0;questionTries=0;awaitingNext=false;renderActivity();speak();}else finishActivity();}
+function nextQuestion(){clearAdvance();if(qIndex<current.questions.length-1){qIndex++;hintLevel=0;questionTries=0;awaitingNext=false;renderActivity();speak();}else finishActivity();}
 function finishActivity(){
-  if(activityCompleted)return;activityCompleted=true;
+  clearAdvance();if(activityCompleted)return;activityCompleted=true;
   var result=Prog.completeActivity({activity:current,sessionId:session.session_id,answers:answers});renderStats();var t=Trails.get(current.domain_id),amount=result.rewards_issued[0].amount;$('#celebrateIcon').innerHTML='<img src="'+(window.SAKHI_ICON_DATA||'./icon-192.png')+'" alt="">';$('#celebrateTitle').textContent=current.skill_title+' complete!';$('#celebrateBody').textContent=t.companion+' is cheering for you.';$('#celebrateReward').textContent='✦ '+amount+' trail stars earned';var finalMission=missionIndex>=plan.missions.length;$('#continueBtn').textContent=finalMission?'See my treasures →':'Next little adventure →';$('#celebrate').classList.add('show');
   var rewardMedia=Pres.mediaFor&&Pres.mediaFor(current.domain_id,current.skill_title,q().template,qIndex);if(rewardMedia)$('#celebrateIcon').innerHTML='<img src="'+rewardMedia.src+'" alt="'+rewardMedia.alt+'">';
 }
@@ -103,7 +104,7 @@ function bootFailure(e){
   console.error('[Sakhi boot failed]',e);window.__SAKHI_BOOT_ERROR=String(e&&e.message||e);var box=$('#bootFallback');if(box){box.hidden=false;var detail=box.querySelector('[data-boot-detail]');if(detail)detail.textContent='Build '+(window.SAKHI_BUILD_ID||'unknown')+' · '+window.__SAKHI_BOOT_ERROR;}
 }
 async function boot(){
-  try{await Cur.load();Prog.load();Audio.setEnabled(Prog.load().settings.voice!==false);bind();renderHome();renderStats();if(Audio.isEnabled()&&Audio.warm)Audio.warm().catch(function(e){console.warn('[Sakhi] Voice warm-up',e&&e.message||e);});window.__SAKHI_BOOTED=true;document.documentElement.classList.add('sakhi-ready');if(Cloud&&Cloud.probe)Cloud.probe().catch(function(e){console.warn('Cloud probe',e.message);});if('serviceWorker'in navigator&&location.protocol!=='file:'){navigator.serviceWorker.register('./sw.js?v=3.9.0',{updateViaCache:'none'}).then(function(r){r.update().catch(function(){});}).catch(function(e){console.warn('SW',e.message);});}}
+  try{await Cur.load();Prog.load();Audio.setEnabled(Prog.load().settings.voice!==false);bind();renderHome();renderStats();if(Audio.isEnabled()&&Audio.warm)Audio.warm().catch(function(e){console.warn('[Sakhi] Voice warm-up',e&&e.message||e);});window.__SAKHI_BOOTED=true;document.documentElement.classList.add('sakhi-ready');if(Cloud&&Cloud.probe)Cloud.probe().catch(function(e){console.warn('Cloud probe',e.message);});if('serviceWorker'in navigator&&location.protocol!=='file:'){navigator.serviceWorker.register('./sw.js?v=3.10.0',{updateViaCache:'none'}).then(function(r){r.update().catch(function(){});}).catch(function(e){console.warn('SW',e.message);});}}
   catch(e){bootFailure(e);}
 }
 window.SakhiApp={boot:boot,show:show};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
