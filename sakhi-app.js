@@ -3,6 +3,10 @@
 var Cur=SakhiCurriculum,Prog=SakhiProgress,Plan=SakhiPlan,Adaptive=SakhiAdaptive,Trails=SakhiTrails,Pres=SakhiPresentation,Act=SakhiActivities,Audio=SakhiAudio,Tpl=SakhiTemplates,Cloud=SakhiCloud;
 var $=function(s){return document.querySelector(s);};
 var view='home',plan=null,session=null,missionIndex=0,current=null,qIndex=0,answers=[],controller=null,hintLevel=0,parentOpen=false,questionTries=0,awaitingNext=false,transitioning=false,activityCompleted=false,narrationRun=0,launching=false,answerLocked=false,advanceTimer=null,adventureMode=localStorage.getItem('sakhi_adventure_mode')==='princess'?'princess':'unicorn';
+var RUN_KEY='sakhi.v3.active-adventure';
+function saveRun(nextIndex,nextCurrent){try{if(!plan||!session)return;var savedCurrent=arguments.length>1?nextCurrent:current;localStorage.setItem(RUN_KEY,JSON.stringify({savedAt:Date.now(),plan:plan,session:session,missionIndex:typeof nextIndex==='number'?nextIndex:missionIndex,current:savedCurrent,qIndex:savedCurrent?qIndex:0,answers:savedCurrent?answers:[],hintLevel:savedCurrent?hintLevel:0,questionTries:savedCurrent?questionTries:0}));}catch(e){}}
+function clearRun(){try{localStorage.removeItem(RUN_KEY);}catch(e){}}
+function loadRun(){try{var r=JSON.parse(localStorage.getItem(RUN_KEY)||'null');if(!r||!r.plan||!r.session||Date.now()-r.savedAt>7*86400000){clearRun();return false;}plan=r.plan;session=r.session;missionIndex=Number(r.missionIndex)||0;current=r.current||null;qIndex=Number(r.qIndex)||0;answers=Array.isArray(r.answers)?r.answers:[];hintLevel=Number(r.hintLevel)||0;questionTries=Number(r.questionTries)||0;return true;}catch(e){clearRun();return false;}}
 function toast(m){var t=$('#toast');if(!t)return;t.textContent=m;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(function(){t.classList.remove('show');},2600);}
 function setWorld(domain){if(domain)document.body.dataset.domain=domain;else delete document.body.dataset.domain;}
 function clearAdvance(){if(advanceTimer){clearTimeout(advanceTimer);advanceTimer=null;}}
@@ -22,13 +26,14 @@ async function ensureVoiceReady(){
 }
 function trailCard(d){var p=Prog.domainProgress(d.domain_id),t=Trails.get(d.domain_id);return '<article class="trail-card domain-'+d.domain_id+'" data-trail-domain="'+d.domain_id+'" role="button" tabindex="0" aria-label="Open '+t.name+' trail"><div class="mini-scene">'+Pres.scene(d.domain_id,p)+'</div><div class="trail-card-copy"><h3>'+t.icon+' '+t.name+'</h3><p>'+d.title+' · '+Trails.chapter(d.domain_id,p)+'</p><div class="meter" aria-label="'+p+' percent explored"><i style="width:'+p+'%"></i></div><small>'+p+'% explored</small><span class="trail-open">Open trail →</span></div></article>';}
 function renderHome(){
-  setWorld(null);plan=Plan.build();
+  setWorld(null);if(!session||!plan)plan=Plan.build();
   document.body.dataset.adventureMode=adventureMode;$('#homeHero').innerHTML=Pres.scene('reading',Prog.domainProgress('reading'),adventureMode==='princess'?'princess':'home');
   $('#modeUnicorn').classList.toggle('active',adventureMode==='unicorn');$('#modePrincess').classList.toggle('active',adventureMode==='princess');$('#heroTitle').innerHTML=adventureMode==='unicorn'?'<span class="desktop-title">Your next<br>adventure<br>starts with a little<br>magic.</span><span class="mobile-title">Ready for a<br>little magic?</span>':'<span class="desktop-title">A little courage.<br>A kingdom of<br>possibilities.</span><span class="mobile-title">A kingdom of<br>possibilities.</span>';$('#heroInvite').textContent=adventureMode==='unicorn'?'Luna saved a place for you. Shall we explore?':'Your crown is curiosity. Come and discover something wonderful.';
   $('#todayTitle').textContent='Day '+plan.program_day+' · '+plan.missions.length+' magical missions';
   var names=plan.missions.map(function(m){var s=Cur.skill(m.pick.skill_id);return s?s.title:m.pick.skill_id;});
   $('#todaySummary').textContent=names.join(' • ')+' • one hands-on mission';
   $('#questCount').textContent=plan.missions.length+' little quests + a hands-on discovery';$('#todayPath').innerHTML=names.map(function(name,i){return '<span><i>'+(i+1)+'</i><b>'+name+'</b></span>';}).join('')+'<span><i>✦</i><b>Play away from the screen</b></span>';
+  $('#startBtn').textContent=session?'Continue my adventure →':"Let's play →";
   var order=['reading','logic','science','language','wellbeing','creative'],domains=Cur.domains();
   var grid=$('#trailPreview');grid.innerHTML=order.map(function(id){return domains.find(function(d){return d.domain_id===id;});}).filter(Boolean).map(trailCard).join('');
 }
@@ -54,17 +59,17 @@ async function renderParent(){
 }
 async function start(){
   $('#startBtn').disabled=true;
-  try{Audio.unlock().catch(function(){});plan=Plan.build();if(session)Prog.endSession(session.session_id,'LEFT_EARLY');session=Prog.startSession(plan);missionIndex=0;await loadMission();}
+  try{Audio.unlock().catch(function(){});if(session&&plan){if(missionIndex>plan.missions.length){Prog.endSession(session.session_id);session=null;clearRun();show('rewards');}else if(current){show('activity');Audio.prefetchActivity(current);speak();}else await loadMission();return;}plan=Plan.build();session=Prog.startSession(plan);missionIndex=0;saveRun();await loadMission();}
   catch(e){console.error('[Sakhi start]',e);toast('The adventure could not open. Tap once more to try again.');}
   finally{$('#startBtn').disabled=false;}
 }
 async function loadMission(){
   if(missionIndex>=plan.missions.length)return offscreenMission();
-  var m=plan.missions[missionIndex];current=Act.generate(m.pick.skill_id,m.pick.band,session.session_id+':'+missionIndex);current._mission=m;qIndex=0;answers=[];hintLevel=0;questionTries=0;show('activity');speak();
+  var m=plan.missions[missionIndex];current=Act.generate(m.pick.skill_id,m.pick.band,session.session_id+':'+missionIndex);current._mission=m;qIndex=0;answers=[];hintLevel=0;questionTries=0;saveRun();show('activity');Audio.prefetchActivity(current);speak();
 }
 function offscreenMission(){
   current={skill_id:'creative.imaginative_play',skill_title:'Hands-on mission',domain_id:plan.offscreen.domain,band:1,band_name:'PRACTICE',evidence_mode:'practice',questions:[{template:'practice',prompt:plan.offscreen.prompt,narration:plan.offscreen.prompt,answer:'done',evidence_mode:'practice',hints:['A grown-up can join you.']}]};
-  current._mission={domain:plan.offscreen.domain,minutes:plan.offscreen.minutes,pick:{skill_id:current.skill_id,reason:'off-screen practice'}};qIndex=0;answers=[];hintLevel=0;questionTries=0;show('activity');speak();return Promise.resolve();
+  current._mission={domain:plan.offscreen.domain,minutes:plan.offscreen.minutes,pick:{skill_id:current.skill_id,reason:'off-screen practice'}};qIndex=0;answers=[];hintLevel=0;questionTries=0;saveRun();show('activity');Audio.prefetchActivity(current);speak();return Promise.resolve();
 }
 function q(){return current.questions[qIndex];}
 async function speak(){var run=++narrationRun,pill=$('#voicePill'),button=$('#hearBtn');if(pill)pill.textContent='✨ Sakhi voice';if(button)button.setAttribute('aria-busy','true');try{await Audio.narrate(q());}catch(e){if(run===narrationRun&&e.kind!=='DISABLED'){console.warn('[Sakhi voice]',e);if(pill)pill.textContent='🔊 Hear again';toast('Sakhi voice could not play. Tap Hear again.');}}finally{if(run===narrationRun&&button)button.removeAttribute('aria-busy');}}
@@ -73,18 +78,18 @@ function renderActivity(){
   clearAdvance();answerLocked=false;activityCompleted=false;$('#activityTrail').textContent=t.name;$('#activitySkill').textContent=current.skill_title;$('#activityProgress').textContent=(missionIndex+1)+' of '+(plan.missions.length+1)+' quests';$('#activityScene').innerHTML=Pres.scene(d,p,{kind:'activity',skill:current.skill_title,template:q().template,question:qIndex});$('#missionEyebrow').textContent=t.companion;$('#missionStory').textContent=cue.text||'Take your time. I’m right here.';$('#missionStep').textContent=cue.step;$('#questLabel').textContent=current.evidence_mode==='practice'?'A little practice':'A little discovery';$('#questionPrompt').textContent=q().prompt;$('#hintArea').textContent=hintLevel?(q().hints||[]).slice(0,hintLevel).map(function(h){return'💡 '+h;}).join('  '):'';$('#checkBtn').textContent='Check ✓';awaitingNext=false;
   controller=Tpl.render($('#interaction'),q(),{domain:d,onProgress:function(){if(controller)$('#checkBtn').disabled=!controller.isReady();}});$('#checkBtn').disabled=!controller.isReady();$('#hintBtn').disabled=!(q().hints||[]).length;
 }
-function hint(){var h=q().hints||[];if(hintLevel<h.length){hintLevel++;$('#hintArea').textContent=h.slice(0,hintLevel).map(function(x){return'💡 '+x;}).join('  ');Audio.speak(h[hintLevel-1]).catch(function(){});}if(hintLevel>=h.length)$('#hintBtn').disabled=true;}
+function hint(){var h=q().hints||[];if(hintLevel<h.length){hintLevel++;saveRun();$('#hintArea').textContent=h.slice(0,hintLevel).map(function(x){return'💡 '+x;}).join('  ');Audio.speak(h[hintLevel-1]).catch(function(){});}if(hintLevel>=h.length)$('#hintBtn').disabled=true;}
 function check(){
   if(awaitingNext){clearAdvance();awaitingNext=false;nextQuestion();return;}
   if(answerLocked||!controller)return;var r=controller.check();if(!r)return;questionTries++;
   if(!r.correct&&current.evidence_mode!=='practice'&&questionTries<2){toast('Good try — here is a clue.');if(hintLevel<(q().hints||[]).length)hint();setTimeout(function(){controller.reset();$('#checkBtn').disabled=true;},500);return;}
-  answers.push({correct:r.correct,hintsUsed:hintLevel,response:r.response,tries:questionTries});
+  answers.push({correct:r.correct,hintsUsed:hintLevel,response:r.response,tries:questionTries});saveRun();
   $('#hintArea').textContent=r.correct?'You found it! Ready for the next little adventure?':'We’ll practice that one again later.';$('#hintBtn').disabled=true;$('#checkBtn').disabled=false;$('#checkBtn').textContent='Next discovery →';awaitingNext=true;answerLocked=true;advanceTimer=setTimeout(function(){advanceTimer=null;if(awaitingNext){awaitingNext=false;nextQuestion();}},700);
 }
-function nextQuestion(){clearAdvance();if(qIndex<current.questions.length-1){qIndex++;hintLevel=0;questionTries=0;awaitingNext=false;renderActivity();speak();}else finishActivity();}
+function nextQuestion(){clearAdvance();if(qIndex<current.questions.length-1){qIndex++;hintLevel=0;questionTries=0;awaitingNext=false;saveRun();renderActivity();speak();}else finishActivity();}
 function finishActivity(){
   clearAdvance();if(activityCompleted)return;activityCompleted=true;
-  var result=Prog.completeActivity({activity:current,sessionId:session.session_id,answers:answers});renderStats();var t=Trails.get(current.domain_id),amount=result.rewards_issued[0].amount;$('#celebrateIcon').innerHTML='<img src="'+(window.SAKHI_ICON_DATA||'./icon-192.png')+'" alt="">';$('#celebrateTitle').textContent=current.skill_title+' complete!';$('#celebrateBody').textContent=t.companion+' is cheering for you.';$('#celebrateReward').textContent='✦ '+amount+' trail stars earned';var finalMission=missionIndex>=plan.missions.length;$('#continueBtn').textContent=finalMission?'See my treasures →':'Next little adventure →';$('#celebrate').classList.add('show');
+  var result=Prog.completeActivity({activity:current,sessionId:session.session_id,answers:answers});saveRun(missionIndex+1,null);renderStats();var t=Trails.get(current.domain_id),amount=result.rewards_issued[0].amount;$('#celebrateIcon').innerHTML='<img src="'+(window.SAKHI_ICON_DATA||'./icon-192.png')+'" alt="">';$('#celebrateTitle').textContent=current.skill_title+' complete!';$('#celebrateBody').textContent=t.companion+' is cheering for you.';$('#celebrateReward').textContent='✦ '+amount+' trail stars earned';var finalMission=missionIndex>=plan.missions.length;$('#continueBtn').textContent=finalMission?'See my treasures →':'Next little adventure →';$('#celebrate').classList.add('show');
   var rewardMedia=Pres.mediaFor&&Pres.mediaFor(current.domain_id,current.skill_title,q().template,qIndex);if(rewardMedia)$('#celebrateIcon').innerHTML='<img src="'+rewardMedia.src+'" alt="'+rewardMedia.alt+'">';
 }
 async function continueAfter(){
@@ -92,19 +97,21 @@ async function continueAfter(){
   button.disabled=true;button.setAttribute('aria-busy','true');Audio.stopAll();narrationRun++;overlay.classList.remove('show');
   try{
     missionIndex=previousIndex+1;
-    if(missionIndex>plan.missions.length){if(session)Prog.endSession(session.session_id);session=null;show('rewards');}
+    if(missionIndex>plan.missions.length){if(session)Prog.endSession(session.session_id);session=null;current=null;clearRun();show('rewards');}
     else{await loadMission();if(missionIndex===previousIndex)throw new Error('Adventure did not advance');window.scrollTo(0,0);}
-  }catch(e){console.error('[Sakhi next adventure]',e);missionIndex=previousIndex;overlay.classList.add('show');toast('That adventure paused. Tap once more to continue.');}
+  }catch(e){console.error('[Sakhi next adventure]',e);missionIndex=previousIndex;saveRun();overlay.classList.add('show');toast('That adventure paused. Tap once more to continue.');}
   finally{transitioning=false;button.disabled=false;button.removeAttribute('aria-busy');}
 }
 function bind(){
   document.querySelectorAll('[data-nav]').forEach(function(b){b.onclick=function(){show(b.dataset.nav);};});document.addEventListener('click',function(e){var card=e.target.closest&&e.target.closest('[data-trail-domain]');if(card)startTrail(card.dataset.trailDomain);});document.addEventListener('keydown',function(e){var card=e.target.closest&&e.target.closest('[data-trail-domain]');if(card&&(e.key==='Enter'||e.key===' ')){e.preventDefault();startTrail(card.dataset.trailDomain);}});$('#startBtn').onclick=start;$('#modeUnicorn').onclick=function(){setAdventureMode('unicorn');};$('#modePrincess').onclick=function(){setAdventureMode('princess');};$('#quitBtn').onclick=function(){if(session)Prog.endSession(session.session_id,'LEFT_EARLY');session=null;show('home');};$('#hearBtn').onclick=async function(){try{await ensureVoiceReady();await speak();}catch(e){console.warn('[Sakhi repeat]',e);toast('Sakhi voice could not play. Check the connection and try again.');}};$('#hintBtn').onclick=hint;$('#checkBtn').onclick=check;$('#continueBtn').onclick=continueAfter;$('#gateBtn').onclick=function(){var answer=String($('#gateAnswer').value||'').replace(/\s/g,'');if(answer==='071621'){parentOpen=true;$('#gateAnswer').value='';renderParent();}else toast('Try the grown-up question again. That passcode did not match.');};Audio.onFault(function(e){console.warn('[Sakhi audio]',e.kind,e.message);});
+  $('#quitBtn').addEventListener('click',function(){current=null;clearRun();});
 }
 function bootFailure(e){
   console.error('[Sakhi boot failed]',e);window.__SAKHI_BOOT_ERROR=String(e&&e.message||e);var box=$('#bootFallback');if(box){box.hidden=false;var detail=box.querySelector('[data-boot-detail]');if(detail)detail.textContent='Build '+(window.SAKHI_BUILD_ID||'unknown')+' · '+window.__SAKHI_BOOT_ERROR;}
 }
 async function boot(){
-  try{await Cur.load();Prog.load();Audio.setEnabled(Prog.load().settings.voice!==false);bind();renderHome();renderStats();if(Audio.isEnabled()&&Audio.warm)Audio.warm().catch(function(e){console.warn('[Sakhi] Voice warm-up',e&&e.message||e);});window.__SAKHI_BOOTED=true;document.documentElement.classList.add('sakhi-ready');if(Cloud&&Cloud.probe)Cloud.probe().catch(function(e){console.warn('Cloud probe',e.message);});if('serviceWorker'in navigator&&location.protocol!=='file:'){navigator.serviceWorker.register('./sw.js?v=3.10.0',{updateViaCache:'none'}).then(function(r){r.update().catch(function(){});}).catch(function(e){console.warn('SW',e.message);});}}
+  loadRun();
+  try{await Cur.load();Prog.load();Audio.setEnabled(Prog.load().settings.voice!==false);bind();renderHome();renderStats();if(Audio.isEnabled()&&Audio.warm)Audio.warm().catch(function(e){console.warn('[Sakhi] Voice warm-up',e&&e.message||e);});window.__SAKHI_BOOTED=true;document.documentElement.classList.add('sakhi-ready');if(Cloud&&Cloud.probe)Cloud.probe().catch(function(e){console.warn('Cloud probe',e.message);});if('serviceWorker'in navigator&&location.protocol!=='file:'){navigator.serviceWorker.register('./sw.js?v=3.10.1',{updateViaCache:'none'}).then(function(r){r.update().catch(function(){});}).catch(function(e){console.warn('SW',e.message);});}}
   catch(e){bootFailure(e);}
 }
 window.SakhiApp={boot:boot,show:show};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();

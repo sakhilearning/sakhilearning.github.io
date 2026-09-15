@@ -2,7 +2,7 @@ window.SakhiAudio=(function(){
 'use strict';
 var enabled=true,unlocked=false,ctx=null,currentSource=null,currentAudio=null,currentObjectUrl=null,keepAliveSource=null,keepAliveGain=null,lastText='',listeners=[],manifest=null,playbackEpoch=0;
 var lastProvider='none',lastError=null;
-var naturalTts=null,naturalPromise=null,naturalState='idle',naturalError=null,naturalProgress=0,naturalCache={};
+var naturalTts=null,naturalPromise=null,naturalState='idle',naturalError=null,naturalProgress=0,naturalCache={},naturalInflight={};
 var lastDiag={provider:'none',engine:'none',httpStatus:null,mime:'',bytes:0,decode:false,playbackStarted:false,cached:false,lastError:null};
 var AC=window.AudioContext||window.webkitAudioContext;
 var NATURAL_VOICE='af_heart';
@@ -109,15 +109,21 @@ function warmNaturalVoice(){
   if(naturalState==='loading')return naturalPromise;
   return loadNaturalVoice();
 }
+async function fetchServerPart(text){
+  if(naturalCache[text])return naturalCache[text];
+  if(naturalInflight[text])return naturalInflight[text];
+  naturalInflight[text]=(async function(){
+    var r=await fetch(SAKHI_TTS_URL+'/speak',{method:'POST',mode:'cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:text,voice:NATURAL_VOICE,speed:NATURAL_SPEED})});
+    var mime=(r.headers&&r.headers.get?r.headers.get('content-type'):'')||'audio/wav';
+    if(!r.ok){var detail='';try{detail=await r.text();}catch(e){}throw new Error('Kokoro voice HTTP '+r.status+(detail?' · '+detail.slice(0,160):''));}
+    if(mime.toLowerCase().indexOf('audio/')!==0)throw new Error('Kokoro voice returned '+mime);
+    var item={bytes:await r.arrayBuffer(),mime:mime,httpStatus:r.status};naturalCache[text]=item;return item;
+  })();
+  try{return await naturalInflight[text];}finally{delete naturalInflight[text];}
+}
 async function speakServerPart(text,requestId){
-  var cached=naturalCache[text];
-  if(cached){return playBytes(cached.bytes,{httpStatus:200,mime:cached.mime,cached:true},'kokoro-server',requestId);}
-  var r=await fetch(SAKHI_TTS_URL+'/speak',{method:'POST',mode:'cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:text,voice:NATURAL_VOICE,speed:NATURAL_SPEED})});
-  var mime=(r.headers&&r.headers.get?r.headers.get('content-type'):'')||'audio/wav';
-  if(!r.ok){var detail='';try{detail=await r.text();}catch(e){}throw new Error('Kokoro voice HTTP '+r.status+(detail?' · '+detail.slice(0,160):''));}
-  if(mime.toLowerCase().indexOf('audio/')!==0)throw new Error('Kokoro voice returned '+mime);
-  var bytes=await r.arrayBuffer();naturalCache[text]={bytes:bytes,mime:mime};if(!isCurrent(requestId))return false;
-  return playBytes(bytes,{httpStatus:r.status,mime:mime,cached:false},'kokoro-server',requestId);
+  var wasCached=!!naturalCache[text],item=await fetchServerPart(text);if(!isCurrent(requestId))return false;
+  return playBytes(item.bytes,{httpStatus:item.httpStatus||200,mime:item.mime,cached:wasCached},'kokoro-server',requestId);
 }
 function childChunks(text){
   var sentences=String(text||'').match(/[^.!?]+[.!?]+|[^.!?]+$/g)||[],chunks=[],part='';
@@ -157,6 +163,16 @@ function describeQuestion(question){
   else if(question.template==='practice')parts.push('Take your time. When you finish, tap Check.');
   return parts.join(' ').replace(/\s+/g,' ').trim();
 }
+async function prefetch(question){
+  if(!enabled||!question)return false;
+  try{
+    await loadNaturalVoice();var texts=[],segs=Array.isArray(question.audioSegments)?question.audioSegments:null;
+    if(segs&&segs.length)segs.forEach(function(seg){if(seg&&seg.text)texts.push(seg.text);});else texts.push(describeQuestion(question));
+    var chunks=[];texts.forEach(function(text){childChunks(text).forEach(function(part){if(part&&chunks.indexOf(part)<0)chunks.push(part);});});
+    await Promise.all(chunks.map(fetchServerPart));return true;
+  }catch(e){console.warn('[Sakhi] Narration prefetch:',e&&e.message||e);return false;}
+}
+function prefetchActivity(activity){if(!activity||!Array.isArray(activity.questions))return Promise.resolve(false);return Promise.all(activity.questions.map(prefetch)).then(function(){return true;});}
 async function narrate(question){
   if(!enabled)throw fault('DISABLED','Spoken guidance is turned off in Parent Settings.');if(!question)return false;
   lastText=describeQuestion(question);var segs=Array.isArray(question.audioSegments)?question.audioSegments:null;
@@ -187,5 +203,5 @@ async function report(){var m=await loadManifest();return{required:m.required.le
 function setEnabled(v){enabled=!!v;if(!enabled){stopAll();stopKeepAlive();}}
 function status(){return{enabled:enabled,unlocked:unlocked,provider:lastProvider,lastError:lastError,engine:lastDiag.engine,httpStatus:lastDiag.httpStatus,mime:lastDiag.mime,bytes:lastDiag.bytes,decode:lastDiag.decode,playbackStarted:lastDiag.playbackStarted,cached:lastDiag.cached,naturalState:naturalState,naturalMode:'kokoro-server',naturalVoice:NATURAL_VOICE,naturalSpeed:NATURAL_SPEED,naturalProgress:naturalProgress,naturalError:naturalError&&naturalError.message||null,appleMobile:APPLE_MOBILE};}
 if(typeof document!=='undefined')document.addEventListener('touchend',function(){if(enabled&&ctx&&ctx.state==='suspended')ctx.resume().then(startKeepAlive).catch(function(){});},{passive:true});
-return{unlock:unlock,prepare:loadNaturalVoice,warm:warmNaturalVoice,speak:speak,narrate:narrate,repeat:repeat,describeQuestion:describeQuestion,stopAll:stopAll,playPhoneme:playPhoneme,phonemeReport:report,onFault:onFault,setEnabled:setEnabled,isEnabled:function(){return enabled;},isUnlocked:function(){return unlocked;},status:status};
+return{unlock:unlock,prepare:loadNaturalVoice,warm:warmNaturalVoice,prefetch:prefetch,prefetchActivity:prefetchActivity,speak:speak,narrate:narrate,repeat:repeat,describeQuestion:describeQuestion,stopAll:stopAll,playPhoneme:playPhoneme,phonemeReport:report,onFault:onFault,setEnabled:setEnabled,isEnabled:function(){return enabled;},isUnlocked:function(){return unlocked;},status:status};
 })();

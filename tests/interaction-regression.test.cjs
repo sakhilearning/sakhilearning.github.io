@@ -5,6 +5,12 @@ const root = path.join(__dirname, '..');
 const read = file => fs.readFileSync(path.join(root, file), 'utf8');
 const app = read('sakhi-app.js');
 const audio = read('sakhi-audio.js');
+if (!/sakhi\.v3\.active-adventure/.test(app) || !/Continue my adventure/.test(app) || !/loadRun\(\)/.test(app)) {
+  throw new Error('Active adventures must survive app restarts without requiring cloud sign-in');
+}
+if (!/prefetchActivity/.test(app) || !/naturalInflight/.test(audio) || !/fetchServerPart/.test(audio)) {
+  throw new Error('Kokoro narration must be prefetched and de-duplicated across question pages');
+}
 const presentation = read('sakhi-presentation.js');
 const css = read('sakhi-production.css');
 

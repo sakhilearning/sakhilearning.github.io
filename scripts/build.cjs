@@ -3,7 +3,7 @@ const path=require('path');
 let esbuild=null;try{esbuild=require('esbuild');}catch(e){}
 const root=path.join(__dirname,'..');
 const dist=path.join(root,'dist');
-const buildId='3.10.0';
+const buildId='3.10.1';
 const moduleOrder=[
   'supabase-config.js',
   'sakhi-cloud.js',
