@@ -25,7 +25,10 @@ function wellbeingArt(id){return hills('#c8eba6','#8fd18f')+'<g class="art-sway"
 function creativeArt(id){return '<path d="M0 296 C170 270 360 330 520 292 C700 250 830 315 1000 280 V360 H0Z" fill="#6c55b8" opacity=".62"/><g transform="translate(585 98)" class="art-float"><path d="M0 180 L45 40 L90 180" fill="none" stroke="#ffd36e" stroke-width="14" stroke-linecap="round"/><path d="M120 180 L170 18 L220 180" fill="none" stroke="#ff87b8" stroke-width="14" stroke-linecap="round"/><path d="M240 180 L290 58 L340 180" fill="none" stroke="#74d8ff" stroke-width="14" stroke-linecap="round"/></g><g fill="#fff" class="art-pulse"><path d="M155 92 l12 26 28 3-21 19 6 28-25-14-25 14 6-28-21-19 28-3Z"/><path d="M340 145 l9 18 20 2-15 14 4 20-18-10-18 10 4-20-15-14 20-2Z"/></g>';}
 var ART={reading:readingArt,math:mathArt,writing:writingArt,language:languageArt,science:scienceArt,logic:logicArt,wellbeing:wellbeingArt,creative:creativeArt};
 var SCENE_MEDIA={
-  home:{src:'./assets/theme-media/generated/home-unicorn-storytime.webp',position:'center 49%',alt:'Unicorn rainbow story meadow'},
+  home:{src:'./assets/theme-media/generated-v4/unicorn-phonics-meadow.webp',position:'center 49%',alt:'Luminous unicorn in an enchanted phonics meadow'},
+  phonics:{src:'./assets/theme-media/generated-v4/unicorn-phonics-meadow.webp',position:'center 49%',alt:'Unicorn discovering letter sounds in a magical meadow'},
+  princess:{src:'./assets/theme-media/generated-v4/princess-story-forest.webp',position:'center 48%',alt:'Young princess explorer following a glowing story trail'},
+  safari:{src:'./assets/theme-media/generated-v4/safari-discovery-valley.webp',position:'center 50%',alt:'Friendly safari animals exploring nature together'},
   reading:{src:'./assets/theme-media/generated/reading-enchanted-library.webp',position:'center 50%',alt:'Enchanted reading library'},
   math:{src:'./assets/theme-media/generated/math-ice-gems.webp',position:'center 55%',alt:'Ice palace number gems'},
   writing:{src:'./assets/theme-media/generated/writing-rainbow-storybook.webp',position:'center 34%',alt:'Rainbow writing storybook'},
@@ -37,15 +40,16 @@ var SCENE_MEDIA={
 };
 function mediaFor(domain,skill,template,index){
   var concept=String(skill||'').toLowerCase(),key=domain;
-  if(domain==='math'&&/(pattern|shape|position|spatial|sort|logic)/.test(concept))key='logic';
-  else if(domain==='language'&&/(story|sequence|retell|comprehension|character|setting)/.test(concept))key='reading';
+  if(domain==='reading'&&/(letter|sound|vowel|cvc|blend|phon|rhyme|syllable)/.test(concept))key='phonics';
+  else if(domain==='math'&&/(pattern|shape|position|spatial|sort|logic)/.test(concept))key='logic';
+  else if(domain==='language'&&/(story|sequence|retell|comprehension|character|setting|predict|idea|inference)/.test(concept))key='princess';
   else if(domain==='writing'&&/(draw|art|create|imagin)/.test(concept))key='creative';
   else if(domain==='creative'&&/(story|book|write)/.test(concept))key='writing';
-  else if(domain==='science'&&/(weather|season|plant|animal|habitat|water|sink|float)/.test(concept))key='science';
+  else if(domain==='science'&&/(observe|weather|season|plant|animal|habitat)/.test(concept))key='safari';
   return SCENE_MEDIA[key]||SCENE_MEDIA[domain]||SCENE_MEDIA.home;
 }
 function scene(domain,progress,variant){
-  var context=variant&&typeof variant==='object'?variant:null,t=SakhiTrails.get(domain),p=t.palette,ch=SakhiTrails.chapter(domain,progress),id='s'+Math.random().toString(36).slice(2,8),media=context?mediaFor(domain,context.skill,context.template,context.question):(variant==='home'?SCENE_MEDIA.home:(variant==='princess'?SCENE_MEDIA.language:SCENE_MEDIA[domain]));
+  var context=variant&&typeof variant==='object'?variant:null,t=SakhiTrails.get(domain),p=t.palette,ch=SakhiTrails.chapter(domain,progress),id='s'+Math.random().toString(36).slice(2,8),media=context?mediaFor(domain,context.skill,context.template,context.question):(variant==='home'?SCENE_MEDIA.home:(variant==='princess'?SCENE_MEDIA.princess:SCENE_MEDIA[domain]));
   var eager=variant==='home'||variant==='princess'||context&&context.kind==='activity',artwork=media?'<img class="world-art" src="'+media.src+'" alt="'+(context?esc(media.alt):'')+'" '+(context?'':'aria-hidden="true"')+' decoding="async" loading="'+(eager?'eager':'lazy')+'" style="object-position:'+media.position+'">':'<svg class="world-art" viewBox="0 0 1000 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true">'+defs(id,p[0],p[1],p[2])+'<rect width="1000" height="360" fill="url(#sky'+id+')"/>'+clouds()+(ART[domain]||readingArt)(id)+'</svg>';
   return '<div class="scene-card scene-'+esc(domain)+'" style="--a:'+p[0]+';--b:'+p[1]+';--c:'+p[2]+'">'+
     artwork+'<div class="scene-vignette"></div>'+

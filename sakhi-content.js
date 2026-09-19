@@ -13,6 +13,28 @@ var STORIES=[
  {text:'A little crab finds a shiny shell. It is too big for the crab. The crab leaves it beside a rock for another animal.',q:'What did the crab find?',a:'a shell',options:['a shell','a crown','a kite']},
  {text:'Nora builds a tower with four blocks. Her kitten bumps it and the tower falls. Nora takes a breath and builds it again.',q:'What did Nora do after the tower fell?',a:'built it again',options:['built it again','went to sleep','ate it']}
 ];
+var SEQUENCES=[
+ {text:'Ava mixed flour and water. She shaped the dough. Then she baked it with a grown-up.',a:'She baked the dough.',options:['She baked the dough.','She planted the dough.','She put on boots.']},
+ {text:'Leo found library books on the floor. He stacked them, carried them to the shelf, and put them away.',a:'He put the books on the shelf.',options:['He put the books on the shelf.','He threw the books.','He painted the shelf.']},
+ {text:'Nia dug a small hole, placed a seed inside, and covered it with soil.',a:'The seed was covered with soil.',options:['The seed was covered with soil.','The seed flew away.','The soil became ice.']}
+];
+var PREDICTIONS=[
+ {text:'Dark clouds fill the sky. Sam opens an umbrella.',a:'Rain may begin.',options:['Rain may begin.','The sun will get brighter.','The umbrella will become a boat.']},
+ {text:'The puppy waits beside its empty bowl and wags when Mia picks up the food bag.',a:'Mia will feed the puppy.',options:['Mia will feed the puppy.','The puppy will read.','Mia will hide the bowl.']},
+ {text:'Zara adds one block to a very wobbly tower.',a:'The tower may fall.',options:['The tower may fall.','The blocks will sing.','The tower will turn to water.']}
+];
+var CAUSES=[
+ {text:'Omar left an ice cube in the sun. Soon there was a puddle.',q:'Why was there a puddle?',a:'The ice melted in warmth.',options:['The ice melted in warmth.','The ice grew roots.','The sun froze it.']},
+ {text:'The plant had not been watered for many days. Its leaves drooped.',q:'Why did the leaves droop?',a:'The plant needed water.',options:['The plant needed water.','The plant was dancing.','The pot was too blue.']}
+];
+var INFERENCES=[
+ {text:'Kai comes inside shaking drops from his coat. He closes his umbrella.',q:'What is the weather probably like?',a:'rainy',options:['rainy','dry and sunny','snowing indoors']},
+ {text:'Lulu yawns, rubs her eyes, and curls under a blanket.',q:'How does Lulu probably feel?',a:'tired',options:['tired','hungry for soup','ready to race']}
+];
+var MAIN_IDEAS=[
+ {text:'Bees visit flowers and carry pollen. This helps many plants make seeds and fruit.',a:'Bees help plants grow.',options:['Bees help plants grow.','Bees build snowmen.','Flowers eat bees.']},
+ {text:'At the library, people can borrow books, hear stories, and learn about many topics.',a:'Libraries are places to read and learn.',options:['Libraries are places to read and learn.','Libraries sell shoes.','All books are about animals.']}
+];
 var VOCAB=[
  {w:'enormous',m:'very big',o:['very big','very cold','very quiet']},
  {w:'gentle',m:'soft and kind',o:['soft and kind','loud and rough','very fast']},
@@ -45,5 +67,5 @@ var WELL=[
  {q:'You feel frustrated. What can help?',a:'pause and take a slow breath',options:['pause and take a slow breath','throw something','shout at everyone']},
  {q:'What should you do before crossing a street with a grown-up?',a:'stop and look both ways',options:['stop and look both ways','run quickly','close your eyes']}
 ];
-return {LETTERS:LETTERS,UPPER:UPPER,CVC:CVC,DIGRAPHS:DIGRAPHS,BLENDS:BLENDS,SIGHT:SIGHT,SENTENCES:SENTENCES,STORIES:STORIES,VOCAB:VOCAB,SHAPES:SHAPES,SCI:SCI,LOGIC:LOGIC,WELL:WELL};
+return {LETTERS:LETTERS,UPPER:UPPER,CVC:CVC,DIGRAPHS:DIGRAPHS,BLENDS:BLENDS,SIGHT:SIGHT,SENTENCES:SENTENCES,STORIES:STORIES,SEQUENCES:SEQUENCES,PREDICTIONS:PREDICTIONS,CAUSES:CAUSES,INFERENCES:INFERENCES,MAIN_IDEAS:MAIN_IDEAS,VOCAB:VOCAB,SHAPES:SHAPES,SCI:SCI,LOGIC:LOGIC,WELL:WELL};
 })();

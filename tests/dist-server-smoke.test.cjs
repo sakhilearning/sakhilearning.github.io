@@ -66,7 +66,9 @@ function get(base, route) {
       ['/sw.js', 'text/javascript'],
       ['/manifest.json', 'application/json'],
       ['/vendor/kokoro-runtime.js', 'text/javascript'],
-      ['/assets/theme-media/generated/home-unicorn-storytime.webp', 'image/webp'],
+      ['/assets/theme-media/generated-v4/unicorn-phonics-meadow.webp', 'image/webp'],
+      ['/assets/theme-media/generated-v4/princess-story-forest.webp', 'image/webp'],
+      ['/assets/theme-media/generated-v4/safari-discovery-valley.webp', 'image/webp'],
       ['/assets/theme-media/generated/reading-enchanted-library.webp', 'image/webp'],
       ['/assets/theme-media/generated/math-ice-gems.webp', 'image/webp'],
       ['/assets/theme-media/generated/writing-rainbow-storybook.webp', 'image/webp'],
@@ -89,11 +91,11 @@ function get(base, route) {
 
     const index = (await get(base, '/')).body.toString('utf8');
     if (index.includes('sakhi-art.js')) throw new Error('Built index still loads the removed art runtime');
-    if (!index.includes('home-unicorn-storytime.webp')) throw new Error('Built index is missing the supplied home artwork');
+    if (!index.includes('unicorn-phonics-meadow.webp')) throw new Error('Built index is missing the supplied home artwork');
     if (!index.includes('science-mermaid-lagoon.webp')) throw new Error('Built index is missing subject-world artwork');
 
     const sw = (await get(base, '/sw.js')).body.toString('utf8');
-    if (!sw.includes('sakhi-v3-3.10.1') || sw.includes('client.navigate') || sw.includes('clients.matchAll')) throw new Error('Built service worker must update without reload loops');
+    if (!sw.includes('sakhi-v4-4.0.0') || sw.includes('client.navigate') || sw.includes('clients.matchAll')) throw new Error('Built service worker must update without reload loops');
 
     console.log('Dist server smoke passed: self-contained app, generated artwork, audio, and fresh service worker are reachable');
   } finally {

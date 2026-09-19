@@ -1,5 +1,5 @@
 {
-  "curriculum_version": "2026.09.11-v3-rc1",
+  "curriculum_version": "2026.09.19-v4",
   "domains": [
     {
       "domain_id": "reading",
@@ -1981,6 +1981,16 @@
         "mastered_days": 18
       },
       "active": true
-    }
+    },
+    {"skill_id":"reading.vowel_teams","domain_id":"reading","title":"Long vowels and vowel teams","kind":"advanced_phonics","difficulty_level":4,"prerequisites":["reading.advanced"],"mastery_criteria":{"min_attempts":4,"target_accuracy":0.85,"independent_evidence":3,"multi_session":true},"review_policy":{"learning_days":1,"developing_days":3,"mostly_mastered_days":7,"mastered_days":18},"active":true},
+    {"skill_id":"reading.two_syllable","domain_id":"reading","title":"Read two-syllable words","kind":"syllable","difficulty_level":5,"prerequisites":["reading.vowel_teams"],"mastery_criteria":{"min_attempts":4,"target_accuracy":0.85,"independent_evidence":3,"multi_session":true},"review_policy":{"learning_days":1,"developing_days":3,"mostly_mastered_days":7,"mastered_days":18},"active":true},
+    {"skill_id":"reading.story_evidence","domain_id":"reading","title":"Find evidence in a story","kind":"infer","difficulty_level":5,"prerequisites":["reading.stories"],"mastery_criteria":{"min_attempts":4,"target_accuracy":0.85,"independent_evidence":3,"multi_session":true},"review_policy":{"learning_days":1,"developing_days":3,"mostly_mastered_days":7,"mastered_days":18},"active":true},
+    {"skill_id":"math.addition_20","domain_id":"math","title":"Addition within 20","kind":"add","difficulty_level":4,"prerequisites":["math.addition"],"mastery_criteria":{"min_attempts":4,"target_accuracy":0.85,"independent_evidence":3,"multi_session":true},"review_policy":{"learning_days":1,"developing_days":3,"mostly_mastered_days":7,"mastered_days":18},"active":true},
+    {"skill_id":"math.subtraction_20","domain_id":"math","title":"Subtraction within 20","kind":"sub","difficulty_level":4,"prerequisites":["math.subtraction"],"mastery_criteria":{"min_attempts":4,"target_accuracy":0.85,"independent_evidence":3,"multi_session":true},"review_policy":{"learning_days":1,"developing_days":3,"mostly_mastered_days":7,"mastered_days":18},"active":true},
+    {"skill_id":"math.place_value","domain_id":"math","title":"Place value to 100","kind":"teen","difficulty_level":5,"prerequisites":["math.teen_numbers"],"mastery_criteria":{"min_attempts":4,"target_accuracy":0.85,"independent_evidence":3,"multi_session":true},"review_policy":{"learning_days":1,"developing_days":3,"mostly_mastered_days":7,"mastered_days":18},"active":true},
+    {"skill_id":"writing.multi_sentence","domain_id":"writing","title":"Write connected sentences","kind":"sentence_build","difficulty_level":5,"prerequisites":["writing.sentence"],"mastery_criteria":{"min_attempts":4,"target_accuracy":0.85,"independent_evidence":3,"multi_session":true},"review_policy":{"learning_days":1,"developing_days":3,"mostly_mastered_days":7,"mastered_days":18},"active":true},
+    {"skill_id":"language.compare_texts","domain_id":"language","title":"Compare two story ideas","kind":"main_idea","difficulty_level":5,"prerequisites":["language.main_idea"],"mastery_criteria":{"min_attempts":4,"target_accuracy":0.85,"independent_evidence":3,"multi_session":true},"review_policy":{"learning_days":1,"developing_days":3,"mostly_mastered_days":7,"mastered_days":18},"active":true},
+    {"skill_id":"logic.multi_rule","domain_id":"logic","title":"Solve two-rule puzzles","kind":"deduce","difficulty_level":5,"prerequisites":["logic.deduction"],"mastery_criteria":{"min_attempts":4,"target_accuracy":0.85,"independent_evidence":3,"multi_session":true},"review_policy":{"learning_days":1,"developing_days":3,"mostly_mastered_days":7,"mastered_days":18},"active":true},
+    {"skill_id":"science.engineering","domain_id":"science","title":"Plan, build, test, improve","kind":"materials","difficulty_level":5,"prerequisites":["science.materials"],"mastery_criteria":{"min_attempts":4,"target_accuracy":0.85,"independent_evidence":3,"multi_session":true},"review_policy":{"learning_days":1,"developing_days":3,"mostly_mastered_days":7,"mastered_days":18},"active":true}
   ]
 }

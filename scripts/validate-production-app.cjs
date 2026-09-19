@@ -13,7 +13,7 @@ for(const w of p.weeks)for(const d of w.days){if(d.total_minutes!==30)throw new 
 const adaptive=read('sakhi-adaptive.js'),activities=read('sakhi-activities.js'),plan=read('sakhi-plan.js'),curriculum=read('sakhi-curriculum.js'),templates=read('sakhi-templates.js'),audio=read('sakhi-audio.js');
 if(/SakhiTrails|SakhiPresentation/.test(adaptive))throw new Error('Adaptive must not read presentation');
 if(/SakhiTrails|SakhiPresentation/.test(activities))throw new Error('Activities must not read presentation');
-if(/mastery_state\s*=/.test(adaptive))throw new Error('Adaptive writes mastery directly');
+if(/mastery_state\s*=(?!=)/.test(adaptive))throw new Error('Adaptive writes mastery directly');
 if(!/SAKHI_SIX_MONTH_PLAN/.test(plan))throw new Error('Session planner is not connected to six-month plan');
 if(!/SAKHI_CURRICULUM_DATA/.test(curriculum))throw new Error('Curriculum has no embedded deployment fallback');
 if(/reset:function\(\)\{[^}]*render\(root,q,ctx\)/.test(templates))throw new Error('Template reset recreates controller and can leave stale state');
@@ -21,9 +21,9 @@ if(/FAULT\.SILENT|kind\s*===\s*['"]SILENT['"]|Sound is on, but nothing is coming
 
 const presentation=read('sakhi-presentation.js');
 if(!/world-art/.test(presentation)||!/objectSet/.test(presentation)||!/storyCue/.test(presentation))throw new Error('Immersive presentation engine missing');
-const generatedScenes=[...presentation.matchAll(/\.\/assets\/theme-media\/generated\/[^'"]+\.webp/g)].map(m=>m[0]);
-if(new Set(generatedScenes).size!==9)throw new Error('Expected nine distinct generated world scenes');
-if(!/adventureMode==='princess'\?'princess':'home'/.test(read('sakhi-app.js'))||!/variant==='princess'\?SCENE_MEDIA\.language/.test(presentation))throw new Error('Home does not switch between the dedicated unicorn and princess scenes');
+const generatedScenes=[...presentation.matchAll(/\.\/assets\/theme-media\/generated(?:-v4)?\/[^'"]+\.webp/g)].map(m=>m[0]);
+if(new Set(generatedScenes).size<11)throw new Error('Expected eleven or more distinct generated world scenes');
+if(!/adventureMode==='princess'\?'princess':'home'/.test(read('sakhi-app.js'))||!/variant==='princess'\?SCENE_MEDIA\.princess/.test(presentation))throw new Error('Home does not switch between the dedicated unicorn and princess scenes');
 if(!/data-count-object/.test(presentation)||!/wireCountables/.test(templates))throw new Error('Countable learning objects are not interactive');
 if(!/af_heart/.test(audio)||!/NATURAL_SPEED=\.86/.test(audio)||!/describeQuestion/.test(audio)||!/startKeepAlive/.test(audio)||!/prepare:loadNaturalVoice/.test(audio)||!/playWithHtmlAudio/.test(audio)||!/narrate:/.test(audio))throw new Error('Detailed iPad-safe Kokoro audio hardening missing');
 if(!/SAKHI_TTS_URL[\s\S]*kokoro-server/.test(audio)||!/naturalMode:'kokoro-server'/.test(audio)||/NATURAL_IMPORT|KokoroTTS|from_pretrained|tts\.generate/.test(audio))throw new Error('The all-device server-side Kokoro path is missing or browser model loading remains');
@@ -36,7 +36,7 @@ const css=read('sakhi-production.css');if(/!important/.test(css))throw new Error
 const html=read('index.template.html');const idMatches=[...html.matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]);if(new Set(idMatches).size!==idMatches.length)throw new Error('Duplicate HTML id');
 const hotlinks=[...fs.readdirSync(root).filter(f=>/\.(js|css|html)$/.test(f)).flatMap(f=>[...read(f).matchAll(/https?:\/\/[^'"\s)]+\.(?:png|jpe?g|webp|svg)/gi)].map(m=>m[0]))];if(hotlinks.length)throw new Error('Remote image hotlink found');
 const kokoroEntry=read('scripts/kokoro-browser-entry.js');if(!/numThreads\s*=\s*1/.test(kokoroEntry)||!/proxy\s*=\s*false/.test(kokoroEntry))throw new Error('Single-thread iPad Kokoro bundle settings missing');
-console.log('Sakhi V3.10.1 source validation passed:');
+console.log('Sakhi V4.0.0 source validation passed:');
 console.log(` - ${c.skills.length} skills across 8 persistent subject trails`);
 console.log(' - prerequisite graph sound');
 console.log(' - 26 weeks / 130 days / 30 minutes validated');
@@ -45,6 +45,6 @@ console.log(' - adaptive/activity layers do not read presentation');
 console.log(' - mastery writes centralized in Progress');
 console.log(' - controller reset, one-tap progression, duplicate-launch and legacy SILENT regressions blocked');
 console.log(' - background-warmed server-side af_heart on every device, readiness gate and update-safe PWA present');
-console.log(' - nine distinct generated scenes mapped across the home and eight learning worlds');
+console.log(' - eleven distinct generated scenes mapped across the home and learning worlds');
 console.log(' - CSS source layers present; no !important');
 console.log(' - no duplicate DOM ids or remote image hotlinks');

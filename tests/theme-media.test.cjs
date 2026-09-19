@@ -5,11 +5,11 @@ const root = path.join(__dirname, '..');
 const read = file => fs.readFileSync(path.join(root, file), 'utf8');
 
 const presentation = read('sakhi-presentation.js');
-const mediaRefs = [...presentation.matchAll(/\.\/(assets\/theme-media\/generated\/[^'"]+)/g)].map(match => match[1]);
+const mediaRefs = [...presentation.matchAll(/\.\/(assets\/theme-media\/generated(?:-v4)?\/[^'"]+)/g)].map(match => match[1]);
 const uniqueRefs = [...new Set(mediaRefs)];
 
-if (uniqueRefs.length !== 9) {
-  throw new Error(`Theme presentation should reference nine distinct generated scenes; found ${uniqueRefs.length}`);
+if (uniqueRefs.length < 11) {
+  throw new Error(`Theme presentation should reference at least eleven distinct generated scenes; found ${uniqueRefs.length}`);
 }
 
 for (const ref of uniqueRefs) {

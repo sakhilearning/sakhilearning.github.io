@@ -2,7 +2,7 @@ window.SakhiAudio=(function(){
 'use strict';
 var enabled=true,unlocked=false,ctx=null,currentSource=null,currentAudio=null,currentObjectUrl=null,keepAliveSource=null,keepAliveGain=null,lastText='',listeners=[],manifest=null,playbackEpoch=0;
 var lastProvider='none',lastError=null;
-var naturalTts=null,naturalPromise=null,naturalState='idle',naturalError=null,naturalProgress=0,naturalCache={},naturalInflight={};
+var naturalTts=null,naturalPromise=null,naturalState='idle',naturalError=null,naturalProgress=0,naturalCache={},naturalInflight={},VOICE_CACHE='sakhi-voice-v4';
 var lastDiag={provider:'none',engine:'none',httpStatus:null,mime:'',bytes:0,decode:false,playbackStarted:false,cached:false,lastError:null};
 var AC=window.AudioContext||window.webkitAudioContext;
 var NATURAL_VOICE='af_heart';
@@ -83,7 +83,7 @@ function canUseNatural(){return typeof document!=='undefined'&&typeof location!=
 function delay(ms){return new Promise(function(resolve){setTimeout(resolve,ms);});}
 async function prepareServerVoice(){
   naturalState='loading';naturalError=null;naturalProgress=8;
-  var deadline=Date.now()+300000,lastError=null;
+  var deadline=Date.now()+6500,lastError=null;
   while(Date.now()<deadline){
     try{
       var r=await fetch(SAKHI_TTS_URL+'/health',{cache:'no-store',mode:'cors'}),h=await r.json();
@@ -92,7 +92,7 @@ async function prepareServerVoice(){
       if(h&&h.status==='error')throw new Error(h.error||'Kokoro server initialization failed.');
       naturalProgress=h&&h.status==='loading'?78:35;
     }catch(e){lastError=e;naturalProgress=Math.max(naturalProgress,18);}
-    await delay(4000);
+    await delay(1200);
   }
   throw lastError||new Error('Kokoro server did not become ready in time.');
 }
@@ -109,21 +109,22 @@ function warmNaturalVoice(){
   if(naturalState==='loading')return naturalPromise;
   return loadNaturalVoice();
 }
+function textHash(text){var h=2166136261,s=NATURAL_VOICE+'|'+NATURAL_SPEED+'|'+text;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return(h>>>0).toString(16);}
+async function persistentGet(text){if(!('caches'in window))return null;try{var c=await caches.open(VOICE_CACHE),r=await c.match(new Request(location.origin+'/__sakhi_voice_cache__/'+textHash(text)));if(!r)return null;return{bytes:await r.arrayBuffer(),mime:r.headers.get('content-type')||'audio/wav',httpStatus:200,persistent:true};}catch(e){return null;}}
+async function persistentPut(text,item){if(!('caches'in window)||!item||!item.bytes)return;try{var c=await caches.open(VOICE_CACHE),req=new Request(location.origin+'/__sakhi_voice_cache__/'+textHash(text));await c.put(req,new Response(item.bytes.slice(0),{headers:{'Content-Type':item.mime||'audio/wav','X-Sakhi-Voice':NATURAL_VOICE}}));}catch(e){}}
 async function fetchServerPart(text){
   if(naturalCache[text])return naturalCache[text];
   if(naturalInflight[text])return naturalInflight[text];
   naturalInflight[text]=(async function(){
-    var r=await fetch(SAKHI_TTS_URL+'/speak',{method:'POST',mode:'cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:text,voice:NATURAL_VOICE,speed:NATURAL_SPEED})});
-    var mime=(r.headers&&r.headers.get?r.headers.get('content-type'):'')||'audio/wav';
-    if(!r.ok){var detail='';try{detail=await r.text();}catch(e){}throw new Error('Kokoro voice HTTP '+r.status+(detail?' · '+detail.slice(0,160):''));}
-    if(mime.toLowerCase().indexOf('audio/')!==0)throw new Error('Kokoro voice returned '+mime);
-    var item={bytes:await r.arrayBuffer(),mime:mime,httpStatus:r.status};naturalCache[text]=item;return item;
+    var saved=await persistentGet(text);if(saved){naturalCache[text]=saved;return saved;}var last;
+    for(var attempt=0;attempt<3;attempt++)try{var ctrl=typeof AbortController!=='undefined'?new AbortController():null,timer=ctrl?setTimeout(function(){ctrl.abort();},18000):null,r=await fetch(SAKHI_TTS_URL+'/speak',{method:'POST',mode:'cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:text,voice:NATURAL_VOICE,speed:NATURAL_SPEED}),signal:ctrl&&ctrl.signal});if(timer)clearTimeout(timer);var mime=(r.headers&&r.headers.get?r.headers.get('content-type'):'')||'audio/wav';if(!r.ok){var detail='';try{detail=await r.text();}catch(e){}throw new Error('Kokoro voice HTTP '+r.status+(detail?' · '+detail.slice(0,160):''));}if(mime.toLowerCase().indexOf('audio/')!==0)throw new Error('Kokoro voice returned '+mime);var item={bytes:await r.arrayBuffer(),mime:mime,httpStatus:r.status};naturalCache[text]=item;persistentPut(text,item);return item;}catch(e){last=e;if(attempt<2)await delay(550*(attempt+1));}
+    throw last||new Error('Kokoro voice request failed.');
   })();
   try{return await naturalInflight[text];}finally{delete naturalInflight[text];}
 }
 async function speakServerPart(text,requestId){
   var wasCached=!!naturalCache[text],item=await fetchServerPart(text);if(!isCurrent(requestId))return false;
-  return playBytes(item.bytes,{httpStatus:item.httpStatus||200,mime:item.mime,cached:wasCached},'kokoro-server',requestId);
+  return playBytes(item.bytes,{httpStatus:item.httpStatus||200,mime:item.mime,cached:wasCached||item.persistent},'kokoro-server',requestId);
 }
 function childChunks(text){
   var sentences=String(text||'').match(/[^.!?]+[.!?]+|[^.!?]+$/g)||[],chunks=[],part='';
@@ -151,7 +152,7 @@ function spokenValue(value){
 }
 function listValues(values,label){return values.map(function(value,index){return label+' '+(index+1)+' is '+spokenValue(value)+'.';}).join(' ');}
 function describeQuestion(question){
-  var prompt=spokenValue(question.prompt||''),guide=spokenValue(question.narration||''),parts=[];
+  var prompt=spokenValue(question.prompt||''),guide=spokenValue(question.spoken_instruction||question.narration||''),parts=[];
   if(question.media&&question.media.passage)parts.push(guide||prompt);else{if(prompt)parts.push(prompt);if(guide&&guide.toLowerCase()!==prompt.toLowerCase())parts.push(guide);}
   if(question.media&&question.media.count)parts.push('Tap each treasure once as you count.');
   if(question.media&&question.media.groups)parts.push('Look at both groups, put them together, and count all the treasures.');

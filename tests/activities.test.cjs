@@ -34,4 +34,4 @@ for(const s of curriculum.skills)for(let b=1;b<=5;b++)for(let seed=0;seed<50;see
   }
   activities++;
 }
-console.log(`Activity generation passed: ${activities} activities / ${questions} questions across 85 skills × 5 bands × 50 seeds`);
+console.log(`Activity generation passed: ${activities} activities / ${questions} questions across ${curriculum.skills.length} skills × 5 bands × 50 seeds`);
