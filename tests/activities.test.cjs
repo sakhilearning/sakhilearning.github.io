@@ -17,6 +17,8 @@ for(const s of curriculum.skills)for(let b=1;b<=5;b++)for(let seed=0;seed<50;see
   for(const q of a.questions){
     questions++;
     if(!q.template||q.answer===undefined)throw new Error('Bad question '+s.skill_id);
+    if(/look at|this picture|this sentence|pictures|which ribbon|how many treasures do you see/i.test(q.prompt)){const m=q.media||{};if(!(m.visual||m.count||m.shape||m.groups||m.subtract||m.passage))throw new Error('Question depends on missing visual media: '+s.skill_id+' · '+q.prompt);}
+    if(q.media&&q.media.visual&&!['leaves','ribbons','print-line','cat','memory'].includes(q.media.visual))throw new Error('Unknown assessment visual '+q.media.visual);
     if(q.template==='choice'){
       if(!Array.isArray(q.choices)||q.choices.length<2)throw new Error('Choice options missing '+s.skill_id);
       const serialized=q.choices.map(x=>JSON.stringify(x));

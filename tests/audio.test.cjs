@@ -8,7 +8,7 @@ function src(f){return fs.readFileSync(path.join(root,f),'utf8');}
   function AC(){this.state='running';this.destination={};} AC.prototype.resume=async function(){}; AC.prototype.createBuffer=()=>({}); AC.prototype.createBufferSource=()=>new FakeSource(); AC.prototype.createGain=()=>new FakeGain(); AC.prototype.decodeAudioData=async function(){return {duration:.2};};
   let healthCalls=0,speechCalls=0;
   async function fetch(url,opts={}){
-    if(url.endsWith('/health')){healthCalls++;return {ok:true,status:200,json:async()=>({status:'ready',ready:true})};}
+    if(url.endsWith('/health')){healthCalls++;await new Promise(resolve=>setTimeout(resolve,50));return {ok:true,status:200,json:async()=>({status:'ready',ready:true})};}
     if(url.endsWith('/speak')){speechCalls++;const body=JSON.parse(opts.body);if(body.voice!=='af_heart'||body.speed!==.86)throw new Error('Wrong server voice request');if(body.text.includes('Slow request'))await new Promise(resolve=>setTimeout(resolve,20));return {ok:true,status:200,headers:{get:()=> 'audio/wav'},arrayBuffer:async()=>new ArrayBuffer(512),text:async()=>''};}
     throw new Error('Unexpected fetch '+url);
   }
@@ -17,7 +17,7 @@ function src(f){return fs.readFileSync(path.join(root,f),'utf8');}
   ctx.SakhiCloud={state:()=>({configured:true}),speak:async()=>{cloudCalls++;throw new Error('quota exhausted');}};
   vm.createContext(ctx);vm.runInContext(src('sakhi-audio.js'),ctx,{filename:'sakhi-audio.js'});
   if(!await ctx.SakhiAudio.unlock())throw new Error('Audio unlock failed');
-  await ctx.SakhiAudio.prepare();
+  const prepareStarted=Date.now();await ctx.SakhiAudio.prepare();if(Date.now()-prepareStarted>20)throw new Error('Voice readiness still blocks on the slow health endpoint');
   await ctx.SakhiAudio.speak('Which answer is best? Choice one is left. Choice two is right.');
   const st=ctx.SakhiAudio.status();
   if(st.provider!=='kokoro-server'||st.naturalMode!=='kokoro-server'||st.naturalVoice!=='af_heart'||st.naturalSpeed!==.86||st.appleMobile||healthCalls<1||speechCalls!==1)throw new Error('cross-device server Kokoro diagnostics incorrect: '+JSON.stringify(st));

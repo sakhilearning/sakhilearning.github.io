@@ -14,7 +14,8 @@ const types = {
   '.png': 'image/png',
   '.svg': 'image/svg+xml',
   '.webp': 'image/webp',
-  '.ogg': 'audio/ogg'
+  '.ogg': 'audio/ogg',
+  '.wav': 'audio/wav'
 };
 
 function serve() {
@@ -77,7 +78,8 @@ function get(base, route) {
       ['/assets/theme-media/generated/logic-crystal-number-palace.webp', 'image/webp'],
       ['/assets/theme-media/generated/wellbeing-enchanted-forest.webp', 'image/webp'],
       ['/assets/theme-media/generated/creative-tower-art-studio.webp', 'image/webp'],
-      ['/assets/audio/phonemes/phoneme_p.ogg', 'audio/ogg']
+      ['/assets/audio/phonemes/phoneme_p.ogg', 'audio/ogg'],
+      ['/assets/audio/sakhi-ready-next.wav', 'audio/wav']
     ];
 
     for (const [route, expectedType] of routes) {
@@ -95,7 +97,7 @@ function get(base, route) {
     if (!index.includes('science-mermaid-lagoon.webp')) throw new Error('Built index is missing subject-world artwork');
 
     const sw = (await get(base, '/sw.js')).body.toString('utf8');
-    if (!sw.includes('sakhi-v4-4.0.0') || sw.includes('client.navigate') || sw.includes('clients.matchAll')) throw new Error('Built service worker must update without reload loops');
+    if (!sw.includes('sakhi-v4-4.0.1') || sw.includes('client.navigate') || sw.includes('clients.matchAll')) throw new Error('Built service worker must update without reload loops');
 
     console.log('Dist server smoke passed: self-contained app, generated artwork, audio, and fresh service worker are reachable');
   } finally {

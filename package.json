@@ -1,7 +1,7 @@
 {
   "name": "sakhi-learning-trails-v3",
   "private": true,
-  "version": "4.0.0",
+  "version": "4.0.1",
   "scripts": {
     "syntax": "node scripts/check-syntax.cjs",
     "validate": "node scripts/validate-production-app.cjs",

@@ -15,12 +15,13 @@ if (!cloud.includes('httpStatus:r.status') || !cloud.includes("mime:mime||'audio
 }
 
 const audio = read('sakhi-audio.js');
-for (const token of ['af_heart', 'NATURAL_SPEED=.86', 'describeQuestion', 'startKeepAlive', 'prepare:loadNaturalVoice', 'playWithHtmlAudio', 'decodeAudioData']) {
+for (const token of ['af_heart', 'NATURAL_SPEED=.86', 'describeQuestion', 'startKeepAlive', 'prepare:loadNaturalVoice', 'playWithHtmlAudio', 'decodeAudioData', 'playTransitionCue', 'sakhi-ready-next.wav']) {
   if (!audio.includes(token)) throw new Error(`Resilient free audio path is missing ${token}`);
 }
 if (!/SAKHI_TTS_URL[\s\S]*kokoro-server/.test(audio)||!/naturalMode:'kokoro-server'/.test(audio)||/NATURAL_IMPORT|KokoroTTS|from_pretrained|tts\.generate/.test(audio)) throw new Error('The all-device server-side Kokoro path is missing or browser model loading remains');
 if (/speechSynthesis|SpeechSynthesisUtterance|apple-system/.test(audio)) throw new Error('Robotic browser speech remains in the narration runtime');
 if (/SakhiCloud\.speak\(/.test(audio)) throw new Error('Normal narration still depends on paid cloud speech');
+const instantCue=path.join(root,'assets/audio/sakhi-ready-next.wav');if(!fs.existsSync(instantCue)||fs.statSync(instantCue).size<50000)throw new Error('Immediate local Kokoro transition cue is missing');
 
 const app = read('sakhi-app.js');
 if (!app.includes("answer==='071621'")) throw new Error('Parent passcode changed');
@@ -48,7 +49,7 @@ const kokoroEntry = read('scripts/kokoro-browser-entry.js');
 if (!/numThreads\s*=\s*1/.test(kokoroEntry) || !/proxy\s*=\s*false/.test(kokoroEntry)) throw new Error('iPad-safe Kokoro runtime settings are missing');
 
 const sw = read('sw.js');
-if (!/sakhi-v4-4\.0\.0/.test(sw)||/client\.navigate|clients\.matchAll/.test(sw)) throw new Error('Service worker must refresh caches without navigating clients');
+if (!/sakhi-v4-4\.0\.1/.test(sw)||/client\.navigate|clients\.matchAll/.test(sw)) throw new Error('Service worker must refresh caches without navigating clients');
 if (!sw.includes("cache:'no-store'")) throw new Error('Navigation requests should bypass stale HTTP caches');
 for (const file of [
   'assets/theme-media/generated-v4/unicorn-phonics-meadow.webp',

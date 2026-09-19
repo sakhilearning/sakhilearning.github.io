@@ -82,19 +82,9 @@ async function playBytes(bytes,meta,provider,requestId){
 function canUseNatural(){return typeof document!=='undefined'&&typeof location!=='undefined'&&location.protocol!=='file:'&&typeof Promise!=='undefined';}
 function delay(ms){return new Promise(function(resolve){setTimeout(resolve,ms);});}
 async function prepareServerVoice(){
-  naturalState='loading';naturalError=null;naturalProgress=8;
-  var deadline=Date.now()+6500,lastError=null;
-  while(Date.now()<deadline){
-    try{
-      var r=await fetch(SAKHI_TTS_URL+'/health',{cache:'no-store',mode:'cors'}),h=await r.json();
-      if(!r.ok)throw new Error('Voice health HTTP '+r.status);
-      if(h&&h.ready){naturalTts={kind:'kokoro-server',voice:NATURAL_VOICE};naturalState='ready';naturalError=null;naturalProgress=100;return naturalTts;}
-      if(h&&h.status==='error')throw new Error(h.error||'Kokoro server initialization failed.');
-      naturalProgress=h&&h.status==='loading'?78:35;
-    }catch(e){lastError=e;naturalProgress=Math.max(naturalProgress,18);}
-    await delay(1200);
-  }
-  throw lastError||new Error('Kokoro server did not become ready in time.');
+  naturalState='ready';naturalError=null;naturalProgress=100;naturalTts={kind:'kokoro-server',voice:NATURAL_VOICE};
+  fetch(SAKHI_TTS_URL+'/health',{cache:'no-store',mode:'cors'}).then(function(r){if(!r.ok)throw new Error('Voice health HTTP '+r.status);return r.json();}).then(function(h){if(h&&h.status==='error')throw new Error(h.error||'Kokoro server initialization failed.');}).catch(function(e){naturalError=e;});
+  return naturalTts;
 }
 function loadNaturalVoice(){
   if(naturalTts)return Promise.resolve(naturalTts);
@@ -173,7 +163,11 @@ async function prefetch(question){
     await Promise.all(chunks.map(fetchServerPart));return true;
   }catch(e){console.warn('[Sakhi] Narration prefetch:',e&&e.message||e);return false;}
 }
-function prefetchActivity(activity){if(!activity||!Array.isArray(activity.questions))return Promise.resolve(false);return Promise.all(activity.questions.map(prefetch)).then(function(){return true;});}
+async function prefetchActivity(activity){if(!activity||!Array.isArray(activity.questions))return false;for(var i=0;i<activity.questions.length;i++)await prefetch(activity.questions[i]);return true;}
+async function playTransitionCue(){
+  if(!enabled)return false;if(!await unlock())return false;stopAll();var requestId=playbackEpoch;
+  try{var url=new URL('assets/audio/sakhi-ready-next.wav',document.baseURI).href,r=await fetch(url,{cache:'force-cache'});if(!r.ok)throw new Error('Transition cue '+r.status);return playBytes(await r.arrayBuffer(),{httpStatus:r.status,mime:r.headers&&r.headers.get?r.headers.get('content-type')||'audio/wav':'audio/wav',cached:true},'kokoro-local',requestId);}catch(e){console.warn('[Sakhi] Immediate cue unavailable:',e&&e.message||e);return false;}
+}
 async function narrate(question){
   if(!enabled)throw fault('DISABLED','Spoken guidance is turned off in Parent Settings.');if(!question)return false;
   lastText=describeQuestion(question);var segs=Array.isArray(question.audioSegments)?question.audioSegments:null;
@@ -204,5 +198,5 @@ async function report(){var m=await loadManifest();return{required:m.required.le
 function setEnabled(v){enabled=!!v;if(!enabled){stopAll();stopKeepAlive();}}
 function status(){return{enabled:enabled,unlocked:unlocked,provider:lastProvider,lastError:lastError,engine:lastDiag.engine,httpStatus:lastDiag.httpStatus,mime:lastDiag.mime,bytes:lastDiag.bytes,decode:lastDiag.decode,playbackStarted:lastDiag.playbackStarted,cached:lastDiag.cached,naturalState:naturalState,naturalMode:'kokoro-server',naturalVoice:NATURAL_VOICE,naturalSpeed:NATURAL_SPEED,naturalProgress:naturalProgress,naturalError:naturalError&&naturalError.message||null,appleMobile:APPLE_MOBILE};}
 if(typeof document!=='undefined')document.addEventListener('touchend',function(){if(enabled&&ctx&&ctx.state==='suspended')ctx.resume().then(startKeepAlive).catch(function(){});},{passive:true});
-return{unlock:unlock,prepare:loadNaturalVoice,warm:warmNaturalVoice,prefetch:prefetch,prefetchActivity:prefetchActivity,speak:speak,narrate:narrate,repeat:repeat,describeQuestion:describeQuestion,stopAll:stopAll,playPhoneme:playPhoneme,phonemeReport:report,onFault:onFault,setEnabled:setEnabled,isEnabled:function(){return enabled;},isUnlocked:function(){return unlocked;},status:status};
+return{unlock:unlock,prepare:loadNaturalVoice,warm:warmNaturalVoice,prefetch:prefetch,prefetchActivity:prefetchActivity,playTransitionCue:playTransitionCue,speak:speak,narrate:narrate,repeat:repeat,describeQuestion:describeQuestion,stopAll:stopAll,playPhoneme:playPhoneme,phonemeReport:report,onFault:onFault,setEnabled:setEnabled,isEnabled:function(){return enabled;},isUnlocked:function(){return unlocked;},status:status};
 })();
