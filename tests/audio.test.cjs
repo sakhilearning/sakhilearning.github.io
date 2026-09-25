@@ -31,6 +31,8 @@ function src(f){return fs.readFileSync(path.join(root,f),'utf8');}
   if(audibleStarted-audibleBefore!==1)throw new Error('Overlapping narration produced echo: '+(audibleStarted-audibleBefore)+' audible sources started');
   const detailed=ctx.SakhiAudio.describeQuestion({template:'choice',prompt:'Which number comes next?',narration:'Look at the pattern.',choices:[2,3,4]});
   for(const phrase of ['Which number comes next?','Look at the pattern.','Choice 1 is 2.','Choice 2 is 3.','Choice 3 is 4.','tap the best answer'])if(!detailed.includes(phrase))throw new Error('Detailed child narration is missing: '+phrase+' in '+detailed);
+  const build=ctx.SakhiAudio.describeQuestion({template:'build',prompt:'Build the word you hear.',narration:'Build the word pot.',tokens:['p','o','t','m','s']});
+  if(!build.includes('Build the word pot.')||/Piece 1|Piece 2|Piece 3|is p\.|is o\.|is t\./.test(build))throw new Error('Word-building narration reads the tile bank and may confuse the learner: '+build);
   let phonemeBlocked=false;try{await ctx.SakhiAudio.playPhoneme('m');}catch(e){phonemeBlocked=e.kind==='MISSING_PHONEME';}
   if(!phonemeBlocked)throw new Error('Unverified isolated phoneme was not blocked');
   console.log('Audio core passed: server af_heart narration on every device avoids browser freezes and cloud credits; unverified phonemes are blocked.');

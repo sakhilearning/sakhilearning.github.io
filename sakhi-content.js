@@ -25,15 +25,18 @@ var PREDICTIONS=[
 ];
 var CAUSES=[
  {text:'Omar left an ice cube in the sun. Soon there was a puddle.',q:'Why was there a puddle?',a:'The ice melted in warmth.',options:['The ice melted in warmth.','The ice grew roots.','The sun froze it.']},
- {text:'The plant had not been watered for many days. Its leaves drooped.',q:'Why did the leaves droop?',a:'The plant needed water.',options:['The plant needed water.','The plant was dancing.','The pot was too blue.']}
+ {text:'The plant had not been watered for many days. Its leaves drooped.',q:'Why did the leaves droop?',a:'The plant needed water.',options:['The plant needed water.','The plant was dancing.','The pot was too blue.']},
+ {text:'Priya wore boots because the playground had deep puddles.',q:'Why did Priya wear boots?',a:'to keep her feet dry',options:['to keep her feet dry','to make the puddles bigger','to help her fly']}
 ];
 var INFERENCES=[
  {text:'Kai comes inside shaking drops from his coat. He closes his umbrella.',q:'What is the weather probably like?',a:'rainy',options:['rainy','dry and sunny','snowing indoors']},
- {text:'Lulu yawns, rubs her eyes, and curls under a blanket.',q:'How does Lulu probably feel?',a:'tired',options:['tired','hungry for soup','ready to race']}
+ {text:'Lulu yawns, rubs her eyes, and curls under a blanket.',q:'How does Lulu probably feel?',a:'tired',options:['tired','hungry for soup','ready to race']},
+ {text:'Noah carries a wrapped box and a card into the party room.',q:'What is probably inside the box?',a:'a gift',options:['a gift','a rain cloud','a bathtub']}
 ];
 var MAIN_IDEAS=[
  {text:'Bees visit flowers and carry pollen. This helps many plants make seeds and fruit.',a:'Bees help plants grow.',options:['Bees help plants grow.','Bees build snowmen.','Flowers eat bees.']},
- {text:'At the library, people can borrow books, hear stories, and learn about many topics.',a:'Libraries are places to read and learn.',options:['Libraries are places to read and learn.','Libraries sell shoes.','All books are about animals.']}
+ {text:'At the library, people can borrow books, hear stories, and learn about many topics.',a:'Libraries are places to read and learn.',options:['Libraries are places to read and learn.','Libraries sell shoes.','All books are about animals.']},
+ {text:'A class planted seeds, measured the sprouts, and wrote down what changed each day.',a:'The class observed how plants grow.',options:['The class observed how plants grow.','The class built a spaceship.','The seeds learned to read.']}
 ];
 var VOCAB=[
  {w:'enormous',m:'very big',o:['very big','very cold','very quiet']},

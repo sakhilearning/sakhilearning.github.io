@@ -41,11 +41,11 @@ function build(){
 }
 function offscreen(d){return{
   reading:'Find three things at home that begin with a sound from today\'s Rainbow Library mission.',
-  math:'Use real objects such as blocks, spoons, socks, or fruit to act out today\'s number idea.',
+  math:'Use favorite toys, crayons, or snack pieces to act out today\'s number idea, then make a new example.',
   writing:'Use pencil and paper for one short line of careful letter, number, or word practice.',
   language:'Tell a grown-up the beginning, middle, and end of a favorite story.',
   science:'Make one prediction, test it safely with a grown-up nearby, then say what you observed.',
-  logic:'Build a repeating pattern with toys or household objects, then ask someone to continue it.',
+  logic:'Build a repeating pattern with blocks, stickers, or beads, then ask someone to continue it.',
   wellbeing:'Practice one helpful routine independently and tell a grown-up how it felt.',
   creative:'Draw, dance, build, or act out something from today\'s learning.'
 }[d]||'Do a short hands-on learning mission with a grown-up nearby.';}

@@ -27,6 +27,9 @@ const app = read('sakhi-app.js');
 if (!app.includes("answer==='071621'")) throw new Error('Parent passcode changed');
 if (!app.includes('[data-trail-domain]') || !app.includes('startTrail')) throw new Error('Trail cards are not wired for interaction');
 if (!app.includes('ensureVoiceReady') || !app.includes('voicePrepare') || app.includes('Starting voice')) throw new Error('Kokoro readiness gate is incomplete');
+for (const token of ["['reading','math','writing'", 'startChosenLesson', 'advanceProgramDay', 'curriculumSkill', 'recentQuestionKeys']) {
+  if (!app.includes(token)) throw new Error(`Curriculum visibility or parent control is missing ${token}`);
+}
 
 const speechFunction = read('supabase/functions/sakhi-speech/index.ts');
 for (const token of ['PROD_ORIGIN', 'originOK', 'keyOK', 'authorization, apikey', 'SAKHI_VOICE_ID', 'response.ok']) {
@@ -49,7 +52,7 @@ const kokoroEntry = read('scripts/kokoro-browser-entry.js');
 if (!/numThreads\s*=\s*1/.test(kokoroEntry) || !/proxy\s*=\s*false/.test(kokoroEntry)) throw new Error('iPad-safe Kokoro runtime settings are missing');
 
 const sw = read('sw.js');
-if (!/sakhi-v4-4\.0\.1/.test(sw)||/client\.navigate|clients\.matchAll/.test(sw)) throw new Error('Service worker must refresh caches without navigating clients');
+if (!/sakhi-v4-4\.1\.0/.test(sw)||/client\.navigate|clients\.matchAll/.test(sw)) throw new Error('Service worker must refresh caches without navigating clients');
 if (!sw.includes("cache:'no-store'")) throw new Error('Navigation requests should bypass stale HTTP caches');
 for (const file of [
   'assets/theme-media/generated-v4/unicorn-phonics-meadow.webp',

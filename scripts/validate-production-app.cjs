@@ -31,12 +31,14 @@ if(/speechSynthesis|SpeechSynthesisUtterance|apple-system/.test(audio))throw new
 if(/SakhiCloud\.speak\(/.test(audio))throw new Error('Narration still depends on the exhausted paid provider');
 if(!/Adaptive\.pick\(domain,\[\]\)/.test(read('sakhi-app.js'))||!/advanceTimer=setTimeout/.test(read('sakhi-app.js')))throw new Error('Trail fallback or automatic question progression missing');
 if(!/Test Sakhi voice/.test(read('sakhi-app.js'))||!/ensureVoiceReady/.test(read('sakhi-app.js'))||!/voicePrepare/.test(read('index.template.html')))throw new Error('Kokoro readiness controls missing');
+if(!/startChosenLesson/.test(read('sakhi-app.js'))||!/advanceProgramDay/.test(read('sakhi-app.js'))||!/recentQuestionKeys/.test(read('sakhi-progress.js')))throw new Error('Parent curriculum control or repetition memory missing');
+if(!/\['reading','math','writing'/.test(read('sakhi-app.js')))throw new Error('Home trail order must visibly include Math and Writing');
 const progress=read('sakhi-progress.js');if(!/completeActivity/.test(progress))throw new Error('Missing completion path');
 const css=read('sakhi-production.css');if(/!important/.test(css))throw new Error('CSS contains !important');if(!/@layer reset,tokens,base,layout,components,experience,cinematic,states,utilities/.test(css))throw new Error('Missing CSS source layers');
 const html=read('index.template.html');const idMatches=[...html.matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]);if(new Set(idMatches).size!==idMatches.length)throw new Error('Duplicate HTML id');
 const hotlinks=[...fs.readdirSync(root).filter(f=>/\.(js|css|html)$/.test(f)).flatMap(f=>[...read(f).matchAll(/https?:\/\/[^'"\s)]+\.(?:png|jpe?g|webp|svg)/gi)].map(m=>m[0]))];if(hotlinks.length)throw new Error('Remote image hotlink found');
 const kokoroEntry=read('scripts/kokoro-browser-entry.js');if(!/numThreads\s*=\s*1/.test(kokoroEntry)||!/proxy\s*=\s*false/.test(kokoroEntry))throw new Error('Single-thread iPad Kokoro bundle settings missing');
-console.log('Sakhi V4.0.1 source validation passed:');
+console.log('Sakhi V4.1.0 source validation passed:');
 console.log(` - ${c.skills.length} skills across 8 persistent subject trails`);
 console.log(' - prerequisite graph sound');
 console.log(' - 26 weeks / 130 days / 30 minutes validated');

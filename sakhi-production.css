@@ -48,6 +48,7 @@ button{border:0}.view{display:none}.view.active{display:block}h1,h2,h3,p{margin-
 .parent-gate input{width:130px;display:block;margin:12px auto 18px;padding:14px;border:2px solid var(--line);border-radius:18px;text-align:center;font-size:24px}
 .parent-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
 .parent-form{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.parent-progress{margin-top:16px}.parent-setting{display:flex;gap:10px;align-items:center;margin:14px 0}.parent-setting select{min-height:44px;border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:#fff;color:var(--ink)}
+.curriculum-control{border-color:rgba(255,224,152,.5);background:linear-gradient(145deg,rgba(65,34,91,.94),rgba(44,50,112,.92))}.curriculum-control>small{color:#ffe19b;letter-spacing:.12em;font-weight:900}.curriculum-picker{display:grid;grid-template-columns:minmax(180px,.7fr) minmax(260px,1.3fr);gap:12px;margin:18px 0}.curriculum-picker label{display:flex;flex-direction:column;gap:7px;font-weight:800}.curriculum-picker select{width:100%;min-height:50px;padding:10px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.35);background:#fff;color:#332044;font:inherit}
 .parent-two{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:16px}.journey{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px}.journey span{display:flex;flex-direction:column;gap:5px;min-height:84px;padding:13px;border:1px solid rgba(255,255,255,.18);border-radius:16px;background:rgba(255,255,255,.07)}.journey span.current{background:linear-gradient(145deg,rgba(255,199,94,.25),rgba(255,118,181,.2));border-color:rgba(255,224,152,.55)}.journey b{font-size:11px;letter-spacing:.1em;color:#ffe19b}.parent-progress p{display:flex;justify-content:space-between;gap:12px;margin:0 0 7px}.parent-progress p span{font-size:13px;color:rgba(255,255,255,.72)}.sync-good{color:#d7ffe7}.today-focus>small{letter-spacing:.14em;color:#ffe19b;font-weight:900}
 }
 
@@ -196,3 +197,4 @@ body[data-view="activity"] .activity-actions .soft{flex:1}
 body[data-view="activity"] .activity-actions .primary{width:100%;margin-left:0}
 }
 @media(max-width:820px){.parent-two,.journey{grid-template-columns:1fr}.journey span{min-height:0}.parent-progress p{align-items:flex-start;flex-direction:column;gap:3px}}
+@media(max-width:820px){.curriculum-picker{grid-template-columns:1fr}}
