@@ -14,6 +14,7 @@ let activities=0,questions=0;
 for(const s of curriculum.skills)for(let b=1;b<=5;b++)for(let seed=0;seed<50;seed++){
   const a=ctx.window.SakhiActivities.generate(s.skill_id,b,String(seed));
   if(!a.questions||a.questions.length!==3)throw new Error('Bad activity '+s.skill_id+' band '+b+' seed '+seed);
+  if(s.kind==='practice'&&a.questions.some(q=>q.template!=='guided'||!Array.isArray(q.steps)||q.steps.length<3||!q.success_criteria))throw new Error('Practice skill is vague or not measurable: '+s.skill_id);
   for(const q of a.questions){
     questions++;
     if(!q.template||q.answer===undefined)throw new Error('Bad question '+s.skill_id);
@@ -33,6 +34,7 @@ for(const s of curriculum.skills)for(let b=1;b<=5;b++)for(let seed=0;seed<50;see
       if(!Array.isArray(q.tokens)||!Array.isArray(q.answer)||!q.tokens.length||!q.answer.length)throw new Error('Build data missing '+s.skill_id);
       if(!containsBag(q.tokens,q.answer))throw new Error('Build answer contains unavailable token '+s.skill_id);
     }
+    if(q.template==='guided'&&(!Array.isArray(q.steps)||q.steps.length<3||!q.success_criteria))throw new Error('Guided task lacks steps or success criteria: '+s.skill_id);
   }
   if(new Set(a.questions.map(q=>q.question_key)).size!==a.questions.length)throw new Error('Activity repeats a question: '+s.skill_id+' band '+b+' seed '+seed);
   activities++;

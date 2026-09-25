@@ -11,6 +11,9 @@ if (!/sakhi\.v3\.active-adventure/.test(app) || !/Continue my adventure/.test(ap
 if (!/prefetchActivity/.test(app) || !/naturalInflight/.test(audio) || !/fetchServerPart/.test(audio)) {
   throw new Error('Kokoro narration must be prefetched and de-duplicated across question pages');
 }
+if (!/setActiveRun/.test(app) || !/getActiveRun/.test(app) || !/active_run/.test(read('sakhi-progress.js'))) throw new Error('Exact in-progress activity is not part of synced learner history');
+if (!/prewarmTrail/.test(app) || !/prewarmTrail\('math'\)/.test(app)) throw new Error('Trail narration is not warmed before a child opens the trail');
+if (/function beginMissionAudio\(\)[\s\S]{0,300}playTransitionCue/.test(app)) throw new Error('Mission launch still plays a misleading ready cue before slow narration');
 const presentation = read('sakhi-presentation.js');
 const css = read('sakhi-production.css');
 

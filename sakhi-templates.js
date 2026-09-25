@@ -50,6 +50,11 @@ function render(root,q,ctx){
     guide();c.addEventListener('pointerdown',start);c.addEventListener('pointermove',move);c.addEventListener('pointerup',end);c.addEventListener('pointercancel',end);
     return{immediate:false,isReady:function(){return marks>8;},check:function(){return{correct:true,response:'traced'};},reset:function(){marks=0;drawing=false;guide();notify(ctx);}};
   }
+  if(q.template==='guided'){
+    var card=document.createElement('div'),goal=document.createElement('p'),list=document.createElement('div'),done={};card.className='guided-card';goal.className='guided-goal';goal.textContent=q.success_criteria?'Goal: '+q.success_criteria:q.prompt;card.appendChild(goal);list.className='guided-steps';
+    (q.steps||[]).forEach(function(step,index){var b=btn(''+(index+1)+'. '+step,'guided-step');b.setAttribute('aria-pressed','false');b.onclick=function(){done[index]=!done[index];b.classList.toggle('done',!!done[index]);b.setAttribute('aria-pressed',done[index]?'true':'false');notify(ctx);};list.appendChild(b);});card.appendChild(list);root.appendChild(card);
+    return{immediate:false,isReady:function(){return(q.steps||[]).length>0&&(q.steps||[]).every(function(_,i){return!!done[i];});},check:function(){return{correct:true,response:Object.keys(done).filter(function(k){return done[k];}).length+' steps completed'};},reset:function(){done={};list.querySelectorAll('.guided-step').forEach(function(b){b.classList.remove('done');b.setAttribute('aria-pressed','false');});notify(ctx);}};
+  }
   var p=document.createElement('div');p.className='practice-card';var icon=document.createElement('div');icon.className='practice-icon';icon.textContent='✏️';var text=document.createElement('p');text.textContent=q.prompt;p.appendChild(icon);p.appendChild(text);root.appendChild(p);
   return{immediate:false,isReady:function(){return true;},check:function(){return{correct:true,response:'done'};},reset:function(){}};
 }

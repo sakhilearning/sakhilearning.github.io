@@ -150,6 +150,7 @@ function describeQuestion(question){
   if(question.template==='choice'&&Array.isArray(question.choices)){parts.push('Listen to every choice. '+listValues(question.choices,'Choice')+' Now tap the best answer.');}
   else if(question.template==='build'&&Array.isArray(question.tokens)){parts.push('Tap the letter pieces in order, then tap Check.');}
   else if(question.template==='sequence'&&Array.isArray(question.tokens)){parts.push('Put the word cards in the right order, then tap Check.');}
+  else if(question.template==='guided'&&Array.isArray(question.steps)){parts.push(question.steps.map(function(step,index){return(index===0?'First':index===question.steps.length-1?'Finally':'Next')+', '+spokenValue(step)+'.';}).join(' ')+' Tap each step after you complete it.');}
   else if(question.template==='trace')parts.push('Use one finger. Start at the dot and follow the glowing path slowly. Then tap Check.');
   else if(question.template==='practice')parts.push('Take your time. When you finish, tap Check.');
   return parts.join(' ').replace(/\s+/g,' ').trim();

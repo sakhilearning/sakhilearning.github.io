@@ -21,7 +21,7 @@ var SEQUENCES=[
 var PREDICTIONS=[
  {text:'Dark clouds fill the sky. Sam opens an umbrella.',a:'Rain may begin.',options:['Rain may begin.','The sun will get brighter.','The umbrella will become a boat.']},
  {text:'The puppy waits beside its empty bowl and wags when Mia picks up the food bag.',a:'Mia will feed the puppy.',options:['Mia will feed the puppy.','The puppy will read.','Mia will hide the bowl.']},
- {text:'Zara adds one block to a very wobbly tower.',a:'The tower may fall.',options:['The tower may fall.','The blocks will sing.','The tower will turn to water.']}
+ {text:'Zara adds one block to a very wobbly tower.',a:'The tower may fall.',options:['The tower may fall.','The tower may become steadier.','The new block may slide off.']}
 ];
 var CAUSES=[
  {text:'Omar left an ice cube in the sun. Soon there was a puddle.',q:'Why was there a puddle?',a:'The ice melted in warmth.',options:['The ice melted in warmth.','The ice grew roots.','The sun froze it.']},
@@ -29,14 +29,14 @@ var CAUSES=[
  {text:'Priya wore boots because the playground had deep puddles.',q:'Why did Priya wear boots?',a:'to keep her feet dry',options:['to keep her feet dry','to make the puddles bigger','to help her fly']}
 ];
 var INFERENCES=[
- {text:'Kai comes inside shaking drops from his coat. He closes his umbrella.',q:'What is the weather probably like?',a:'rainy',options:['rainy','dry and sunny','snowing indoors']},
+ {text:'Kai comes inside shaking drops from his coat. He closes his umbrella.',q:'What is the weather probably like?',a:'rainy',options:['rainy','dry and sunny','cold but dry']},
  {text:'Lulu yawns, rubs her eyes, and curls under a blanket.',q:'How does Lulu probably feel?',a:'tired',options:['tired','hungry for soup','ready to race']},
- {text:'Noah carries a wrapped box and a card into the party room.',q:'What is probably inside the box?',a:'a gift',options:['a gift','a rain cloud','a bathtub']}
+ {text:'Noah carries a wrapped box and a card into the party room.',q:'What is probably inside the box?',a:'a gift',options:['a gift','party plates','a folded jacket']}
 ];
 var MAIN_IDEAS=[
- {text:'Bees visit flowers and carry pollen. This helps many plants make seeds and fruit.',a:'Bees help plants grow.',options:['Bees help plants grow.','Bees build snowmen.','Flowers eat bees.']},
- {text:'At the library, people can borrow books, hear stories, and learn about many topics.',a:'Libraries are places to read and learn.',options:['Libraries are places to read and learn.','Libraries sell shoes.','All books are about animals.']},
- {text:'A class planted seeds, measured the sprouts, and wrote down what changed each day.',a:'The class observed how plants grow.',options:['The class observed how plants grow.','The class built a spaceship.','The seeds learned to read.']}
+ {text:'Bees visit flowers and carry pollen. This helps many plants make seeds and fruit.',a:'Bees help plants grow.',options:['Bees help plants grow.','Bees collect food only for birds.','Flowers grow without pollination.']},
+ {text:'At the library, people can borrow books, hear stories, and learn about many topics.',a:'Libraries are places to read and learn.',options:['Libraries are places to read and learn.','Libraries are only quiet meeting rooms.','All library books tell the same story.']},
+ {text:'A class planted seeds, measured the sprouts, and wrote down what changed each day.',a:'The class observed how plants grow.',options:['The class observed how plants grow.','The class compared different playground games.','The class practiced sorting finished books.']}
 ];
 var VOCAB=[
  {w:'enormous',m:'very big',o:['very big','very cold','very quiet']},
