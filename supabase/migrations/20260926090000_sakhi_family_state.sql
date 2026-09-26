@@ -15,6 +15,3 @@ using ((select auth.uid()) = user_id)
 with check ((select auth.uid()) = user_id);
 
 grant select, insert, update on public.sakhi_family_state to authenticated;
-
-create index if not exists sakhi_v3_events_user_at_idx
-on public.sakhi_v3_events (user_id, at desc);
