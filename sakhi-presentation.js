@@ -10,7 +10,8 @@ var WORLD={
   science:{soft:'#e9fbff',deep:'#1199ad',accent:'#52d8c8',label:'Discovery Lagoon',object:'shell'},
   logic:{soft:'#f3efff',deep:'#8954c8',accent:'#78d6a5',label:'Puzzle Garden',object:'butterfly'},
   wellbeing:{soft:'#fff3f6',deep:'#df6f9d',accent:'#9cd986',label:'Friendship Garden',object:'heart'},
-  creative:{soft:'#f5efff',deep:'#7b58c8',accent:'#ff7eb6',label:'Starlight Stage',object:'spark'}
+  creative:{soft:'#f5efff',deep:'#7b58c8',accent:'#ff7eb6',label:'Starlight Stage',object:'spark'},
+  world:{soft:'#fff3e9',deep:'#7651b8',accent:'#65c8b7',label:'Discovery Atlas',object:'star'}
 };
 function defs(id,a,b,c){return '<defs><linearGradient id="sky'+id+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+a+'"/><stop offset=".55" stop-color="'+b+'"/><stop offset="1" stop-color="'+c+'"/></linearGradient><linearGradient id="shine'+id+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".92"/><stop offset="1" stop-color="#fff" stop-opacity=".18"/></linearGradient><filter id="glow'+id+'" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="14"/></filter></defs>';}
 function clouds(){return '<g class="art-drift" fill="#fff" opacity=".55"><ellipse cx="160" cy="95" rx="72" ry="26"/><ellipse cx="205" cy="89" rx="48" ry="34"/><ellipse cx="120" cy="88" rx="38" ry="29"/><ellipse cx="785" cy="78" rx="66" ry="23"/><ellipse cx="825" cy="74" rx="42" ry="30"/></g>';}
@@ -23,7 +24,7 @@ function scienceArt(id){return '<path d="M0 165 C160 130 275 200 430 166 C610 12
 function logicArt(id){return hills('#b8e69f','#72cc8f')+'<g transform="translate(620 145)" class="art-float"><rect x="0" y="80" width="240" height="90" rx="24" fill="#fff" opacity=".9"/><path d="M28 170 V80 M92 170 V80 M156 170 V80 M220 170 V80" stroke="#8c63c7" stroke-width="12"/><circle cx="54" cy="58" r="32" fill="#ff91bd"/><circle cx="115" cy="42" r="34" fill="#8bddac"/><circle cx="178" cy="60" r="31" fill="#ffd36e"/></g><g class="art-sway" fill="#fff"><path d="M220 118 C190 82 157 99 171 132 C141 108 121 142 154 163 C190 186 217 154 220 118Z"/><path d="M330 82 C305 54 278 69 288 95 C264 75 246 103 272 122 C302 142 326 116 330 82Z"/></g>';}
 function wellbeingArt(id){return hills('#c8eba6','#8fd18f')+'<g class="art-sway"><g transform="translate(640 160)"><path d="M0 120 V44" stroke="#4e9c68" stroke-width="9"/><circle cx="0" cy="38" r="34" fill="#ff88b7"/><circle cx="-31" cy="52" r="24" fill="#ffb1cf"/><circle cx="31" cy="52" r="24" fill="#ffb1cf"/><circle cx="0" cy="55" r="13" fill="#ffd36e"/></g><g transform="translate(800 130)"><path d="M0 145 V60" stroke="#4e9c68" stroke-width="9"/><circle cx="0" cy="50" r="32" fill="#a789ef"/><circle cx="-29" cy="64" r="23" fill="#c4afff"/><circle cx="29" cy="64" r="23" fill="#c4afff"/><circle cx="0" cy="66" r="12" fill="#ffd36e"/></g></g><g transform="translate(160 116)" class="art-pulse"><path d="M70 142 C-14 87 1 10 70 52 C139 10 154 87 70 142Z" fill="#fff" opacity=".9"/><path d="M70 122 C12 82 25 30 70 60 C115 30 128 82 70 122Z" fill="#ff7eae"/></g>';}
 function creativeArt(id){return '<path d="M0 296 C170 270 360 330 520 292 C700 250 830 315 1000 280 V360 H0Z" fill="#6c55b8" opacity=".62"/><g transform="translate(585 98)" class="art-float"><path d="M0 180 L45 40 L90 180" fill="none" stroke="#ffd36e" stroke-width="14" stroke-linecap="round"/><path d="M120 180 L170 18 L220 180" fill="none" stroke="#ff87b8" stroke-width="14" stroke-linecap="round"/><path d="M240 180 L290 58 L340 180" fill="none" stroke="#74d8ff" stroke-width="14" stroke-linecap="round"/></g><g fill="#fff" class="art-pulse"><path d="M155 92 l12 26 28 3-21 19 6 28-25-14-25 14 6-28-21-19 28-3Z"/><path d="M340 145 l9 18 20 2-15 14 4 20-18-10-18 10 4-20-15-14 20-2Z"/></g>';}
-var ART={reading:readingArt,math:mathArt,writing:writingArt,language:languageArt,science:scienceArt,logic:logicArt,wellbeing:wellbeingArt,creative:creativeArt};
+var ART={reading:readingArt,math:mathArt,writing:writingArt,language:languageArt,science:scienceArt,logic:logicArt,wellbeing:wellbeingArt,creative:creativeArt,world:languageArt};
 var SCENE_MEDIA={
   home:{src:'./assets/theme-media/generated-v4/unicorn-phonics-meadow.webp',position:'center 49%',alt:'Luminous unicorn in an enchanted phonics meadow'},
   phonics:{src:'./assets/theme-media/generated-v4/unicorn-phonics-meadow.webp',position:'center 49%',alt:'Unicorn discovering letter sounds in a magical meadow'},
@@ -36,7 +37,8 @@ var SCENE_MEDIA={
   science:{src:'./assets/theme-media/generated/science-mermaid-lagoon.webp',position:'center 50%',alt:'Mermaid discovery lagoon'},
   logic:{src:'./assets/theme-media/generated/logic-crystal-number-palace.webp',position:'center 32%',alt:'Crystal puzzle palace'},
   wellbeing:{src:'./assets/theme-media/generated/wellbeing-enchanted-forest.webp',position:'center 50%',alt:'Enchanted friendship forest'},
-  creative:{src:'./assets/theme-media/generated/creative-tower-art-studio.webp',position:'center 52%',alt:'Magical tower art studio'}
+  creative:{src:'./assets/theme-media/generated/creative-tower-art-studio.webp',position:'center 52%',alt:'Magical tower art studio'},
+  world:{src:'./assets/theme-media/generated-v4/princess-story-forest.webp',position:'center 48%',alt:'Young explorer following a glowing path through stories of the world'}
 };
 function mediaFor(domain,skill,template,index){
   var concept=String(skill||'').toLowerCase(),key=domain;
@@ -45,7 +47,7 @@ function mediaFor(domain,skill,template,index){
   else if(domain==='language'&&/(story|sequence|retell|comprehension|character|setting|predict|idea|inference)/.test(concept))key='princess';
   else if(domain==='writing'&&/(draw|art|create|imagin)/.test(concept))key='creative';
   else if(domain==='creative'&&/(story|book|write)/.test(concept))key='writing';
-  else if(domain==='science'&&/(observe|weather|season|plant|animal|habitat)/.test(concept))key='safari';
+  else if(domain==='science'&&/(observe|weather|season|plant|animal|habitat|living|herbivore|carnivore|food chain|body)/.test(concept))key='safari';
   return SCENE_MEDIA[key]||SCENE_MEDIA[domain]||SCENE_MEDIA.home;
 }
 function scene(domain,progress,variant){
@@ -68,7 +70,7 @@ function svgObject(kind,i){
   return '<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 5 L39 23 L59 24 L44 37 L49 57 L32 46 L15 57 L20 37 L5 24 L25 23Z" fill="'+(k%2?'#ffd36e':'#ff8cbd')+'" stroke="#fff" stroke-width="3"/></svg>';
 }
 function objectSet(domain,count){var w=WORLD[domain]||WORLD.reading;return Array.from({length:count},function(_,i){return '<button class="learn-object" type="button" aria-label="countable object '+(i+1)+'" aria-pressed="false" data-count-object><span class="object-art">'+svgObject(w.object,i)+'</span><small class="count-mark" aria-hidden="true"></small></button>';}).join('');}
-function storyCue(domain,skill,qIndex){var t=SakhiTrails.get(domain),chapter=SakhiTrails.chapter(domain,0),n=(qIndex||0)+1;var lead={reading:'Help Luna unlock the next page with careful eyes and ears.',math:'Help Princess Nova light the palace crystals with number power.',writing:'Help Princess Mira fill the lantern studio with beautiful marks and words.',language:'Open a new room in the Story Castle by listening and thinking.',science:'Explore the lagoon like a scientist: notice, predict, and discover.',logic:'Guide Faye through the puzzle garden one clever step at a time.',wellbeing:'Grow the Friendship Garden with a kind, safe choice.',creative:'Add sparkle to the Starlight Stage by making, moving, and imagining.'}[domain]||'Take one brave learning step.';return{eyebrow:t.companion+' says',text:lead,step:'Magic step '+n};}
+function storyCue(domain,skill,qIndex){var t=SakhiTrails.get(domain),chapter=SakhiTrails.chapter(domain,0),n=(qIndex||0)+1;var lead={reading:'Help Luna unlock the next page with careful eyes and ears.',math:'Help Princess Nova light the palace crystals with number power.',writing:'Help Princess Mira fill the lantern studio with beautiful marks and words.',language:'Open a new room in the Story Castle by listening and thinking.',science:'Explore like a scientist: notice evidence, predict, and discover.',logic:'Guide Faye through the puzzle garden one clever step at a time.',wellbeing:'Grow the Friendship Garden with a kind, safe choice.',creative:'Add sparkle to the Starlight Stage by making, moving, and imagining.',world:'Follow the discovery map: compare the past, read the world, and use evidence.'}[domain]||'Take one brave learning step.';return{eyebrow:t.companion+' says',text:lead,step:'Magic step '+n};}
 function celebration(domain){var t=SakhiTrails.get(domain);return{title:'Wonderful work!',body:t.companion+' helped you move farther through '+t.name+'.',icon:t.icon};}
 function worldTokens(domain){return WORLD[domain]||WORLD.reading;}
 return{scene:scene,mediaFor:mediaFor,objectSet:objectSet,storyCue:storyCue,celebration:celebration,worldTokens:worldTokens};

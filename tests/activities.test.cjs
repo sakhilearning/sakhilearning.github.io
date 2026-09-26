@@ -1,6 +1,7 @@
 const fs=require('fs'),vm=require('vm'),path=require('path');
 const root=path.join(__dirname,'..');
 const curriculum=JSON.parse(fs.readFileSync(path.join(root,'data/curriculum-v3.json'),'utf8'));
+const templateSource=fs.readFileSync(path.join(root,'sakhi-templates.js'),'utf8');
 const ctx={window:{},console};ctx.window.window=ctx.window;vm.createContext(ctx);ctx.window.SakhiCurriculum={skill:id=>curriculum.skills.find(s=>s.skill_id===id)||null};
 for(const f of ['sakhi-content.js','sakhi-activities.js'])vm.runInContext(fs.readFileSync(path.join(root,f),'utf8'),ctx,{filename:f});
 function same(a,b){return JSON.stringify(a)===JSON.stringify(b);}
@@ -21,7 +22,8 @@ for(const s of curriculum.skills)for(let b=1;b<=5;b++)for(let seed=0;seed<50;see
     if(!q.narration_policy)throw new Error('Narration policy missing '+s.skill_id);
     if(q.template==='choice'&&['count_sequence','numeral','count','subitize','compare','compose','add','sub','bond','teen','pattern','measure','shape','data','letter_name','cvc_read','cvc_spell'].includes(s.kind)&&q.narration_policy!=='prompt_only')throw new Error('Self-explanatory assessment will read every option: '+s.skill_id);
     if(/look at|this picture|this sentence|pictures|which ribbon|how many treasures do you see/i.test(q.prompt)){const m=q.media||{};if(!(m.visual||m.count||m.shape||m.groups||m.subtract||m.passage))throw new Error('Question depends on missing visual media: '+s.skill_id+' · '+q.prompt);}
-    if(q.media&&q.media.visual&&!['leaves','ribbons','print-line','cat','dog','sun','memory'].includes(q.media.visual))throw new Error('Unknown assessment visual '+q.media.visual);
+    if(q.media&&q.media.visual){if(!['leaves','ribbons','print-line','cat','dog','sun','memory'].includes(q.media.visual))throw new Error('Unknown assessment visual '+q.media.visual);if(!templateSource.includes("kind==='"+q.media.visual+"'"))throw new Error('Assessment visual has no renderer: '+q.media.visual);}
+    if(q.media&&q.media.shape&&(!q.media.shape.src||!fs.existsSync(path.join(root,q.media.shape.src.replace(/^\.\//,'')))))throw new Error('Assessment shape image is missing: '+s.skill_id);
     if(q.template==='choice'){
       if(!Array.isArray(q.choices)||q.choices.length<2)throw new Error('Choice options missing '+s.skill_id);
       const serialized=q.choices.map(x=>JSON.stringify(x));

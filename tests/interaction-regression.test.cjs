@@ -54,4 +54,4 @@ if (/async function start\(\)[\s\S]{0,180}await ensureVoiceReady/.test(app) || /
   throw new Error('Opening an activity must not wait for voice preparation');
 }
 
-console.log('Interaction regression passed: background server voice warm-up, instant activity open, tablet-safe controls, guarded transitions, and single-play narration');
+console.log('Interaction regression passed: background local voice warm-up, instant activity open, tablet-safe controls, guarded transitions, and single-play narration');

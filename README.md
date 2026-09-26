@@ -1,117 +1,55 @@
-# Sakhi Learning Trails V3 RC1
+# Sakhi Learning Trails 4.4.0
 
-A deployable preview/release-candidate of the high-end Sakhi Kindergarten learning app.
+An offline-first Kindergarten learning app with adaptive daily lessons, parent evidence, exact resume, and bundled Kokoro narration optimized for iPad.
 
-## What this bundle is for
+## What ships in 4.4.0
 
-Use this bundle to **deploy and test the V3 product direction now**: persistent subject trails, 85 Kindergarten skills across 8 domains, a 26-week/130-day plan, 30-minute mixed-modality sessions, parent progress, offline PWA behavior, and ElevenLabs narration through Supabase with browser voice fallback.
+- 141 skills across 9 persistent subject trails.
+- A 26-week, 130-day curriculum path.
+- Daily Math, Science, Listening/Language, and Reading/Understanding priorities, plus rotating world, logic, wellbeing, writing, and creative work.
+- Age-appropriate astronomy, living things, animal groups, herbivores/carnivores/omnivores, food chains, ecosystems, body systems, maps, timelines, inventions, cultures, and citizenship.
+- Five adaptive difficulty bands. Fast independent answers increase the next question's challenge; struggle produces a smaller next step.
+- Semantic question-history blocking so changing distractors cannot disguise a repeated task.
+- On-device session, attempt, question, reward, setting, and exact activity-position history. A family account adds cross-device snapshot sync.
+- Parent-selected subject/lesson controls and a clear “finish today and open the next day” action.
+- Evidence-based parent metrics: accuracy, independence, hints, challenge level, coverage, review queue, strengths, support needs, session recommendations, and exact resume point.
+- Repository-generated world artwork reused throughout the app, plus complete assessment visuals for any question that depends on a picture.
 
-This bundle intentionally contains no Disney-owned artwork. The worlds are original magical princess/unicorn/fairy/mermaid settings. Rights-cleared character packs can be added later through the presentation layer without changing curriculum.
+## Audio behavior
 
-## Important audio change
+Normal narration uses the bundled Kokoro `af_heart` voice. The narration index is embedded in the app shell, the first mission is warmed on the home page, and upcoming questions are prefetched. iPad uses standard HTML audio playback and never waits for remote TTS. Browser speech synthesis and paid speech are not used for normal lesson narration.
 
-This RC removes the old fragile "silent after 1.2 seconds" detection. Narration works as:
+Narration is concise by design:
 
-1. Child taps Start and unlocks the browser audio context.
-2. If Supabase is configured, the app requests `functions/v1/sakhi-speech`, which proxies ElevenLabs server-side.
-3. If premium narration is unavailable, normal instructions fall back to the device/browser voice.
-4. **Isolated phonemes never use TTS fallback.** They require verified local recordings in `assets/audio/phonemes`.
+- Self-explanatory questions read only the instruction.
+- “Choice 1 is / Choice 2 is” is not spoken.
+- Options are read only when a question explicitly requires spoken choices, using natural phrasing.
+- Word-building reads the target word, never the letter bank.
 
-No ElevenLabs secret belongs in this repository.
+Run `npm run test:narration-coverage` to confirm that all generated prompt variants have local audio.
 
-## Curriculum
-
-- 8 domains
-- 85 skills
-- 26 weeks
-- 130 planned days
-- 30 minutes/day by default
-- Core daily sequence: Reading/Phonics + Math + Writing + rotating whole-child subject + off-screen activity + celebration
-
-Persistent subject worlds:
-
-- Reading & Phonics -> Luna's Rainbow Library
-- Math -> Crystal Number Palace
-- Writing -> Lantern Letter Studio
-- Stories & Language -> Enchanted Story Castle
-- Science -> Mermaid Discovery Lagoon
-- Logic -> Butterfly Puzzle Garden
-- Wellbeing -> Friendship Garden
-- Create & Move -> Starlight Create & Move Stage
-
-The world is selected from the subject **after** curriculum/adaptive selection. Trails cannot decide the skill or difficulty.
-
-## Local test on your Mac
+## Local development
 
 ```bash
 npm ci
-npm run qa
+npm run release
 npm run preview
 ```
 
 Open `http://localhost:4173`.
 
-## Safest install over your current repo
+## Deployment
 
-You already created `backup/sakhi-v3-before-sync`, so keep it.
+The GitHub Pages workflow builds and deploys `dist/` on pushes to `main`.
 
-Extract this ZIP somewhere outside the repository, then:
+Apply the Supabase migrations before testing cross-device family history. The current snapshot table migration is:
 
-```bash
-cd /Users/vinaygovindam/Downloads/sakhi-learning
-git checkout upgrade/sakhi-v3
-git status
+```text
+supabase/migrations/20260926090000_sakhi_family_state.sql
 ```
 
-Only continue if the working tree is clean. Then run:
+The public Supabase URL and publishable key belong in `supabase-config.js`. Never put a service-role key in browser code.
 
-```bash
-/path/to/extracted/sakhi-v3-release/install-over-existing.sh /Users/vinaygovindam/Downloads/sakhi-learning
-```
+## Quality gates
 
-The installer preserves your existing `supabase-config.js` and current phoneme directory, overlays this RC, then runs QA and builds `dist/`.
-
-Review before commit:
-
-```bash
-git status
-git diff --stat
-npm run qa
-npm run preview
-```
-
-When satisfied:
-
-```bash
-git add -A
-git commit -m "Upgrade Sakhi to Learning Trails V3 RC1"
-git push -u origin upgrade/sakhi-v3
-```
-
-You can test the branch via GitHub Pages workflow. Merge into `main` only after runtime testing on the child's real device.
-
-## Supabase + ElevenLabs
-
-Apply:
-
-`supabase/migrations/20260911_sakhi_v3_rc1.sql`
-
-Deploy:
-
-```bash
-supabase functions deploy sakhi-speech
-```
-
-Set secrets in Supabase (not GitHub Pages JS):
-
-```bash
-supabase secrets set ELEVENLABS_API_KEY=...
-supabase secrets set ELEVENLABS_VOICE_ID=...
-supabase secrets set ELEVENLABS_MODEL_ID=eleven_flash_v2_5
-```
-
-Keep only the public Supabase URL and anon/publishable key in `supabase-config.js`.
-
-## Release note
-
-This is a **testable RC**, not a claim that the isolated phoneme bank is complete. `assets/audio/phonemes/manifest.json` currently marks no phonemes verified because the actual validated sound files were not available in the build environment. Preserve and audit your existing recordings before enabling phoneme-specific playback.
+`npm run release` verifies syntax, curriculum prerequisites, 105,750 activity generations, narration coverage, iPad local playback, repetition memory, adaptive progression, account sync behavior, assessment visuals, navigation, production build integrity, and a local deployment smoke test.

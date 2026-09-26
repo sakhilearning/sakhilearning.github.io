@@ -3,7 +3,7 @@ const path=require('path');
 let esbuild=null;try{esbuild=require('esbuild');}catch(e){}
 const root=path.join(__dirname,'..');
 const dist=path.join(root,'dist');
-const buildId='4.3.0';
+const buildId='4.4.0';
 const moduleOrder=[
   'supabase-config.js',
   'sakhi-cloud.js',
@@ -62,11 +62,13 @@ const curriculum=JSON.parse(read('data/curriculum-v3.json'));
 const sixMonth=JSON.parse(read('data/six-month-plan.json'));
 let phonemes={required:[],verified:[]};
 try{phonemes=JSON.parse(read('assets/audio/phonemes/manifest.json'));}catch(e){}
+const narrationManifest=JSON.parse(read('assets/audio/narration/manifest.json'));
 const runtimeData=[
   `window.SAKHI_BUILD_ID=${JSON.stringify(buildId)};`,
   `window.SAKHI_CURRICULUM_DATA=${JSON.stringify(curriculum)};`,
   `window.SAKHI_SIX_MONTH_PLAN=${JSON.stringify(sixMonth)};`,
   `window.SAKHI_PHONEME_MANIFEST=${JSON.stringify(phonemes)};`,
+  `window.SAKHI_NARRATION_MANIFEST=${JSON.stringify(narrationManifest)};`,
   `window.SAKHI_ICON_DATA=${JSON.stringify(dataUri('icon-192.png','image/png'))};`
 ].join('\n');
 const runtimeJs=moduleOrder.map(f=>`\n/* ===== ${f} ===== */\n${read(f)}\n`).join('');

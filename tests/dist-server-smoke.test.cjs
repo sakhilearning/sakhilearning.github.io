@@ -15,6 +15,7 @@ const types = {
   '.svg': 'image/svg+xml',
   '.webp': 'image/webp',
   '.ogg': 'audio/ogg',
+  '.mp3': 'audio/mpeg',
   '.wav': 'audio/wav'
 };
 
@@ -97,7 +98,14 @@ function get(base, route) {
     if (!index.includes('science-mermaid-lagoon.webp')) throw new Error('Built index is missing subject-world artwork');
 
     const sw = (await get(base, '/sw.js')).body.toString('utf8');
-    if (!sw.includes('sakhi-v4-4.3.0') || sw.includes('client.navigate') || sw.includes('clients.matchAll')) throw new Error('Built service worker must update without reload loops');
+    if (!sw.includes('sakhi-v4-4.4.0') || sw.includes('client.navigate') || sw.includes('clients.matchAll')) throw new Error('Built service worker must update without reload loops');
+
+    const narrationResponse = await get(base, '/assets/audio/narration/manifest.json');
+    const narration = JSON.parse(narrationResponse.body.toString('utf8'));
+    const firstClip = Object.values(narration.files || {})[0];
+    if (!firstClip || Object.keys(narration.files || {}).length < 870) throw new Error('Bundled narration manifest is incomplete');
+    const clipResponse = await get(base, '/assets/audio/narration/' + firstClip);
+    if (clipResponse.status !== 200 || !clipResponse.type.includes('audio/mpeg') || clipResponse.body.length < 100) throw new Error('Bundled narration clip is not playable');
 
     console.log('Dist server smoke passed: self-contained app, generated artwork, audio, and fresh service worker are reachable');
   } finally {

@@ -20,9 +20,10 @@ function src(f){return fs.readFileSync(path.join(root,f),'utf8');}
   for(const domain of curriculum.domains){const pick=ctx.SakhiAdaptive.pick(domain.domain_id,[]);if(!pick)throw new Error('Trail has no launchable skill: '+domain.domain_id);const skill=ctx.SakhiCurriculum.skill(pick.skill_id);if(!skill||skill.domain_id!==domain.domain_id)throw new Error('Trail launch selected the wrong domain: '+domain.domain_id);}
   let built=ctx.SakhiPlan.build();
   if(built.program_day!==1)throw new Error('Fresh learner must start on program day 1');
-  const expected=six.weeks[0].days[0].missions.map(m=>m.skill_id).join('|');
-  const actual=built.missions.map(m=>m.pick.skill_id).join('|');
-  if(actual!==expected)throw new Error('Day 1 does not follow six-month plan: '+actual);
+  const domains=built.missions.map(m=>m.domain).join('|');
+  if(domains!=='math|science|language|reading|logic')throw new Error('Daily priorities are not math, science, listening, reading, and rotating enrichment: '+domains);
+  if(built.missions.length!==5||built.missions.some(m=>!m.pick||!m.focus))throw new Error('Daily plan is missing a clear adaptive mission');
+  if(!built.offscreen||built.offscreen.domain!=='science')throw new Error('Day 1 should include a hands-on science mission');
   sessions.push({status:'LEFT_EARLY'});
   built=ctx.SakhiPlan.build();
   if(built.program_day!==1)throw new Error('Left-early session advanced the program day');
@@ -34,5 +35,5 @@ function src(f){return fs.readFileSync(path.join(root,f),'utf8');}
   const pctx={window:{},console,Date,crypto:{randomUUID:()=> 'id'},localStorage:{getItem:k=>store[k]||null,setItem:(k,v)=>{store[k]=v},removeItem:k=>{delete store[k]}}};pctx.window=pctx;pctx.SakhiCurriculum={skill:()=>null,skillsIn:()=>[]};pctx.SakhiCloud={enqueue:()=>{}};vm.createContext(pctx);vm.runInContext(src('sakhi-progress.js'),pctx,{filename:'sakhi-progress.js'});
   pctx.SakhiProgress.load();pctx.SakhiProgress.evidence('reading.test');
   if(Object.keys(pctx.SakhiProgress.load().skills).length!==0)throw new Error('Reading evidence mutated learner skill state outside completeActivity');
-  console.log('Runtime core passed: inline boot data, six-month pacing, early-exit pacing, read-only evidence access');
+  console.log('Runtime core passed: inline boot data, five daily priorities, six-month pacing, early-exit pacing, read-only evidence access');
 })().catch(e=>{console.error(e);process.exit(1);});

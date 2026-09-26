@@ -8,7 +8,8 @@ var T={
  science:{name:'Mermaid Discovery Lagoon',icon:'🧜‍♀️',companion:'Coral the Mermaid',chapters:['Observation Cove','Living Reef','Experiment Bay','Weather Lighthouse','Starlight Sea'],palette:['#16b9c5','#6edbd1','#ff8fb8'],objects:['pearls','shells','sea stars']},
  logic:{name:'Ice Princess Palace',icon:'❄️',companion:'Faye the Fairy',chapters:['Sorting Path','Pattern Arbor','Sequence Pond','Puzzle Pavilion','Thinking Tree'],palette:['#9b67dc','#67c9ff','#dff7ff'],objects:['snow gems','crystals','puzzle stars']},
  wellbeing:{name:'Enchanted Forest Friends',icon:'🦌',companion:'Princess Amara',chapters:['Feelings Path','Kindness Grove','Routine Cottage','Safety Gate','Friendship Fountain'],palette:['#ef78a8','#9dd88b','#ffd57f'],objects:['flowers','hearts','kindness stars']},
- creative:{name:'Pixie Art Garden',icon:'🧚',companion:'Stella the Fairy',chapters:['Finger Gym','Art Studio','Music Stage','Imagination Cloud','Starlight Showcase'],palette:['#8a63d2','#ff7eb6','#63c8e8'],objects:['sparkles','ribbons','stars']}
+ creative:{name:'Pixie Art Garden',icon:'🧚',companion:'Stella the Fairy',chapters:['Finger Gym','Art Studio','Music Stage','Imagination Cloud','Starlight Showcase'],palette:['#8a63d2','#ff7eb6','#63c8e8'],objects:['sparkles','ribbons','stars']},
+ world:{name:'Time-Travel Discovery Atlas',icon:'🌍',companion:'Mira the Map Explorer',chapters:['Past & Present Path','Family Story Square','Map & Globe Harbor','Invention Workshop','World Friendship Gallery'],palette:['#7651b8','#ef9b62','#65c8b7'],objects:['maps','timeline stars','compass gems']}
 };
 Object.keys(T).forEach(function(k){Object.freeze(T[k]);}); Object.freeze(T);
 function get(domain){return T[domain]||T.reading;}
