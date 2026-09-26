@@ -1,8 +1,8 @@
-# Sakhi Learning Trails 4.4.1
+# Sakhi Learning Trails 4.4.2
 
 An offline-first Kindergarten learning app with adaptive daily lessons, parent evidence, exact resume, and bundled Kokoro narration optimized for iPad.
 
-## What ships in 4.4.1
+## What ships in 4.4.2
 
 - 141 skills across 9 persistent subject trails.
 - A 26-week, 130-day curriculum path.
@@ -12,6 +12,7 @@ An offline-first Kindergarten learning app with adaptive daily lessons, parent e
 - Five adaptive difficulty bands. Two fast, independent answers advance to a different or harder skill without forcing a third near-duplicate; struggle produces a smaller next step.
 - Semantic question-history blocking so changing distractors cannot disguise a repeated task.
 - On-device session, attempt, question, reward, setting, and exact activity-position history. A family account adds cross-device snapshot sync.
+- Email confirmation callbacks automatically establish the parent session on localhost or production, remove login tokens from the address bar, and resume history synchronization.
 - Parent-selected subject/lesson controls and a clear “finish today and open the next day” action.
 - Evidence-based parent metrics: accuracy, independence, hints, challenge level, coverage, review queue, strengths, support needs, session recommendations, and exact resume point.
 - Repository-generated world artwork reused throughout the app, plus complete assessment visuals for any question that depends on a picture.
