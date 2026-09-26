@@ -1,6 +1,6 @@
 window.SakhiAudio=(function(){
 'use strict';
-var enabled=true,unlocked=false,ctx=null,currentSource=null,currentAudio=null,currentObjectUrl=null,keepAliveSource=null,keepAliveGain=null,lastText='',listeners=[],manifest=null,playbackEpoch=0;
+var enabled=true,unlocked=false,ctx=null,currentSource=null,currentAudio=null,currentObjectUrl=null,keepAliveSource=null,keepAliveGain=null,lastText='',lastQuestion=null,listeners=[],manifest=null,playbackEpoch=0;
 var lastProvider='none',lastError=null;
 var naturalTts=null,naturalPromise=null,naturalState='idle',naturalError=null,naturalProgress=0,naturalCache={},naturalInflight={},VOICE_CACHE='sakhi-voice-v4';
 var lastDiag={provider:'none',engine:'none',httpStatus:null,mime:'',bytes:0,decode:false,playbackStarted:false,cached:false,lastError:null};
@@ -141,13 +141,18 @@ function spokenValue(value){
   return text.replace(/\/([a-z]+)\//gi,'$1 sound').replace(/\s*=\s*\?/g,' equals what number?').replace(/−/g,' minus ').replace(/\+/g,' plus ').replace(/\s+/g,' ').trim();
 }
 function listValues(values,label){return values.map(function(value,index){return label+' '+(index+1)+' is '+spokenValue(value)+'.';}).join(' ');}
-function describeQuestion(question){
+function shouldReadChoices(question,repeatMode){
+  var policy=question&&question.narration_policy||'prompt_only';
+  return policy==='choices_always'||(policy==='choices_on_repeat'&&!!repeatMode);
+}
+function describeQuestion(question,repeatMode){
   var prompt=spokenValue(question.prompt||''),guide=spokenValue(question.spoken_instruction||question.narration||''),parts=[];
   if(question.media&&question.media.passage)parts.push(guide||prompt);else{if(prompt)parts.push(prompt);if(guide&&guide.toLowerCase()!==prompt.toLowerCase())parts.push(guide);}
   if(question.media&&question.media.count)parts.push('Tap each treasure once as you count.');
   if(question.media&&question.media.groups)parts.push('Look at both groups, put them together, and count all the treasures.');
   if(question.media&&question.media.subtract)parts.push('Tap the treasures as you take some away, then count what remains.');
-  if(question.template==='choice'&&Array.isArray(question.choices)){parts.push('Listen to every choice. '+listValues(question.choices,'Choice')+' Now tap the best answer.');}
+  if(question.template==='choice'&&Array.isArray(question.choices)&&shouldReadChoices(question,repeatMode)){parts.push(listValues(question.choices,'Choice')+' Tap the best answer.');}
+  else if(question.template==='choice')parts.push('Tap your answer.');
   else if(question.template==='build'&&Array.isArray(question.tokens)){parts.push('Tap the letter pieces in order, then tap Check.');}
   else if(question.template==='sequence'&&Array.isArray(question.tokens)){parts.push('Put the word cards in the right order, then tap Check.');}
   else if(question.template==='guided'&&Array.isArray(question.steps)){parts.push(question.steps.map(function(step,index){return(index===0?'First':index===question.steps.length-1?'Finally':'Next')+', '+spokenValue(step)+'.';}).join(' ')+' Tap each step after you complete it.');}
@@ -159,19 +164,19 @@ async function prefetch(question){
   if(!enabled||!question)return false;
   try{
     await loadNaturalVoice();var texts=[],segs=Array.isArray(question.audioSegments)?question.audioSegments:null;
-    if(segs&&segs.length)segs.forEach(function(seg){if(seg&&seg.text)texts.push(seg.text);});else texts.push(describeQuestion(question));
+    if(segs&&segs.length)segs.forEach(function(seg){if(seg&&seg.text)texts.push(seg.text);});else{texts.push(describeQuestion(question,false));if(question.narration_policy==='choices_on_repeat')texts.push(describeQuestion(question,true));}
     var chunks=[];texts.forEach(function(text){childChunks(text).forEach(function(part){if(part&&chunks.indexOf(part)<0)chunks.push(part);});});
     await Promise.all(chunks.map(fetchServerPart));return true;
   }catch(e){console.warn('[Sakhi] Narration prefetch:',e&&e.message||e);return false;}
 }
-async function prefetchActivity(activity){if(!activity||!Array.isArray(activity.questions))return false;for(var i=0;i<activity.questions.length;i++)await prefetch(activity.questions[i]);return true;}
+async function prefetchActivity(activity){if(!activity||!Array.isArray(activity.questions))return false;await Promise.all(activity.questions.map(prefetch));return true;}
 async function playTransitionCue(){
   if(!enabled)return false;if(!await unlock())return false;stopAll();var requestId=playbackEpoch;
   try{var url=new URL('assets/audio/sakhi-ready-next.wav',document.baseURI).href,r=await fetch(url,{cache:'force-cache'});if(!r.ok)throw new Error('Transition cue '+r.status);return playBytes(await r.arrayBuffer(),{httpStatus:r.status,mime:r.headers&&r.headers.get?r.headers.get('content-type')||'audio/wav':'audio/wav',cached:true},'kokoro-local',requestId);}catch(e){console.warn('[Sakhi] Immediate cue unavailable:',e&&e.message||e);return false;}
 }
-async function narrate(question){
+async function narrate(question,options){
   if(!enabled)throw fault('DISABLED','Spoken guidance is turned off in Parent Settings.');if(!question)return false;
-  lastText=describeQuestion(question);var segs=Array.isArray(question.audioSegments)?question.audioSegments:null;
+  options=options||{};lastQuestion=question;lastText=describeQuestion(question,!!options.repeat);var segs=Array.isArray(question.audioSegments)?question.audioSegments:null;
   if(!segs||!segs.length)return speakText(lastText);
   for(var i=0;i<segs.length;i++){
     var seg=segs[i]||{};
@@ -181,7 +186,7 @@ async function narrate(question){
   }
   return true;
 }
-function repeat(){return lastText?speak(lastText):Promise.resolve(false);}
+function repeat(){return lastQuestion?narrate(lastQuestion,{repeat:true}):(lastText?speak(lastText):Promise.resolve(false));}
 async function loadManifest(){
   if(manifest)return manifest;if(window.SAKHI_PHONEME_MANIFEST){manifest=window.SAKHI_PHONEME_MANIFEST;return manifest;}
   try{var r=await fetch(new URL('assets/audio/phonemes/manifest.json',document.baseURI).href,{cache:'no-store'});if(!r.ok)throw new Error(String(r.status));manifest=await r.json();}catch(e){manifest={required:[],verified:[]};}

@@ -3,8 +3,9 @@ const root=path.join(__dirname,'..');
 function read(f){return fs.readFileSync(path.join(root,f),'utf8');}
 const c=JSON.parse(read('data/curriculum-v3.json')),p=JSON.parse(read('data/six-month-plan.json'));
 if(c.domains.length!==8)throw new Error('Expected 8 domains');
-if(c.skills.length<85)throw new Error('Expected at least 85 skills');
+if(c.skills.length<125)throw new Error('Expected at least 125 skills');
 const ids=new Set(c.skills.map(s=>s.skill_id));if(ids.size!==c.skills.length)throw new Error('Duplicate skill id');
+for(const required of ['reading.phoneme_change','reading.nonfiction','math.skip_count','math.unknown_addend','math.story_problems','math.data_reasoning','writing.opinion','language.explain_reasoning','logic.constraints','science.forces_motion','wellbeing.self_management','creative.design_challenge'])if(!ids.has(required))throw new Error('Advanced syllabus skill missing '+required);
 for(const s of c.skills){if(!s.domain_id)throw new Error('Skill missing domain '+s.skill_id);for(const pre of s.prerequisites||[])if(!ids.has(pre))throw new Error(`Missing prerequisite ${pre}`);}
 const visiting=new Set(),done=new Set(),byId=Object.fromEntries(c.skills.map(s=>[s.skill_id,s]));
 function walk(id){if(visiting.has(id))throw new Error('Prerequisite loop at '+id);if(done.has(id))return;visiting.add(id);for(const q of byId[id].prerequisites||[])walk(q);visiting.delete(id);done.add(id);}c.skills.forEach(s=>walk(s.skill_id));
@@ -38,7 +39,7 @@ const css=read('sakhi-production.css');if(/!important/.test(css))throw new Error
 const html=read('index.template.html');const idMatches=[...html.matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]);if(new Set(idMatches).size!==idMatches.length)throw new Error('Duplicate HTML id');
 const hotlinks=[...fs.readdirSync(root).filter(f=>/\.(js|css|html)$/.test(f)).flatMap(f=>[...read(f).matchAll(/https?:\/\/[^'"\s)]+\.(?:png|jpe?g|webp|svg)/gi)].map(m=>m[0]))];if(hotlinks.length)throw new Error('Remote image hotlink found');
 const kokoroEntry=read('scripts/kokoro-browser-entry.js');if(!/numThreads\s*=\s*1/.test(kokoroEntry)||!/proxy\s*=\s*false/.test(kokoroEntry))throw new Error('Single-thread iPad Kokoro bundle settings missing');
-console.log('Sakhi V4.2.0 source validation passed:');
+console.log('Sakhi V4.3.0 source validation passed:');
 console.log(` - ${c.skills.length} skills across 8 persistent subject trails`);
 console.log(' - prerequisite graph sound');
 console.log(' - 26 weeks / 130 days / 30 minutes validated');

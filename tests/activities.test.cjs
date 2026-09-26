@@ -18,6 +18,8 @@ for(const s of curriculum.skills)for(let b=1;b<=5;b++)for(let seed=0;seed<50;see
   for(const q of a.questions){
     questions++;
     if(!q.template||q.answer===undefined)throw new Error('Bad question '+s.skill_id);
+    if(!q.narration_policy)throw new Error('Narration policy missing '+s.skill_id);
+    if(q.template==='choice'&&['count_sequence','numeral','count','subitize','compare','compose','add','sub','bond','teen','pattern','measure','shape','data','letter_name','cvc_read','cvc_spell'].includes(s.kind)&&q.narration_policy!=='prompt_only')throw new Error('Self-explanatory assessment will read every option: '+s.skill_id);
     if(/look at|this picture|this sentence|pictures|which ribbon|how many treasures do you see/i.test(q.prompt)){const m=q.media||{};if(!(m.visual||m.count||m.shape||m.groups||m.subtract||m.passage))throw new Error('Question depends on missing visual media: '+s.skill_id+' · '+q.prompt);}
     if(q.media&&q.media.visual&&!['leaves','ribbons','print-line','cat','dog','sun','memory'].includes(q.media.visual))throw new Error('Unknown assessment visual '+q.media.visual);
     if(q.template==='choice'){

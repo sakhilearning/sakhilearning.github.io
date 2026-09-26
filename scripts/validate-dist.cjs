@@ -10,7 +10,7 @@ if(!/window\.SAKHI_SIX_MONTH_PLAN=/.test(html))throw new Error('Embedded six-mon
 if(!/window\.SakhiApp=/.test(html))throw new Error('App runtime not embedded');
 if(!/\.today-card\{/.test(html))throw new Error('Compiled CSS not embedded');
 if(/@layer\s/.test(html))throw new Error('Deployment CSS still contains @layer and may fail on older browsers');
-if(!/4\.2\.0/.test(html))throw new Error('4.2.0 build marker missing');
+if(!/4\.3\.0/.test(html))throw new Error('4.3.0 build marker missing');
 if(html.includes('/*__SAKHI_'))throw new Error('Unresolved build placeholder in deployment HTML');
 if(!/class=\"world-art\"/.test(html)||!/mission-story/.test(html))throw new Error('Immersive world presentation missing from deployment');
 if(!/af_heart/.test(html)||!/NATURAL_SPEED=\.86/.test(html)||!/describeQuestion/.test(html)||!/startKeepAlive/.test(html)||!/prepare:loadNaturalVoice/.test(html)||!/playWithHtmlAudio/.test(html)||!/voicePrepare/.test(html))throw new Error('Detailed non-blocking Kokoro readiness gate missing from deployment');
@@ -26,4 +26,4 @@ console.log(' - self-contained CSS + runtime JS');
 console.log(' - embedded curriculum + six-month plan fallbacks');
 console.log(' - no CSS @layer dependency in shipped HTML');
 console.log(' - 130 learning days present');
-console.log(' - 4.2.0 guided tasks, subject placement, exact synced resume, clear trail goals, and narration prewarming embedded');
+console.log(' - 4.3.0 concise narration, adaptive evidence, 125-skill syllabus, parent recommendations, and exact synced resume embedded');

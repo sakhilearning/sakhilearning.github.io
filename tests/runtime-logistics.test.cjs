@@ -30,9 +30,10 @@ if (!app.includes('ensureVoiceReady') || !app.includes('voicePrepare') || app.in
 for (const token of ["['reading','math','writing'", 'startChosenLesson', 'advanceProgramDay', 'curriculumSkill', 'recentQuestionKeys']) {
   if (!app.includes(token)) throw new Error(`Curriculum visibility or parent control is missing ${token}`);
 }
-for (const token of ['goalForSkill', 'subject placement assessment', 'math.compare', 'math.addition_5', 'math.count_20', 'Exact resume point', 'Recent activity history']) {
+for (const token of ['goalForSkill', 'subject placement assessment', 'math.compare', 'math.addition_5', 'math.cardinality_20', 'Exact resume point', 'Recent activity history']) {
   if (!app.includes(token)) throw new Error(`Clear trail purpose, math assessment, or parent history is missing ${token}`);
 }
+if(app.includes('math.count_20'))throw new Error('Math placement references a missing counting skill');
 if (!read('sakhi-templates.js').includes("q.template==='guided'") || !read('sakhi-activities.js').includes('success_criteria')) throw new Error('Guided measurable activity template is missing');
 
 const speechFunction = read('supabase/functions/sakhi-speech/index.ts');
@@ -56,7 +57,7 @@ const kokoroEntry = read('scripts/kokoro-browser-entry.js');
 if (!/numThreads\s*=\s*1/.test(kokoroEntry) || !/proxy\s*=\s*false/.test(kokoroEntry)) throw new Error('iPad-safe Kokoro runtime settings are missing');
 
 const sw = read('sw.js');
-if (!/sakhi-v4-4\.2\.0/.test(sw)||/client\.navigate|clients\.matchAll/.test(sw)) throw new Error('Service worker must refresh caches without navigating clients');
+if (!/sakhi-v4-4\.3\.0/.test(sw)||/client\.navigate|clients\.matchAll/.test(sw)) throw new Error('Service worker must refresh caches without navigating clients');
 if (!sw.includes("cache:'no-store'")) throw new Error('Navigation requests should bypass stale HTTP caches');
 for (const file of [
   'assets/theme-media/generated-v4/unicorn-phonics-meadow.webp',

@@ -29,8 +29,11 @@ function src(f){return fs.readFileSync(path.join(root,f),'utf8');}
   const latest=ctx.SakhiAudio.speak('Latest request should play once.');
   await Promise.all([stale,latest]);
   if(audibleStarted-audibleBefore!==1)throw new Error('Overlapping narration produced echo: '+(audibleStarted-audibleBefore)+' audible sources started');
-  const detailed=ctx.SakhiAudio.describeQuestion({template:'choice',prompt:'Which number comes next?',narration:'Look at the pattern.',choices:[2,3,4]});
-  for(const phrase of ['Which number comes next?','Look at the pattern.','Choice 1 is 2.','Choice 2 is 3.','Choice 3 is 4.','tap the best answer'])if(!detailed.includes(phrase))throw new Error('Detailed child narration is missing: '+phrase+' in '+detailed);
+  const concise=ctx.SakhiAudio.describeQuestion({template:'choice',prompt:'Which number comes next?',narration:'Look at the pattern.',choices:[2,3,4],narration_policy:'prompt_only'});
+  if(!concise.includes('Which number comes next?')||!concise.includes('Look at the pattern.')||/Choice 1|Choice 2|Choice 3/.test(concise))throw new Error('Self-explanatory question reads visible options: '+concise);
+  const firstPass=ctx.SakhiAudio.describeQuestion({template:'choice',prompt:'Why did the seed grow?',choices:['water and sun','candy'],narration_policy:'choices_on_repeat'});
+  const detailed=ctx.SakhiAudio.describeQuestion({template:'choice',prompt:'Why did the seed grow?',choices:['water and sun','candy'],narration_policy:'choices_on_repeat'},true);
+  if(/Choice 1/.test(firstPass)||!detailed.includes('Choice 1 is water and sun.')||!detailed.includes('Choice 2 is candy.'))throw new Error('Repeat-only choice narration policy failed');
   const build=ctx.SakhiAudio.describeQuestion({template:'build',prompt:'Build the word you hear.',narration:'Build the word pot.',tokens:['p','o','t','m','s']});
   if(!build.includes('Build the word pot.')||/Piece 1|Piece 2|Piece 3|is p\.|is o\.|is t\./.test(build))throw new Error('Word-building narration reads the tile bank and may confuse the learner: '+build);
   let phonemeBlocked=false;try{await ctx.SakhiAudio.playPhoneme('m');}catch(e){phonemeBlocked=e.kind==='MISSING_PHONEME';}
