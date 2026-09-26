@@ -98,7 +98,7 @@ function get(base, route) {
     if (!index.includes('science-mermaid-lagoon.webp')) throw new Error('Built index is missing subject-world artwork');
 
     const sw = (await get(base, '/sw.js')).body.toString('utf8');
-    if (!sw.includes('sakhi-v4-4.4.0') || sw.includes('client.navigate') || sw.includes('clients.matchAll')) throw new Error('Built service worker must update without reload loops');
+    if (!sw.includes('sakhi-v4-4.4.1') || sw.includes('client.navigate') || sw.includes('clients.matchAll')) throw new Error('Built service worker must update without reload loops');
 
     const narrationResponse = await get(base, '/assets/audio/narration/manifest.json');
     const narration = JSON.parse(narrationResponse.body.toString('utf8'));

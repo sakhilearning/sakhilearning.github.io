@@ -8,7 +8,7 @@ const context = { window: {}, console };
 context.window = context;
 context.SakhiCurriculum = { skill: id => curriculum.skills.find(skill => skill.skill_id === id) || null };
 vm.createContext(context);
-for (const file of ['sakhi-content.js', 'sakhi-activities.js']) {
+for (const file of ['sakhi-content.js', 'sakhi-activities.js', 'sakhi-wrapups.js']) {
   vm.runInContext(fs.readFileSync(path.join(root, file), 'utf8'), context, { filename: file });
 }
 
@@ -32,6 +32,8 @@ const texts = new Set([
   'Look carefully.', 'Take your time.', 'You can do this one step at a time.',
   'Try saying or counting it slowly.', 'Complete each step in order.'
 ]);
+for (const wrap of [...Object.values(context.SakhiWrapUps.all), context.SakhiWrapUps.fallback]) texts.add(spokenValue(wrap.prompt));
+texts.add('Complete one step at a time. Ask for help only if you need it.');
 for (const skill of curriculum.skills) {
   const perSkill = new Set();
   const perBandLimit = skill.domain_id === 'math' ? 30 : ['science', 'language', 'reading', 'writing'].includes(skill.domain_id) ? 20 : 12;

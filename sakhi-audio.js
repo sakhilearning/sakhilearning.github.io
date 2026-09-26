@@ -144,7 +144,8 @@ async function fetchServerPart(text){
 async function speakServerPart(text,requestId){
   var wasCached=!!naturalCache[text],item=await fetchServerPart(text);if(!isCurrent(requestId))return false;
   var provider=item.provider||'kokoro-server';lastDiag.provider=provider;lastDiag.httpStatus=item.httpStatus||200;lastDiag.mime=item.mime||'audio/mpeg';lastDiag.bytes=item.bytes&&item.bytes.byteLength||0;lastDiag.cached=wasCached||item.persistent;
-  if(APPLE_MOBILE&&item.url)return playWithHtmlAudioUrl(item.url,provider,requestId);
+  /* iPad must play the bytes already warmed by prefetch. Reopening the URL here
+     caused a second media request and the page-to-page pause families reported. */
   return playBytes(item.bytes,{httpStatus:item.httpStatus||200,mime:item.mime,cached:wasCached||item.persistent},provider,requestId);
 }
 function childChunks(text){

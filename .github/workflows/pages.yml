@@ -1,4 +1,4 @@
-name: Deploy Sakhi V4.4.0
+name: Deploy Sakhi V4.4.1
 on:
   push:
     branches: [ main, upgrade/sakhi-v3 ]
@@ -30,7 +30,7 @@ jobs:
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add index.html manifest.json sw.js vendor/kokoro-runtime.js dist
-            git commit -m "Persist Sakhi 4.4.0 deployment build [skip ci]"
+            git commit -m "Persist Sakhi 4.4.1 deployment build [skip ci]"
             git push origin HEAD:main
           fi
       - uses: actions/configure-pages@v5

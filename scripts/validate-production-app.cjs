@@ -42,7 +42,7 @@ const kokoroEntry=read('scripts/kokoro-browser-entry.js');if(!/numThreads\s*=\s*
 const narration=JSON.parse(read('assets/audio/narration/manifest.json'));
 const narrationRequired=JSON.parse(read('assets/audio/narration/texts-v5.json'));
 if(narrationRequired.some(text=>!narration.files[text]||!fs.existsSync(path.join(root,'assets/audio/narration',narration.files[text]))))throw new Error('Bundled narration pack is incomplete');
-console.log('Sakhi V4.4.0 source validation passed:');
+console.log('Sakhi V4.4.1 source validation passed:');
 console.log(` - ${c.skills.length} skills across 9 persistent subject trails`);
 console.log(' - prerequisite graph sound');
 console.log(' - 26 weeks / 130 days / 30 minutes validated');

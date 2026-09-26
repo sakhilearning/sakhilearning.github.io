@@ -1,14 +1,15 @@
-# Sakhi Learning Trails 4.4.0
+# Sakhi Learning Trails 4.4.1
 
 An offline-first Kindergarten learning app with adaptive daily lessons, parent evidence, exact resume, and bundled Kokoro narration optimized for iPad.
 
-## What ships in 4.4.0
+## What ships in 4.4.1
 
 - 141 skills across 9 persistent subject trails.
 - A 26-week, 130-day curriculum path.
 - Daily Math, Science, Listening/Language, and Reading/Understanding priorities, plus rotating world, logic, wellbeing, writing, and creative work.
 - Age-appropriate astronomy, living things, animal groups, herbivores/carnivores/omnivores, food chains, ecosystems, body systems, maps, timelines, inventions, cultures, and citizenship.
-- Five adaptive difficulty bands. Fast independent answers increase the next question's challenge; struggle produces a smaller next step.
+- Four connected quests per selected subject trail, followed by a concrete three-step finish activity with visible success criteria.
+- Five adaptive difficulty bands. Two fast, independent answers advance to a different or harder skill without forcing a third near-duplicate; struggle produces a smaller next step.
 - Semantic question-history blocking so changing distractors cannot disguise a repeated task.
 - On-device session, attempt, question, reward, setting, and exact activity-position history. A family account adds cross-device snapshot sync.
 - Parent-selected subject/lesson controls and a clear “finish today and open the next day” action.
@@ -17,7 +18,7 @@ An offline-first Kindergarten learning app with adaptive daily lessons, parent e
 
 ## Audio behavior
 
-Normal narration uses the bundled Kokoro `af_heart` voice. The narration index is embedded in the app shell, the first mission is warmed on the home page, and upcoming questions are prefetched. iPad uses standard HTML audio playback and never waits for remote TTS. Browser speech synthesis and paid speech are not used for normal lesson narration.
+Normal narration uses the bundled Kokoro `af_heart` voice. The narration index is embedded in the app shell, complete missions are warmed on the home page, and each adaptive next question is prefetched before navigation. iPad plays the already-fetched audio bytes instead of requesting the same clip a second time. Browser speech synthesis and paid speech are not used for normal lesson narration.
 
 Narration is concise by design:
 

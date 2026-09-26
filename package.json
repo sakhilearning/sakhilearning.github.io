@@ -1,7 +1,7 @@
 {
   "name": "sakhi-learning-trails-v3",
   "private": true,
-  "version": "4.4.0",
+  "version": "4.4.1",
   "scripts": {
     "syntax": "node scripts/check-syntax.cjs",
     "validate": "node scripts/validate-production-app.cjs",
@@ -13,7 +13,7 @@
     "test:dist-smoke": "node tests/dist-server-smoke.test.cjs",
     "build": "node scripts/build.cjs",
     "validate:dist": "node scripts/validate-dist.cjs",
-    "qa": "npm run syntax && npm run validate && npm run test:activities && npm run test:plan && npm run test:runtime-core && npm run test:learner-model && npm run test:cloud-sync && npm run test:audio && npm run test:narration-coverage && npm run test:no-robo-voice && npm run test:theme-media && npm run test:navigation && npm run test:interaction-regression && npm run test:runtime-logistics",
+    "qa": "npm run syntax && npm run validate && npm run test:activities && npm run test:plan && npm run test:runtime-core && npm run test:learner-model && npm run test:flow-depth && npm run test:cloud-sync && npm run test:audio && npm run test:narration-coverage && npm run test:no-robo-voice && npm run test:theme-media && npm run test:navigation && npm run test:interaction-regression && npm run test:runtime-logistics",
     "release": "npm run qa && npm run build && npm run validate:dist && npm run test:dist-smoke",
     "preview": "node scripts/serve-local.cjs",
     "test:runtime-core": "node tests/runtime-core.test.cjs",
@@ -22,6 +22,7 @@
     "test:narration-coverage": "node tests/narration-coverage.test.cjs",
     "test:no-robo-voice": "node tests/no-robo-voice.test.cjs",
     "test:navigation": "node tests/navigation-smoke.test.cjs",
+    "test:flow-depth": "node tests/flow-depth.test.cjs",
     "test:interaction-regression": "node tests/interaction-regression.test.cjs"
   },
   "dependencies": {

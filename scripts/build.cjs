@@ -3,7 +3,7 @@ const path=require('path');
 let esbuild=null;try{esbuild=require('esbuild');}catch(e){}
 const root=path.join(__dirname,'..');
 const dist=path.join(root,'dist');
-const buildId='4.4.0';
+const buildId='4.4.1';
 const moduleOrder=[
   'supabase-config.js',
   'sakhi-cloud.js',
@@ -17,6 +17,7 @@ const moduleOrder=[
   'sakhi-plan.js',
   'sakhi-audio.js',
   'sakhi-templates.js',
+  'sakhi-wrapups.js',
   'sakhi-app.js'
 ];
 function read(f,enc='utf8'){return fs.readFileSync(path.join(root,f),enc);}
