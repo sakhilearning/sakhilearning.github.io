@@ -14,7 +14,7 @@ if(new Set(printActivity.questions.map(q=>q.prompt)).size!==3)throw new Error('P
 let activities=0,questions=0;
 for(const s of curriculum.skills)for(let b=1;b<=5;b++)for(let seed=0;seed<50;seed++){
   const a=ctx.window.SakhiActivities.generate(s.skill_id,b,String(seed));
-  if(!a.questions||a.questions.length!==3)throw new Error('Bad activity '+s.skill_id+' band '+b+' seed '+seed);
+  if(!a.questions||a.questions.length<3||a.questions.length>5)throw new Error('Bad activity depth '+s.skill_id+' band '+b+' seed '+seed+' · '+(a.questions&&a.questions.length));
   if(s.kind==='practice'&&a.questions.some(q=>q.template!=='guided'||!Array.isArray(q.steps)||q.steps.length<3||!q.success_criteria))throw new Error('Practice skill is vague or not measurable: '+s.skill_id);
   for(const q of a.questions){
     questions++;
@@ -40,7 +40,8 @@ for(const s of curriculum.skills)for(let b=1;b<=5;b++)for(let seed=0;seed<50;see
     }
     if(q.template==='guided'&&(!Array.isArray(q.steps)||q.steps.length<3||!q.success_criteria))throw new Error('Guided task lacks steps or success criteria: '+s.skill_id);
   }
-  if(new Set(a.questions.map(q=>q.question_key)).size!==a.questions.length)throw new Error('Activity repeats a question: '+s.skill_id+' band '+b+' seed '+seed);
+  if(new Set(a.questions.map(q=>q.question_key)).size!==a.questions.length)throw new Error('Activity repeats a question: '+s.skill_id+' band '+b+' seed '+seed);if(a.questions[a.questions.length-1].learning_phase!=='transfer')throw new Error('Activity does not finish with transfer/application: '+s.skill_id);
   activities++;
 }
-console.log(`Activity generation passed: ${activities} activities / ${questions} questions across ${curriculum.skills.length} skills × 5 bands × 50 seeds`);
+const taught=ctx.window.SakhiActivities.generate('science.animal_diets',3,'teach-sequence',[],{teachFirst:true});if(taught.questions[0].evidence_mode!=='practice'||taught.questions[0].learning_phase!=='learn'||!taught.questions[0].coach_tip)throw new Error('First-time learning does not start with supported teaching');
+console.log(`Activity generation passed: ${activities} activities / ${questions} questions with supported teaching and transfer across ${curriculum.skills.length} skills × 5 bands × 50 seeds`);
