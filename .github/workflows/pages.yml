@@ -10,7 +10,7 @@ permissions:
   pages: write
   id-token: write
 concurrency:
-  group: pages
+  group: ${{ github.event_name == 'pull_request' && format('sakhi-ci-{0}', github.event.pull_request.number) || 'pages' }}
   cancel-in-progress: true
 jobs:
   build:
@@ -36,10 +36,13 @@ jobs:
             git push origin HEAD:main
           fi
       - uses: actions/configure-pages@v5
+        if: github.event_name != 'pull_request'
       - uses: actions/upload-pages-artifact@v3
+        if: github.event_name != 'pull_request'
         with:
           path: dist
   deploy:
+    if: github.event_name != 'pull_request'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
