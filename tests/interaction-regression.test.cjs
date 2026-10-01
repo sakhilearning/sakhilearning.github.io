@@ -38,6 +38,15 @@ if (!/playbackEpoch\+\+/.test(audio) || !/if\(!isCurrent\(requestId\)\)return fa
 if (!/function mediaFor\(domain,skill,template,index\)/.test(presentation) || !/Pres\.scene\(d,p,\{kind:'activity',skill:current\.skill_title/.test(app)) {
   throw new Error('Generated scenes must be selected with activity context');
 }
+if (!/pool\[\(base\+step\)%pool\.length\]/.test(presentation)) {
+  throw new Error('Activity scenes must rotate deterministically between learning steps instead of repeating the same image');
+}
+if (!/reading:\[.*Now try the same reading idea/s.test(presentation) || !/science:\[.*Now compare the evidence/s.test(presentation)) {
+  throw new Error('Per-step coaching cues must change across a lesson instead of repeating one sentence');
+}
+if (!/function syncCheckState\(\)/.test(app) || !/onProgress:syncCheckState/.test(app)) {
+  throw new Error('Check button readiness must stay synchronized with the active answer control');
+}
 if (!/body\[data-view="activity"\] #activityScene\{display:block/.test(css)) {
   throw new Error('Generated activity scenes must be visible, not hidden as background-only media');
 }
