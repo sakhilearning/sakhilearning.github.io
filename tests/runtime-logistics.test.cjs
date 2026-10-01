@@ -24,13 +24,13 @@ if (/SakhiCloud\.speak\(/.test(audio)) throw new Error('Normal narration still d
 const instantCue=path.join(root,'assets/audio/sakhi-ready-next.wav');if(!fs.existsSync(instantCue)||fs.statSync(instantCue).size<50000)throw new Error('Immediate local Kokoro transition cue is missing');
 
 const app = read('sakhi-app.js');
-if (!app.includes("answer==='071621'")) throw new Error('Parent passcode changed');
+if (!app.includes("answer==='15'")) throw new Error('Grown-up parent check changed');
 if (!app.includes('[data-trail-domain]') || !app.includes('startTrail')) throw new Error('Trail cards are not wired for interaction');
 if (!app.includes('ensureVoiceReady') || !app.includes('voicePrepare') || app.includes('Starting voice')) throw new Error('Kokoro readiness gate is incomplete');
-for (const token of ["['math','science','language','reading','world','logic','wellbeing','writing','creative']", 'startChosenLesson', 'advanceProgramDay', 'curriculumSkill', 'recentQuestionKeys']) {
+for (const token of ['todayWorldCard', 'OPTIONAL SUBJECT PRACTICE', 'startChosenLesson', 'advanceProgramDay', 'curriculumSkill', 'recentQuestionKeys', 'cloudMagicLink']) {
   if (!app.includes(token)) throw new Error(`Curriculum visibility or parent control is missing ${token}`);
 }
-for (const token of ['goalForSkill', 'subject placement assessment', 'math.compare', 'math.addition_5', 'math.cardinality_20', 'Exact resume point', 'Recent activity history']) {
+for (const token of ['goalForSkill', 'age-appropriate starting lesson', 'math.compare', 'math.addition_5', 'math.cardinality_20', 'Exact resume point', 'Recent activity history']) {
   if (!app.includes(token)) throw new Error(`Clear trail purpose, math assessment, or parent history is missing ${token}`);
 }
 if(app.includes('math.count_20'))throw new Error('Math placement references a missing counting skill');
@@ -57,7 +57,7 @@ const kokoroEntry = read('scripts/kokoro-browser-entry.js');
 if (!/numThreads\s*=\s*1/.test(kokoroEntry) || !/proxy\s*=\s*false/.test(kokoroEntry)) throw new Error('iPad-safe Kokoro runtime settings are missing');
 
 const sw = read('sw.js');
-if (!/sakhi-v4-4\.4\.2/.test(sw)||/client\.navigate|clients\.matchAll/.test(sw)) throw new Error('Service worker must refresh caches without navigating clients');
+if (!/sakhi-v4-4\\.5\\.0/.test(sw)||/client\.navigate|clients\.matchAll/.test(sw)) throw new Error('Service worker must refresh caches without navigating clients');
 if (!sw.includes("cache:'no-store'")) throw new Error('Navigation requests should bypass stale HTTP caches');
 for (const file of [
   'assets/theme-media/generated-v4/unicorn-phonics-meadow.webp',
@@ -77,4 +77,4 @@ if (!sw.includes('self.skipWaiting()') || !sw.includes('self.clients.claim()')) 
   throw new Error('Service worker should activate fresh deployment assets immediately');
 }
 
-console.log('Runtime logistics passed: bundled af_heart Kokoro on iPad without browser model compilation, clickable trails, protected parent gate, reload-safe PWA updates, and generated scenes are deploy-safe');
+console.log('Runtime logistics passed: bundled af_heart Kokoro, clear Explore practice, grown-up gate, account sign-in link, reload-safe PWA updates, and generated scenes are deploy-safe');
