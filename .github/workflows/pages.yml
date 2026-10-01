@@ -2,6 +2,8 @@ name: Deploy Sakhi V4.5.0
 on:
   push:
     branches: [ main, upgrade/sakhi-v3 ]
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:
 permissions:
   contents: write
