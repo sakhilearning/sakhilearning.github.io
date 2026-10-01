@@ -1,4 +1,5 @@
 const fs = require('fs');
+const vm = require('vm');
 const path = require('path');
 
 const root = path.join(__dirname, '..');
@@ -7,6 +8,12 @@ const read = file => fs.readFileSync(path.join(root, file), 'utf8');
 const presentation = read('sakhi-presentation.js');
 const mediaRefs = [...presentation.matchAll(/\.\/(assets\/theme-media\/generated(?:-v4)?\/[^'"]+)/g)].map(match => match[1]);
 const uniqueRefs = [...new Set(mediaRefs)];
+
+const ctx={window:{},SakhiTrails:{get:domain=>({name:domain,palette:['#fff','#eee','#ddd'],companion:'Guide'}),chapter:()=> 'Chapter'}};ctx.window=ctx;vm.createContext(ctx);vm.runInContext(presentation,ctx);
+const stepMedia=[0,1,2].map(i=>ctx.SakhiPresentation.mediaFor('science','Animal diets','choice',i).src);
+if(new Set(stepMedia).size!==3)throw new Error('Consecutive science steps must rotate through distinct generated scenes');
+const cueText=[0,1,2,3].map(i=>ctx.SakhiPresentation.storyCue('math','Compare numbers',i).text);
+if(new Set(cueText).size!==4)throw new Error('Consecutive lesson steps must not repeat the same coaching sentence');
 
 if (uniqueRefs.length < 11) {
   throw new Error(`Theme presentation should reference at least eleven distinct generated scenes; found ${uniqueRefs.length}`);
