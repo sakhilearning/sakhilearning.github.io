@@ -3,6 +3,9 @@ window.SakhiCloud=(function(){
 var CFG=window.SAKHI_CONFIG||window.RAINBOW_CONFIG||{};
 var BASE=CFG.supabaseUrl||'',ANON=CFG.supabaseAnonKey||CFG.supabasePublishableKey||'',SPEECH_URL=CFG.speechFunctionUrl||CFG.ttsEndpoint||'';
 var OUT='sakhi.v3.outbox',DEAD='sakhi.v3.deadletter',SESSION='sakhi.cloud.session',listeners=[],verified=false,flushing=false,lastError=null,snapshotTimer=null;
+function queueScope(){var s=session();return s&&s.user&&s.user.id?'user-'+s.user.id:'guest';}
+function outKey(){return OUT+'.'+queueScope();}
+function deadKey(){return DEAD+'.'+queueScope();}
 var AUTH_CALLBACK_KEYS=['access_token','refresh_token','expires_in','expires_at','token_type','type','error','error_code','error_description'];
 function read(k,f){try{var v=localStorage.getItem(k);return v?JSON.parse(v):f;}catch(e){return f;}}
 function write(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true;}catch(e){return false;}}
@@ -15,7 +18,7 @@ function authErrorMessage(d,fallback){var code=d&&d.error_code||d&&d.code||'',ms
 function clearAuthCallback(query){AUTH_CALLBACK_KEYS.forEach(function(k){query.delete(k);});var qs=query.toString(),clean=(location.pathname||'/')+(qs?'?'+qs:'');if(typeof history!=='undefined'&&history.replaceState)history.replaceState(null,'',clean);}
 function consumeAuthCallback(){var p=callbackParams(),touched=AUTH_CALLBACK_KEYS.some(function(k){return p.get(k)!==null;});if(!touched)return null;var problem=p.get('error_description')||p.get('error'),code=p.get('error_code')||p.get('error'),type=p.get('type')||'';clearAuthCallback(p.query);if(problem){var expired=code==='otp_expired'||/expired|invalid|not found/i.test(problem),message=expired?'This email link was already used or expired. Request a new email sign-in link from Parents.':problem;lastError=message;emit();return{status:'error',code:code||'auth_callback_error',message:message};}var access=p.get('access_token'),refreshToken=p.get('refresh_token');if(!access||!refreshToken){lastError='The email link did not contain a complete parent session.';emit();return{status:'error',code:'incomplete_callback',message:lastError};}var expiresIn=Number(p.get('expires_in'))||3600,expiresAt=Number(p.get('expires_at'))||Math.floor(Date.now()/1000)+expiresIn;lastError=null;setSession({access_token:access,refresh_token:refreshToken,expires_in:expiresIn,expires_at:expiresAt,token_type:p.get('token_type')||'bearer'});return{status:type==='recovery'?'recovery':'confirmed',type:type};}
 function status(){if(!configured())return'NOT_CONFIGURED';if(navigator.onLine===false)return'OFFLINE';var s=session();return s&&s.access_token&&verified?'CONNECTED':'NOT_CONNECTED';}
-function state(){var s=session();return{status:status(),pending:read(OUT,[]).length,dead:read(DEAD,[]).length,configured:configured(),signedIn:!!(s&&s.access_token),email:s&&s.user&&s.user.email||null,userId:s&&s.user&&s.user.id||null,error:lastError};}
+function state(){var s=session();return{status:status(),pending:read(outKey(),[]).length,dead:read(deadKey(),[]).length,configured:configured(),signedIn:!!(s&&s.access_token),email:s&&s.user&&s.user.email||null,userId:s&&s.user&&s.user.id||null,error:lastError};}
 function emit(){var s=state();listeners.forEach(function(fn){try{fn(s);}catch(e){}});}
 function onChange(fn){listeners.push(fn);return function(){listeners=listeners.filter(function(x){return x!==fn;});};}
 function uuid(){return crypto.randomUUID?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0;return(c==='x'?r:(r&3|8)).toString(16);});}
@@ -30,8 +33,8 @@ async function probe(){
   catch(e){verified=false;lastError=String(e.message||e);emit();}
   return state();
 }
-function enqueue(batch){var q=read(OUT,[]);q.push({op_id:uuid(),at:new Date().toISOString(),batch:batch,tries:0});write(OUT,q);emit();flush();}
-async function flush(){if(flushing||status()!=='CONNECTED')return;flushing=true;var q=read(OUT,[]),dead=read(DEAD,[]);try{while(q.length){var op=q[0];try{await request('/rest/v1/sakhi_v3_events',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:op.batch});q.shift();write(OUT,q);emit();}catch(e){op.tries=(op.tries||0)+1;if(/HTTP 4/.test(String(e.message))&&op.tries>=3){dead.push(Object.assign(op,{error:String(e.message)}));q.shift();write(DEAD,dead);write(OUT,q);emit();continue;}lastError=String(e.message||e);break;}}}finally{flushing=false;}}
+function enqueue(batch){var q=read(outKey(),[]);q.push({op_id:uuid(),at:new Date().toISOString(),batch:batch,tries:0});write(outKey(),q);emit();flush();}
+async function flush(){if(flushing||status()!=='CONNECTED')return;flushing=true;var ok=outKey(),dk=deadKey(),q=read(ok,[]),dead=read(dk,[]);try{while(q.length){var op=q[0];try{await request('/rest/v1/sakhi_v3_events',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:op.batch});q.shift();write(ok,q);emit();}catch(e){op.tries=(op.tries||0)+1;if(/HTTP 4/.test(String(e.message))&&op.tries>=3){dead.push(Object.assign(op,{error:String(e.message)}));q.shift();write(dk,dead);write(ok,q);emit();continue;}lastError=String(e.message||e);break;}}}finally{flushing=false;}}
 async function loadSnapshot(){
   var s=session(),userId=s&&s.user&&s.user.id;if(!userId||status()!=='CONNECTED')return{synced:false,reason:'not-connected',snapshot:null};
   var rows=await request('/rest/v1/sakhi_family_state?user_id=eq.'+encodeURIComponent(userId)+'&select=snapshot,updated_at&limit=1'),remote=rows&&rows[0];
