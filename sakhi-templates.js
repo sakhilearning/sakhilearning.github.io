@@ -3,6 +3,17 @@ window.SakhiTemplates=(function(){
 function clear(n){while(n&&n.firstChild)n.removeChild(n.firstChild);}
 function btn(text,cls){var b=document.createElement('button');b.type='button';b.className=cls||'answer';b.textContent=text;return b;}
 function notify(ctx){if(ctx&&typeof ctx.onProgress==='function')ctx.onProgress();}
+function activate(button,handler){
+  var touchHandled=false,clearTimer=null;
+  button.addEventListener('pointerup',function(e){
+    if(e.pointerType!=='touch'&&e.pointerType!=='pen')return;
+    touchHandled=true;clearTimeout(clearTimer);handler(e);clearTimer=setTimeout(function(){touchHandled=false;},450);
+  });
+  button.addEventListener('click',function(e){
+    if(touchHandled){e.preventDefault();return;}
+    handler(e);
+  });
+}
 function assessmentVisual(kind){
   if(kind==='leaves')return '<svg viewBox="0 0 640 210" aria-hidden="true"><defs><linearGradient id="leafLight" x1="0" x2="1"><stop stop-color="#b9ee83"/><stop offset="1" stop-color="#70bf5e"/></linearGradient><linearGradient id="leafDark" x1="0" x2="1"><stop stop-color="#247447"/><stop offset="1" stop-color="#0d4f35"/></linearGradient></defs><g transform="translate(38 18)"><path d="M250 88C174-2 45 18 18 94c61 64 174 78 232-6Z" fill="url(#leafLight)" stroke="#447e40" stroke-width="6"/><path d="M28 101 232 79M103 93l-28-36M157 87l-24-43" fill="none" stroke="#fff" stroke-opacity=".65" stroke-width="5" stroke-linecap="round"/></g><g transform="translate(348 18)"><path d="M250 88C174-2 45 18 18 94c61 64 174 78 232-6Z" fill="url(#leafDark)" stroke="#063d29" stroke-width="6"/><path d="M28 101 232 79M103 93l-28-36M157 87l-24-43" fill="none" stroke="#bce1c7" stroke-opacity=".62" stroke-width="5" stroke-linecap="round"/></g></svg>';
   if(kind==='ribbons')return '<svg viewBox="0 0 640 230" aria-hidden="true"><text x="28" y="52" class="visual-label">purple ribbon</text><path d="M36 82H576" stroke="#9a60dc" stroke-width="30" stroke-linecap="round"/><path d="m576 67 35 15-35 15Z" fill="#7340ae"/><text x="28" y="157" class="visual-label">gold ribbon</text><path d="M36 187H370" stroke="#f2bc45" stroke-width="30" stroke-linecap="round"/><path d="m370 172 35 15-35 15Z" fill="#ca9025"/></svg>';
@@ -28,16 +39,16 @@ function render(root,q,ctx){
   if(q.template==='choice'){
     var grid=document.createElement('div');grid.className='answer-grid';
     var buttons=[];
-    q.choices.forEach(function(c){var b=btn(c,'answer');buttons.push(b);b.onclick=function(){buttons.forEach(function(x){x.classList.remove('selected');});b.classList.add('selected');state.response=c;notify(ctx);};grid.appendChild(b);});
+    q.choices.forEach(function(c){var b=btn(c,'answer');buttons.push(b);b.setAttribute('aria-pressed','false');activate(b,function(){buttons.forEach(function(x){x.classList.remove('selected');x.setAttribute('aria-pressed','false');});b.classList.add('selected');b.setAttribute('aria-pressed','true');state.response=c;notify(ctx);});grid.appendChild(b);});
     root.appendChild(grid);
-    return{immediate:false,isReady:function(){return state.response!==null;},check:function(){return{correct:String(state.response)===String(q.answer),response:state.response};},reset:function(){state.response=null;buttons.forEach(function(b){b.classList.remove('selected');b.disabled=false;});notify(ctx);}};
+    return{immediate:false,isReady:function(){return state.response!==null;},check:function(){return{correct:String(state.response)===String(q.answer),response:state.response};},reset:function(){state.response=null;buttons.forEach(function(b){b.classList.remove('selected');b.setAttribute('aria-pressed','false');b.disabled=false;});notify(ctx);}};
   }
   if(q.template==='build'||q.template==='sequence'){
     var built=[],out=document.createElement('button'),bank=document.createElement('div'),buttons=[];
     out.type='button';out.className='build-out';out.setAttribute('aria-label','Built answer. Tap to clear.');bank.className='token-bank';
     function paint(doNotify){out.textContent=built.length?built.join(q.template==='sequence'?' ':''):'Tap pieces to build it';buttons.forEach(function(b){b.disabled=b.dataset.used==='1';});if(doNotify)notify(ctx);}
-    q.tokens.forEach(function(tok){var b=btn(tok,'token');buttons.push(b);b.onclick=function(){if(b.dataset.used==='1')return;b.dataset.used='1';built.push(tok);paint(true);};bank.appendChild(b);});
-    out.onclick=function(){built=[];buttons.forEach(function(b){delete b.dataset.used;b.disabled=false;});paint(true);};root.appendChild(out);root.appendChild(bank);paint(false);
+    q.tokens.forEach(function(tok){var b=btn(tok,'token');buttons.push(b);activate(b,function(){if(b.dataset.used==='1')return;b.dataset.used='1';built.push(tok);paint(true);});bank.appendChild(b);});
+    activate(out,function(){built=[];buttons.forEach(function(b){delete b.dataset.used;b.disabled=false;});paint(true);});root.appendChild(out);root.appendChild(bank);paint(false);
     return{immediate:false,isReady:function(){return built.length===q.answer.length;},check:function(){return{correct:JSON.stringify(built)===JSON.stringify(q.answer),response:built.slice()};},reset:function(){built=[];buttons.forEach(function(b){delete b.dataset.used;b.disabled=false;});paint(true);}};
   }
   if(q.template==='trace'){
@@ -52,7 +63,7 @@ function render(root,q,ctx){
   }
   if(q.template==='guided'){
     var card=document.createElement('div'),goal=document.createElement('p'),list=document.createElement('div'),done={};card.className='guided-card';goal.className='guided-goal';goal.textContent=q.success_criteria?'Goal: '+q.success_criteria:q.prompt;card.appendChild(goal);list.className='guided-steps';
-    (q.steps||[]).forEach(function(step,index){var b=btn(''+(index+1)+'. '+step,'guided-step');b.setAttribute('aria-pressed','false');b.onclick=function(){done[index]=!done[index];b.classList.toggle('done',!!done[index]);b.setAttribute('aria-pressed',done[index]?'true':'false');notify(ctx);};list.appendChild(b);});card.appendChild(list);root.appendChild(card);
+    (q.steps||[]).forEach(function(step,index){var b=btn(''+(index+1)+'. '+step,'guided-step');b.setAttribute('aria-pressed','false');activate(b,function(){done[index]=!done[index];b.classList.toggle('done',!!done[index]);b.setAttribute('aria-pressed',done[index]?'true':'false');notify(ctx);});list.appendChild(b);});card.appendChild(list);root.appendChild(card);
     return{immediate:false,isReady:function(){return(q.steps||[]).length>0&&(q.steps||[]).every(function(_,i){return!!done[i];});},check:function(){return{correct:true,response:Object.keys(done).filter(function(k){return done[k];}).length+' steps completed'};},reset:function(){done={};list.querySelectorAll('.guided-step').forEach(function(b){b.classList.remove('done');b.setAttribute('aria-pressed','false');});notify(ctx);}};
   }
   var p=document.createElement('div');p.className='practice-card';var icon=document.createElement('div');icon.className='practice-icon';icon.textContent='✏️';var text=document.createElement('p');text.textContent=q.prompt;p.appendChild(icon);p.appendChild(text);root.appendChild(p);

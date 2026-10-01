@@ -12,11 +12,13 @@ function toast(m){var t=$('#toast');if(!t)return;t.textContent=m;t.classList.add
 function setWorld(domain){if(domain)document.body.dataset.domain=domain;else delete document.body.dataset.domain;}
 function clearAdvance(){if(advanceTimer){clearTimeout(advanceTimer);advanceTimer=null;}}
 function syncCheckState(){
-  var b=$('#checkBtn');if(!b)return;
-  if(awaitingNext){b.disabled=false;return;}
-  if(answerLocked){b.disabled=true;return;}
-  if(!controller){b.disabled=true;return;}
-  try{b.disabled=!controller.isReady();}catch(e){console.warn('[Sakhi check state]',e&&e.message||e);b.disabled=false;}
+  var b=$('#checkBtn'),ready=false;if(!b)return;
+  if(awaitingNext){ready=true;}
+  else if(controller){try{ready=!!controller.isReady();}catch(e){console.warn('[Sakhi check state]',e&&e.message||e);}}
+  b.disabled=!!answerLocked;
+  b.setAttribute('aria-disabled',answerLocked?'true':'false');
+  b.classList.toggle('needs-answer',!ready&&!answerLocked&&!awaitingNext);
+  b.dataset.ready=ready?'1':'0';
 }
 function missionSeed(m,index){var evidence=Prog.evidence(m.pick.skill_id);return[plan.date,plan.program_day,index,evidence.attempt_count||0].join(':');}
 function resolveMission(index){if(!plan||index<0||index>=plan.missions.length)return null;var m=plan.missions[index];if(m.pick)return m;var used=plan.missions.slice(0,index).map(function(x){return x.pick&&x.pick.skill_id;}).filter(Boolean),pick=Adaptive.pick(m.domain,used);if(!pick)return null;m.pick=pick;m.dynamic=false;return m;}
@@ -120,9 +122,12 @@ function renderActivity(){
 function hint(){var h=q().hints||[];if(hintLevel<h.length){hintLevel++;saveRun();var notes=[];if(q().learning_phase==='learn'&&q().coach_tip)notes.push('✨ '+q().coach_tip);notes=notes.concat(h.slice(0,hintLevel).map(function(x){return'💡 '+x;}));$('#hintArea').textContent=notes.join('  ');Audio.speak(h[hintLevel-1]).catch(function(){});}if(hintLevel>=h.length)$('#hintBtn').disabled=true;}
 function check(){
   if(awaitingNext){clearAdvance();awaitingNext=false;Promise.resolve(nextQuestionReady).catch(function(){return false;}).then(nextQuestion);return;}
-  if(answerLocked||!controller){syncCheckState();return;}
+  if(answerLocked){syncCheckState();return;}
+  if(!controller){toast('This learning step is still opening. Tap once more in a moment.');syncCheckState();return;}
+  var ready=false;try{ready=!!controller.isReady();}catch(e){console.error('[Sakhi answer readiness]',e);}
+  if(!ready){toast(q().template==='guided'?'Finish the little steps first, then tap Check.':'Choose or build an answer first, then tap Check.');syncCheckState();return;}
   var r;try{r=controller.check();}catch(e){console.error('[Sakhi check]',e);answerLocked=false;syncCheckState();toast('That answer control paused. Try your choice once more.');return;}
-  if(!r){syncCheckState();return;}questionTries++;
+  if(!r){toast('Choose an answer first, then tap Check.');syncCheckState();return;}questionTries++;
   if(!r.correct&&q().evidence_mode==='practice'){answerLocked=true;syncCheckState();toast('Let’s solve this one together.');if(hintLevel<(q().hints||[]).length)hint();setTimeout(function(){try{controller.reset();}finally{answerLocked=false;syncCheckState();}},350);return;}
   if(!r.correct&&q().evidence_mode!=='practice'&&questionTries<2){answerLocked=true;syncCheckState();toast('Good try — use the clue, then try again.');if(hintLevel<(q().hints||[]).length)hint();setTimeout(function(){try{controller.reset();}finally{answerLocked=false;syncCheckState();}},350);return;}
   var responseMs=Math.max(0,Date.now()-questionStartedAt),answer={correct:r.correct,hintsUsed:hintLevel,response:r.response,tries:questionTries,response_ms:responseMs,question_key:q().question_key,difficulty:q().difficulty||current.band,evidence_mode:q().evidence_mode||'objective',learning_phase:q().learning_phase||'practice'};answers.push(answer);
@@ -158,7 +163,7 @@ function bootFailure(e){
 }
 async function boot(){
   loadRun();
-  try{await Cur.load();Prog.load();Audio.setEnabled(Prog.load().settings.voice!==false);bind();var authResult=Cloud&&Cloud.consumeAuthCallback?Cloud.consumeAuthCallback():null;if(Cloud&&Cloud.probe){await Cloud.probe().catch(function(e){console.warn('Cloud probe',e.message);});if(Cloud.state().status==='CONNECTED'){if(Prog.attachAccount)Prog.attachAccount(Cloud.state().userId);await Prog.syncCloud().catch(function(e){console.warn('History sync',e.message);});loadRun();}}renderHome();renderStats();if(authResult&&(authResult.status==='confirmed'||authResult.status==='recovery'))toast('Parent account connected. Learning history is restored from the account.');else if(authResult&&authResult.status==='error')toast(authResult.message);if(Audio.isEnabled()&&Audio.warm)Audio.warm().catch(function(e){console.warn('[Sakhi] Voice warm-up',e&&e.message||e);});window.__SAKHI_BOOTED=true;document.documentElement.classList.add('sakhi-ready');if('serviceWorker'in navigator&&location.protocol!=='file:'){navigator.serviceWorker.register('./sw.js?v=4.5.1',{updateViaCache:'none'}).then(function(r){r.update().catch(function(){});}).catch(function(e){console.warn('SW',e.message);});}}
+  try{await Cur.load();Prog.load();Audio.setEnabled(Prog.load().settings.voice!==false);bind();var authResult=Cloud&&Cloud.consumeAuthCallback?Cloud.consumeAuthCallback():null;if(Cloud&&Cloud.probe){await Cloud.probe().catch(function(e){console.warn('Cloud probe',e.message);});if(Cloud.state().status==='CONNECTED'){if(Prog.attachAccount)Prog.attachAccount(Cloud.state().userId);await Prog.syncCloud().catch(function(e){console.warn('History sync',e.message);});loadRun();}}renderHome();renderStats();if(authResult&&(authResult.status==='confirmed'||authResult.status==='recovery'))toast('Parent account connected. Learning history is restored from the account.');else if(authResult&&authResult.status==='error')toast(authResult.message);if(Audio.isEnabled()&&Audio.warm)Audio.warm().catch(function(e){console.warn('[Sakhi] Voice warm-up',e&&e.message||e);});window.__SAKHI_BOOTED=true;document.documentElement.classList.add('sakhi-ready');if('serviceWorker'in navigator&&location.protocol!=='file:'){navigator.serviceWorker.register('./sw.js?v=4.5.2',{updateViaCache:'none'}).then(function(r){r.update().catch(function(){});}).catch(function(e){console.warn('SW',e.message);});}}
   catch(e){bootFailure(e);}
 }
 window.SakhiApp={boot:boot,show:show};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();

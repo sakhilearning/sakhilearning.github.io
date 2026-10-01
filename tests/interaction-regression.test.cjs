@@ -47,6 +47,12 @@ if (!/reading:\[.*Now try the same reading idea/s.test(presentation) || !/scienc
 if (!/function syncCheckState\(\)/.test(app) || !/onProgress:syncCheckState/.test(app)) {
   throw new Error('Check button readiness must stay synchronized with the active answer control');
 }
+if (!/b\.disabled=!!answerLocked/.test(app) || !/Choose or build an answer first, then tap Check/.test(app)) {
+  throw new Error('Check must remain tappable before answer readiness and explain what is missing instead of freezing');
+}
+if (!/function activate\(button,handler\)/.test(read('sakhi-templates.js')) || !/pointerup/.test(read('sakhi-templates.js'))) {
+  throw new Error('Answer controls need a direct touch activation path for iPad');
+}
 if (!/body\[data-view="activity"\] #activityScene\{display:block/.test(css)) {
   throw new Error('Generated activity scenes must be visible, not hidden as background-only media');
 }
