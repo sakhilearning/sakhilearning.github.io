@@ -59,6 +59,7 @@ function stablePick(items,seed){
   return items[Math.abs(h)%items.length];
 }
 function mediaFor(domain,skill,template,index){
+  if(template==='practice-card'||template==='today-world')return SCENE_MEDIA[domain]||SCENE_MEDIA.home;
   var concept=String(skill||'').toLowerCase(),key=domain;
   if(domain==='reading'&&/(letter|sound|vowel|cvc|blend|phon|rhyme|syllable)/.test(concept))key='phonics';
   else if(domain==='math'&&/(pattern|shape|position|spatial|sort|logic)/.test(concept))key='logic';
