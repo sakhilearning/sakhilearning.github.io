@@ -38,6 +38,8 @@ for (const token of ['goalForSkill', 'math.compare', 'math.addition_5', 'math.ca
 if(!adaptive.includes('age-appropriate starting lesson')||!plan.includes("domain:'math'")||!plan.includes("domain:'science'"))throw new Error('Teaching baseline or daily learning priorities are missing');
 if(app.includes('math.count_20'))throw new Error('Math placement references a missing counting skill');
 if(!app.includes("var id=m.pick&&m.pick.skill_id"))throw new Error('Home landing must tolerate unresolved dynamic missions without crashing');
+if(!app.includes('function syncCheckState()')||!app.includes('onProgress:syncCheckState')||!app.includes("['click','input','change','pointerup']"))throw new Error('Answer controls must always resync the Check button state');
+if(!cloud.includes('Object.assign({},window.RAINBOW_CONFIG||{},window.SAKHI_CONFIG||{})')||!cloud.includes("suffix=isLocalHost()?'':'?redirect_to='"))throw new Error('Parent auth must preserve base config and avoid localhost signup redirect failures');
 if (!read('sakhi-templates.js').includes("q.template==='guided'") || !read('sakhi-activities.js').includes('success_criteria')) throw new Error('Guided measurable activity template is missing');
 
 const speechFunction = read('supabase/functions/sakhi-speech/index.ts');
@@ -61,7 +63,7 @@ const kokoroEntry = read('scripts/kokoro-browser-entry.js');
 if (!/numThreads\s*=\s*1/.test(kokoroEntry) || !/proxy\s*=\s*false/.test(kokoroEntry)) throw new Error('iPad-safe Kokoro runtime settings are missing');
 
 const sw = read('sw.js');
-if (!/sakhi-v4-4\.5\.0/.test(sw)||/client\.navigate|clients\.matchAll/.test(sw)) throw new Error('Service worker must refresh caches without navigating clients');
+if (!/sakhi-v4-4\.5\.1/.test(sw)||/client\.navigate|clients\.matchAll/.test(sw)) throw new Error('Service worker must refresh caches without navigating clients');
 if (!sw.includes("cache:'no-store'")) throw new Error('Navigation requests should bypass stale HTTP caches');
 for (const file of [
   'assets/theme-media/generated-v4/unicorn-phonics-meadow.webp',
