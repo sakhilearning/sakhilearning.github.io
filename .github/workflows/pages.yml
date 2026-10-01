@@ -52,4 +52,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-# manual redeploy retry 2026-10-01T16:57Z
+# manual redeploy retry 2026-10-01T18:13Z landing-fix
