@@ -12,7 +12,7 @@ function toast(m){var t=$('#toast');if(!t)return;t.textContent=m;t.classList.add
 function setWorld(domain){if(domain)document.body.dataset.domain=domain;else delete document.body.dataset.domain;}
 function clearAdvance(){if(advanceTimer){clearTimeout(advanceTimer);advanceTimer=null;}}
 function syncCheckState(){
-  var b=$('#checkBtn');if(!b)return,ready=false;
+  var b=$('#checkBtn'),ready=false;if(!b)return;
   if(awaitingNext){ready=true;}
   else if(controller){try{ready=!!controller.isReady();}catch(e){console.warn('[Sakhi check state]',e&&e.message||e);}}
   b.disabled=!!answerLocked;
