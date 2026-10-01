@@ -29,7 +29,7 @@ const plan = read('sakhi-plan.js');
 if (!app.includes("answer==='15'")) throw new Error('Grown-up parent check changed');
 if (!app.includes('[data-trail-domain]') || !app.includes('startTrail')) throw new Error('Trail cards are not wired for interaction');
 if (!app.includes('ensureVoiceReady') || !app.includes('voicePrepare') || app.includes('Starting voice')) throw new Error('Kokoro readiness gate is incomplete');
-for (const token of ['todayWorldCard', 'OPTIONAL SUBJECT PRACTICE', 'startChosenLesson', 'advanceProgramDay', 'curriculumSkill', 'recentQuestionKeys', 'cloudMagicLink']) {
+for (const token of ['todayWorldCard', 'OPTIONAL SUBJECT PRACTICE', 'startChosenLesson', 'advanceProgramDay', 'curriculumSkill', 'recentQuestionKeys', 'cloudMagicLink', 'cloudResendConfirm']) {
   if (!app.includes(token)) throw new Error(`Curriculum visibility or parent control is missing ${token}`);
 }
 for (const token of ['goalForSkill', 'math.compare', 'math.addition_5', 'math.cardinality_20', 'Exact resume point', 'Recent activity history']) {
