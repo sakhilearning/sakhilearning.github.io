@@ -24,15 +24,18 @@ if (/SakhiCloud\.speak\(/.test(audio)) throw new Error('Normal narration still d
 const instantCue=path.join(root,'assets/audio/sakhi-ready-next.wav');if(!fs.existsSync(instantCue)||fs.statSync(instantCue).size<50000)throw new Error('Immediate local Kokoro transition cue is missing');
 
 const app = read('sakhi-app.js');
+const adaptive = read('sakhi-adaptive.js');
+const plan = read('sakhi-plan.js');
 if (!app.includes("answer==='15'")) throw new Error('Grown-up parent check changed');
 if (!app.includes('[data-trail-domain]') || !app.includes('startTrail')) throw new Error('Trail cards are not wired for interaction');
 if (!app.includes('ensureVoiceReady') || !app.includes('voicePrepare') || app.includes('Starting voice')) throw new Error('Kokoro readiness gate is incomplete');
 for (const token of ['todayWorldCard', 'OPTIONAL SUBJECT PRACTICE', 'startChosenLesson', 'advanceProgramDay', 'curriculumSkill', 'recentQuestionKeys', 'cloudMagicLink']) {
   if (!app.includes(token)) throw new Error(`Curriculum visibility or parent control is missing ${token}`);
 }
-for (const token of ['goalForSkill', 'age-appropriate starting lesson', 'math.compare', 'math.addition_5', 'math.cardinality_20', 'Exact resume point', 'Recent activity history']) {
-  if (!app.includes(token)) throw new Error(`Clear trail purpose, math assessment, or parent history is missing ${token}`);
+for (const token of ['goalForSkill', 'math.compare', 'math.addition_5', 'math.cardinality_20', 'Exact resume point', 'Recent activity history']) {
+  if (!app.includes(token)) throw new Error(`Clear learning purpose, math launch, or parent history is missing ${token}`);
 }
+if(!adaptive.includes('age-appropriate starting lesson')||!plan.includes("domain:'math'")||!plan.includes("domain:'science'"))throw new Error('Teaching baseline or daily learning priorities are missing');
 if(app.includes('math.count_20'))throw new Error('Math placement references a missing counting skill');
 if (!read('sakhi-templates.js').includes("q.template==='guided'") || !read('sakhi-activities.js').includes('success_criteria')) throw new Error('Guided measurable activity template is missing');
 
