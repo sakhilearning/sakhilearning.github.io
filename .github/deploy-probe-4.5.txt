@@ -1,3 +1,4 @@
 Temporary CI visibility probe for Sakhi 4.5 deployment validation.
 Retry after learner-model timer harness fix.
 Retry with isolated PR validation concurrency.
+Retry after dist service-worker assertion fix.
