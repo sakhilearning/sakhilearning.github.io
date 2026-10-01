@@ -26,7 +26,7 @@ function wellbeingArt(id){return hills('#c8eba6','#8fd18f')+'<g class="art-sway"
 function creativeArt(id){return '<path d="M0 296 C170 270 360 330 520 292 C700 250 830 315 1000 280 V360 H0Z" fill="#6c55b8" opacity=".62"/><g transform="translate(585 98)" class="art-float"><path d="M0 180 L45 40 L90 180" fill="none" stroke="#ffd36e" stroke-width="14" stroke-linecap="round"/><path d="M120 180 L170 18 L220 180" fill="none" stroke="#ff87b8" stroke-width="14" stroke-linecap="round"/><path d="M240 180 L290 58 L340 180" fill="none" stroke="#74d8ff" stroke-width="14" stroke-linecap="round"/></g><g fill="#fff" class="art-pulse"><path d="M155 92 l12 26 28 3-21 19 6 28-25-14-25 14 6-28-21-19 28-3Z"/><path d="M340 145 l9 18 20 2-15 14 4 20-18-10-18 10 4-20-15-14 20-2Z"/></g>';}
 var ART={reading:readingArt,math:mathArt,writing:writingArt,language:languageArt,science:scienceArt,logic:logicArt,wellbeing:wellbeingArt,creative:creativeArt,world:languageArt};
 var SCENE_MEDIA={
-  home:{src:'./assets/theme-media/generated-v4/unicorn-phonics-meadow.webp',position:'center 49%',alt:'Luminous unicorn in an enchanted phonics meadow'},
+  home:{src:'./assets/theme-media/generated/home-unicorn-storytime.webp',position:'center 46%',alt:'Princess and unicorn reading together in a luminous storybook meadow'},
   phonics:{src:'./assets/theme-media/generated-v4/unicorn-phonics-meadow.webp',position:'center 49%',alt:'Unicorn discovering letter sounds in a magical meadow'},
   princess:{src:'./assets/theme-media/generated-v4/princess-story-forest.webp',position:'center 48%',alt:'Young princess explorer following a glowing story trail'},
   safari:{src:'./assets/theme-media/generated-v4/safari-discovery-valley.webp',position:'center 50%',alt:'Friendly safari animals exploring nature together'},
@@ -40,6 +40,24 @@ var SCENE_MEDIA={
   creative:{src:'./assets/theme-media/generated/creative-tower-art-studio.webp',position:'center 52%',alt:'Magical tower art studio'},
   world:{src:'./assets/theme-media/generated-v4/princess-story-forest.webp',position:'center 48%',alt:'Young explorer following a glowing path through stories of the world'}
 };
+var MEDIA_POOLS={
+  home:['home','phonics','princess'],
+  reading:['reading','phonics','home'],
+  math:['math','logic','language'],
+  writing:['writing','creative','reading'],
+  language:['language','princess','reading'],
+  science:['science','safari','wellbeing'],
+  logic:['logic','math','princess'],
+  wellbeing:['wellbeing','princess','safari'],
+  creative:['creative','writing','language'],
+  world:['princess','safari','wellbeing']
+};
+function stablePick(items,seed){
+  if(!items||!items.length)return null;
+  var h=0,t=String(seed||'');
+  for(var i=0;i<t.length;i++)h=((h<<5)-h+t.charCodeAt(i))|0;
+  return items[Math.abs(h)%items.length];
+}
 function mediaFor(domain,skill,template,index){
   var concept=String(skill||'').toLowerCase(),key=domain;
   if(domain==='reading'&&/(letter|sound|vowel|cvc|blend|phon|rhyme|syllable)/.test(concept))key='phonics';
@@ -48,7 +66,23 @@ function mediaFor(domain,skill,template,index){
   else if(domain==='writing'&&/(draw|art|create|imagin)/.test(concept))key='creative';
   else if(domain==='creative'&&/(story|book|write)/.test(concept))key='writing';
   else if(domain==='science'&&/(observe|weather|season|plant|animal|habitat|living|herbivore|carnivore|food chain|body)/.test(concept))key='safari';
-  return SCENE_MEDIA[key]||SCENE_MEDIA[domain]||SCENE_MEDIA.home;
+  var pool=MEDIA_POOLS[key]||MEDIA_POOLS[domain]||['home'];
+  var picked=stablePick(pool,[domain,key,skill,template,index].join('|'));
+  return SCENE_MEDIA[picked]||SCENE_MEDIA[key]||SCENE_MEDIA[domain]||SCENE_MEDIA.home;
+}
+function gallery(){
+  var items=[
+    ['reading','Unicorn & Storybook'],
+    ['math','Royal Numbers'],
+    ['logic','Ice Palace Puzzles'],
+    ['science','Mermaid Discovery'],
+    ['wellbeing','Forest Friends'],
+    ['creative','Pixie Art & Making']
+  ];
+  return '<div class="reward-world-gallery" aria-label="Magical learning worlds">'+items.map(function(item){
+    var m=SCENE_MEDIA[item[0]]||SCENE_MEDIA.home;
+    return '<figure class="reward-world-card"><img src="'+m.src+'" alt="'+esc(m.alt)+'" loading="lazy" decoding="async" style="object-position:'+m.position+'"><figcaption>'+esc(item[1])+'</figcaption></figure>';
+  }).join('')+'</div>';
 }
 function scene(domain,progress,variant){
   var context=variant&&typeof variant==='object'?variant:null,t=SakhiTrails.get(domain),p=t.palette,ch=SakhiTrails.chapter(domain,progress),id='s'+Math.random().toString(36).slice(2,8),media=context?mediaFor(domain,context.skill,context.template,context.question):(variant==='home'?SCENE_MEDIA.home:(variant==='princess'?SCENE_MEDIA.princess:SCENE_MEDIA[domain]));
@@ -73,5 +107,5 @@ function objectSet(domain,count){var w=WORLD[domain]||WORLD.reading;return Array
 function storyCue(domain,skill,qIndex){var t=SakhiTrails.get(domain),chapter=SakhiTrails.chapter(domain,0),n=(qIndex||0)+1;var lead={reading:'Help Luna unlock the next page with careful eyes and ears.',math:'Help Princess Nova light the palace crystals with number power.',writing:'Help Princess Mira fill the lantern studio with beautiful marks and words.',language:'Open a new room in the Story Castle by listening and thinking.',science:'Explore like a scientist: notice evidence, predict, and discover.',logic:'Guide Faye through the puzzle garden one clever step at a time.',wellbeing:'Grow the Friendship Garden with a kind, safe choice.',creative:'Add sparkle to the Starlight Stage by making, moving, and imagining.',world:'Follow the discovery map: compare the past, read the world, and use evidence.'}[domain]||'Take one brave learning step.';return{eyebrow:t.companion+' says',text:lead,step:'Magic step '+n};}
 function celebration(domain){var t=SakhiTrails.get(domain);return{title:'Wonderful work!',body:t.companion+' helped you move farther through '+t.name+'.',icon:t.icon};}
 function worldTokens(domain){return WORLD[domain]||WORLD.reading;}
-return{scene:scene,mediaFor:mediaFor,objectSet:objectSet,storyCue:storyCue,celebration:celebration,worldTokens:worldTokens};
+return{scene:scene,mediaFor:mediaFor,gallery:gallery,objectSet:objectSet,storyCue:storyCue,celebration:celebration,worldTokens:worldTokens};
 })();
