@@ -37,6 +37,7 @@ for (const token of ['goalForSkill', 'math.compare', 'math.addition_5', 'math.ca
 }
 if(!adaptive.includes('age-appropriate starting lesson')||!plan.includes("domain:'math'")||!plan.includes("domain:'science'"))throw new Error('Teaching baseline or daily learning priorities are missing');
 if(app.includes('math.count_20'))throw new Error('Math placement references a missing counting skill');
+if(!app.includes("var id=m.pick&&m.pick.skill_id"))throw new Error('Home landing must tolerate unresolved dynamic missions without crashing');
 if (!read('sakhi-templates.js').includes("q.template==='guided'") || !read('sakhi-activities.js').includes('success_criteria')) throw new Error('Guided measurable activity template is missing');
 
 const speechFunction = read('supabase/functions/sakhi-speech/index.ts');
