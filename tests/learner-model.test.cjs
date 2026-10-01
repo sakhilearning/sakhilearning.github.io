@@ -2,7 +2,7 @@ const fs=require('fs'),vm=require('vm'),path=require('path');
 const root=path.join(__dirname,'..'),store={};
 function src(f){return fs.readFileSync(path.join(root,f),'utf8');}
 const curriculum=JSON.parse(src('data/curriculum-v3.json'));
-const ctx={window:{},console,Date,crypto:{randomUUID:()=>String(Math.random())},localStorage:{getItem:k=>store[k]||null,setItem:(k,v)=>store[k]=v,removeItem:k=>delete store[k]}};ctx.window=ctx;ctx.SAKHI_CURRICULUM_DATA=curriculum;ctx.SakhiCloud={enqueue(){},scheduleSnapshot(){}};vm.createContext(ctx);
+const ctx={window:{},console,Date,setTimeout,clearTimeout,crypto:{randomUUID:()=>String(Math.random())},localStorage:{getItem:k=>store[k]||null,setItem:(k,v)=>store[k]=v,removeItem:k=>delete store[k]}};ctx.window=ctx;ctx.SAKHI_CURRICULUM_DATA=curriculum;ctx.SakhiCloud={enqueue(){},scheduleSnapshot(){}};vm.createContext(ctx);
 (async()=>{
  vm.runInContext(src('sakhi-curriculum.js'),ctx);await ctx.SakhiCurriculum.load();vm.runInContext(src('sakhi-progress.js'),ctx);vm.runInContext(src('sakhi-adaptive.js'),ctx);
  const activity={activity_id:'fast-1',skill_id:'math.count_sequence',domain_id:'math',band:2,evidence_mode:'objective',questions:[{question_key:'a'},{question_key:'b'},{question_key:'c'}]};
