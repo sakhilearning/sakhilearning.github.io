@@ -11,7 +11,7 @@ if(!/window\.SAKHI_NARRATION_MANIFEST=/.test(html))throw new Error('Embedded nar
 if(!/window\.SakhiApp=/.test(html))throw new Error('App runtime not embedded');
 if(!/\.today-card\{/.test(html))throw new Error('Compiled CSS not embedded');
 if(/@layer\s/.test(html))throw new Error('Deployment CSS still contains @layer and may fail on older browsers');
-if(!/4\.5\.0/.test(html))throw new Error('4.5.1 build marker missing');
+if(!/4\.5\.1/.test(html))throw new Error('4.5.1 build marker missing');
 if(html.includes('/*__SAKHI_'))throw new Error('Unresolved build placeholder in deployment HTML');
 if(!/class=\"world-art\"/.test(html)||!/mission-story/.test(html))throw new Error('Immersive world presentation missing from deployment');
 if(!/af_heart/.test(html)||!/NATURAL_SPEED=\.86/.test(html)||!/describeQuestion/.test(html)||!/startKeepAlive/.test(html)||!/prepare:loadNaturalVoice/.test(html)||!/playWithHtmlAudio/.test(html)||!/voicePrepare/.test(html))throw new Error('Detailed non-blocking Kokoro readiness gate missing from deployment');
