@@ -122,7 +122,22 @@ function q(){return current.questions[qIndex];}
 async function speak(repeatMode){var run=++narrationRun,pill=$('#voicePill'),button=$('#hearBtn');if(pill)pill.textContent='✨ Sakhi voice';if(button)button.setAttribute('aria-busy','true');try{await Audio.narrate(q(),{repeat:!!repeatMode});}catch(e){if(run===narrationRun&&e.kind!=='DISABLED'){console.warn('[Sakhi voice]',e);if(pill)pill.textContent='📖 Read prompt';if(repeatMode)toast('This prompt is ready to read on screen.');}}finally{if(run===narrationRun&&button)button.removeAttribute('aria-busy');}}
 function renderActivity(){
   if(!current)return;var d=current.domain_id,p=Prog.domainProgress(d),t=Trails.get(d),cue=Pres.storyCue(d,current.skill_title,qIndex),phase=q().learning_phase||'practice',phaseLabel={learn:'Learn it together',connect:'Warm up',practice:'Try it',apply:'Use the idea',transfer:'Think deeper'}[phase]||'Try it';setWorld(d);
-  clearAdvance();answerLocked=false;activityCompleted=false;$('#activityTrail').textContent=t.name;$('#activitySkill').textContent=current.skill_title;$('#activityProgress').textContent=current.is_wrap_up?'Finish line':('Quest '+(missionIndex+1)+' of '+plan.missions.length+' · Step '+(qIndex+1)+' of '+current.questions.length);$('#activityScene').innerHTML=Pres.scene(d,p,{kind:'activity',skill:current.skill_title,template:q().template,question:qIndex});$('#missionEyebrow').textContent=t.companion;$('#missionStory').textContent=q().coach_tip||cue.text||'Take your time. I’m right here.';$('#missionStep').textContent=phaseLabel;$('#questLabel').textContent=current.is_wrap_up?'Your clear wrap-up':phaseLabel+' · '+(qIndex+1)+' of '+current.questions.length;$('#questionPrompt').textContent=q().prompt;/* The coaching line lives in the companion card. It used to be printed here as well, so the child saw the same sentence twice on one screen. The hint area now holds hints only. */
+  clearAdvance();answerLocked=false;activityCompleted=false;$('#activityTrail').textContent=t.name;$('#activitySkill').textContent=current.skill_title;$('#activityProgress').textContent=current.is_wrap_up?'Finish line':('Quest '+(missionIndex+1)+' of '+plan.missions.length+' · Step '+(qIndex+1)+' of '+current.questions.length);$('#activityScene').innerHTML=Pres.scene(d,p,{kind:'activity',skill:current.skill_title,template:q().template,question:qIndex});$('#missionEyebrow').textContent=t.companion;$('#missionStory').textContent=q().coach_tip||cue.text||'Take your time. I’m right here.';$('#missionStep').textContent=phaseLabel;$('#questLabel').textContent=current.is_wrap_up?'Your clear wrap-up':phaseLabel+' · '+(qIndex+1)+' of '+current.questions.length;$('#questionPrompt').textContent=q().prompt;
+  (function(){
+    /* The teaching step: the idea, then a solved example, then why it is right.
+       Only the first question of a new concept carries one. */
+    var panel=$('#teachPanel'),t=q().teaching;
+    if(!panel)return;
+    if(!t){panel.hidden=true;panel.textContent='';return;}
+    var html='<p class="teach-explain">'+Pres.esc(t.explain||'')+'</p>';
+    if(t.worked&&t.worked.prompt){
+      html+='<div class="teach-worked"><span class="teach-tag">Here is one</span>'+
+            '<p class="teach-q">'+Pres.esc(t.worked.prompt)+'</p>'+
+            '<p class="teach-a">'+Pres.esc(String(t.worked.answer))+'</p></div>';
+    }
+    if(t.because)html+='<p class="teach-because">'+Pres.esc(t.because)+'</p>';
+    panel.innerHTML=html;panel.hidden=false;
+  })();/* The coaching line lives in the companion card. It used to be printed here as well, so the child saw the same sentence twice on one screen. The hint area now holds hints only. */
   var visibleHints=hintLevel?(q().hints||[]).slice(0,hintLevel).map(function(h){return'💡 '+h;}):[];$('#hintArea').textContent=visibleHints.join('  ');$('#checkBtn').textContent=current.is_wrap_up?'Finish trail ✓':'Check ✓';awaitingNext=false;
   questionStartedAt=Date.now();controller=Tpl.render($('#interaction'),q(),{domain:d,onProgress:syncCheckState});syncCheckState();$('#hintBtn').disabled=!(q().hints||[]).length;
 }

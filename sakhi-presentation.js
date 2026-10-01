@@ -122,5 +122,5 @@ function storyCue(domain,skill,qIndex){
 }
 function celebration(domain){var t=SakhiTrails.get(domain);return{title:'Wonderful work!',body:t.companion+' helped you move farther through '+t.name+'.',icon:t.icon};}
 function worldTokens(domain){return WORLD[domain]||WORLD.reading;}
-return{scene:scene,mediaFor:mediaFor,gallery:gallery,objectSet:objectSet,storyCue:storyCue,celebration:celebration,worldTokens:worldTokens};
+return{esc:esc,scene:scene,mediaFor:mediaFor,gallery:gallery,objectSet:objectSet,storyCue:storyCue,celebration:celebration,worldTokens:worldTokens};
 })();

@@ -114,8 +114,51 @@ for (const m of code.matchAll(/[A-Za-z_]+\.pick\.[a-z_]+/g)) {
 check('no mission pick is read without a guard in its function',
   unguarded.length === 0, [...new Set(unguarded)]);
 
+/* ---- 4. a new concept must TEACH before it tests ---- */
+
+let taught = 0, missingExplain = 0, workedEqualsQuestion = 0, noWorked = 0;
+for (const sk of curriculum.skills) {
+  let a;
+  try { a = Act.generate(sk.skill_id, 2, 'teach', [], { teachFirst: true }); } catch (e) { continue; }
+  const t = a.questions[0].teaching;
+  if (!t) { failures.push('no teaching step for ' + sk.skill_id); continue; }
+  taught++;
+  if (!t.explain || t.explain.length < 25) missingExplain++;
+  if (!t.worked || !t.worked.prompt) noWorked++;
+  else {
+    /* Build-style tasks keep one prompt ("Spell the word") and vary the target,
+     * so an identical prompt is fine. What must never match is the whole task:
+     * same prompt AND same answer as the question she is about to answer. */
+    const sameTask = t.worked.prompt === a.questions[0].prompt &&
+      String(t.worked.answer) === String(Array.isArray(a.questions[0].answer)
+        ? a.questions[0].answer.join(' ') : a.questions[0].answer);
+    if (sameTask) workedEqualsQuestion++;
+  }
+}
+check('every skill teaches before it tests', taught === curriculum.skills.length, taught);
+check('every teaching step explains the idea', missingExplain === 0, missingExplain);
+check('every teaching step shows a solved example', noWorked === 0, noWorked);
+check('the solved example is never the same task as question one',
+  workedEqualsQuestion === 0, workedEqualsQuestion);
+
+/* Teaching is only for a new or struggling concept, not every visit. */
+const repeat = Act.generate('math.compare', 2, 'again', [], { teachFirst: false });
+check('a confident learner is not re-taught', !repeat.questions[0].teaching);
+
+/* It has to be spoken, because she cannot read it. */
+const audio = fs.readFileSync(path.join(root, 'sakhi-audio.js'), 'utf8');
+check('the teaching is spoken before the question',
+  /if\(question\.teaching\)\{/.test(audio) && /t\.worked&&t\.worked\.prompt/.test(audio));
+
+/* Rendered through the shared escaper rather than a second copy of one. */
+const appSrc = fs.readFileSync(path.join(root, 'sakhi-app.js'), 'utf8');
+check('the teach panel renders', /teachPanel/.test(appSrc));
+check('the teach panel escapes through the shared helper', /Pres\.esc\(/.test(appSrc));
+check('no duplicate escaper was added to the app',
+  !/function esc\(/.test(appSrc));
+
 if (failures.length) {
   console.error('lesson-coaching FAILED:\n- ' + failures.join('\n- '));
   process.exit(1);
 }
-console.log(`lesson-coaching passed: ${generated} activities, none repeat one coaching line, coaching moves with the phase, it renders once, and unresolved missions are guarded.`);
+console.log(`lesson-coaching passed: ${generated} activities; no repeated coaching line; coaching moves with the phase; ${taught} skills teach before testing with a solved example; unresolved missions guarded.`);

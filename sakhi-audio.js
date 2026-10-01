@@ -179,6 +179,15 @@ function shouldReadChoices(question,repeatMode){
 }
 function describeQuestion(question,repeatMode){
   var prompt=spokenValue(question.prompt||''),guide=spokenValue(question.spoken_instruction||question.narration||''),parts=[guide||prompt];
+  /* A teaching step is useless to a child who cannot read yet, so the
+     explanation and the solved example are spoken before the question. */
+  if(question.teaching){
+    var t=question.teaching,lead=[];
+    if(t.explain)lead.push(spokenValue(t.explain));
+    if(t.worked&&t.worked.prompt)lead.push('Here is one. '+spokenValue(t.worked.prompt)+' The answer is '+spokenValue(String(t.worked.answer))+'.');
+    if(t.because)lead.push(spokenValue(t.because));
+    if(lead.length)parts=[lead.join(' ')].concat(parts);
+  }
   if(question.template==='choice'&&question.requires_spoken_choices===true&&Array.isArray(question.choices)&&shouldReadChoices(question,repeatMode))parts.push('You can choose '+listValues(question.choices)+'.');
   return parts.join(' ').replace(/\s+/g,' ').trim();
 }
