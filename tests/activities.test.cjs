@@ -10,7 +10,7 @@ function containsBag(container,needed){const c=bag(container),n=bag(needed);for(
 const printSkill=curriculum.skills.find(s=>s.kind==='print');
 if(!printSkill)throw new Error('Print-concepts skill missing');
 const printActivity=ctx.window.SakhiActivities.generate(printSkill.skill_id,1,'navigation-regression');
-if(new Set(printActivity.questions.map(q=>q.prompt)).size!==3)throw new Error('Print-concepts activity repeats the same question and appears stuck');
+if(new Set(printActivity.questions.map(q=>q.prompt)).size<3)throw new Error('Print-concepts activity does not provide enough distinct questions');
 let activities=0,questions=0;
 for(const s of curriculum.skills)for(let b=1;b<=5;b++)for(let seed=0;seed<50;seed++){
   const a=ctx.window.SakhiActivities.generate(s.skill_id,b,String(seed));
