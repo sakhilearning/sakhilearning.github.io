@@ -52,12 +52,13 @@ var MEDIA_POOLS={
   creative:['creative','writing','language'],
   world:['princess','safari','wellbeing']
 };
-function stablePick(items,seed){
-  if(!items||!items.length)return null;
+function stableIndex(items,seed){
+  if(!items||!items.length)return 0;
   var h=0,t=String(seed||'');
   for(var i=0;i<t.length;i++)h=((h<<5)-h+t.charCodeAt(i))|0;
-  return items[Math.abs(h)%items.length];
+  return Math.abs(h)%items.length;
 }
+function stablePick(items,seed){return!items||!items.length?null:items[stableIndex(items,seed)];}
 function mediaFor(domain,skill,template,index){
   if(template==='practice-card'||template==='today-world')return SCENE_MEDIA[domain]||SCENE_MEDIA.home;
   var concept=String(skill||'').toLowerCase(),key=domain;
@@ -67,8 +68,8 @@ function mediaFor(domain,skill,template,index){
   else if(domain==='writing'&&/(draw|art|create|imagin)/.test(concept))key='creative';
   else if(domain==='creative'&&/(story|book|write)/.test(concept))key='writing';
   else if(domain==='science'&&/(observe|weather|season|plant|animal|habitat|living|herbivore|carnivore|food chain|body)/.test(concept))key='safari';
-  var pool=MEDIA_POOLS[key]||MEDIA_POOLS[domain]||['home'];
-  var picked=stablePick(pool,[domain,key,skill,template,index].join('|'));
+  var pool=MEDIA_POOLS[key]||MEDIA_POOLS[domain]||['home'],base=stableIndex(pool,[domain,key,skill,template].join('|')),step=Math.max(0,Number(index)||0);
+  var picked=pool[(base+step)%pool.length];
   return SCENE_MEDIA[picked]||SCENE_MEDIA[key]||SCENE_MEDIA[domain]||SCENE_MEDIA.home;
 }
 function gallery(){
@@ -105,7 +106,20 @@ function svgObject(kind,i){
   return '<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 5 L39 23 L59 24 L44 37 L49 57 L32 46 L15 57 L20 37 L5 24 L25 23Z" fill="'+(k%2?'#ffd36e':'#ff8cbd')+'" stroke="#fff" stroke-width="3"/></svg>';
 }
 function objectSet(domain,count){var w=WORLD[domain]||WORLD.reading;return Array.from({length:count},function(_,i){return '<button class="learn-object" type="button" aria-label="countable object '+(i+1)+'" aria-pressed="false" data-count-object><span class="object-art">'+svgObject(w.object,i)+'</span><small class="count-mark" aria-hidden="true"></small></button>';}).join('');}
-function storyCue(domain,skill,qIndex){var t=SakhiTrails.get(domain),chapter=SakhiTrails.chapter(domain,0),n=(qIndex||0)+1;var lead={reading:'Help Luna unlock the next page with careful eyes and ears.',math:'Help Princess Nova light the palace crystals with number power.',writing:'Help Princess Mira fill the lantern studio with beautiful marks and words.',language:'Open a new room in the Story Castle by listening and thinking.',science:'Explore like a scientist: notice evidence, predict, and discover.',logic:'Guide Faye through the puzzle garden one clever step at a time.',wellbeing:'Grow the Friendship Garden with a kind, safe choice.',creative:'Add sparkle to the Starlight Stage by making, moving, and imagining.',world:'Follow the discovery map: compare the past, read the world, and use evidence.'}[domain]||'Take one brave learning step.';return{eyebrow:t.companion+' says',text:lead,step:'Magic step '+n};}
+function storyCue(domain,skill,qIndex){
+  var t=SakhiTrails.get(domain),n=(qIndex||0)+1,cues={
+    reading:['Look closely for the clue that helps this word or sentence make sense.','Now try the same reading idea on a fresh example.','Use the sounds and meaning together before you choose.','Read it once more and explain what clue helped you.','Stretch the idea into one last new reading example.'],
+    math:['Notice the numbers first, then decide what relationship matters.','Now use the same number idea in a different example.','Show the math in your head, with objects, or with a quick picture.','Check your answer by asking whether it makes sense.','Use the idea one more time in a slightly different problem.'],
+    writing:['Say the idea first, then decide what marks or words will show it clearly.','Add one useful detail to make your message stronger.','Try the same writing idea in a new sentence or pattern.','Read your work back and notice one thing you can improve.','Use what you learned to make one final clear message.'],
+    language:['Listen for the important clue before you answer.','Now connect what you heard to a new example.','Hold the key idea in your mind and use it to reason.','Explain the clue that made your answer fit.','Transfer the listening idea to one last new situation.'],
+    science:['Start with what you can observe, not a guess.','Now compare the evidence in a new example.','Make a prediction, then check which clue supports it.','Explain what the evidence tells you and why.','Use the science idea in one final situation you have not seen yet.'],
+    logic:['Find the rule or clue before you make a move.','Now test that rule on a new puzzle.','Keep the clues that must be true and ignore distractions.','Check whether your answer satisfies every clue.','Use the pattern or rule one more time in a new puzzle.'],
+    wellbeing:['Notice how everyone in the situation might feel or stay safe.','Try the same kind choice in a different situation.','Think about what is fair, safe, and respectful before choosing.','Explain why your choice helps the people involved.','Use the same caring idea in one last new situation.'],
+    creative:['Notice the idea, pattern, sound, or shape you want to build from.','Change one part and see how your creation grows.','Try a new combination instead of copying the first one.','Look at what you made and choose one detail to improve.','Use the idea freely in one final creative challenge.'],
+    world:['Look for the place, time, map, or history clue first.','Now compare that clue with a different example.','Use the evidence to decide what changed, stayed the same, or belongs where.','Explain which clue from the world or past supports your answer.','Transfer the idea to one last map, culture, or history example.']
+  },list=cues[domain]||['Notice the clue first.','Try the idea on a new example.','Use what you noticed to reason.','Explain why your answer fits.','Transfer the idea one more time.'],lead=list[(n-1)%list.length];
+  return{eyebrow:t.companion+' says',text:lead,step:'Magic step '+n};
+}
 function celebration(domain){var t=SakhiTrails.get(domain);return{title:'Wonderful work!',body:t.companion+' helped you move farther through '+t.name+'.',icon:t.icon};}
 function worldTokens(domain){return WORLD[domain]||WORLD.reading;}
 return{scene:scene,mediaFor:mediaFor,gallery:gallery,objectSet:objectSet,storyCue:storyCue,celebration:celebration,worldTokens:worldTokens};
