@@ -7,13 +7,15 @@ const activities=read('sakhi-activities.js'),app=read('sakhi-app.js'),audio=read
 for(const vague of [/show a grown-up one specific thing you learned/i,/draw one by yourself/i,/write it once by yourself/i]){
   if(vague.test(app)||vague.test(activities)||vague.test(wrapups))throw new Error('A vague or unsupported child instruction remains: '+vague);
 }
-for(const token of ['function wrapUpFor(domain)','missions.length<4','dynamic:true','current.is_wrap_up','completeWrapUp','answers.length>=2','New challenge →',"'Quest '+(missionIndex+1)"]){
+for(const token of ['function wrapUpFor(domain)','missions.length<4','dynamic:true','current.is_wrap_up','completeWrapUp',"q().evidence_mode==='practice'",'Next learning step →',"'Quest '+(missionIndex+1)"]){
   if(!app.includes(token))throw new Error('Deep trail flow is missing '+token);
 }
 for(const domain of ['reading','math','writing','language','science','logic','wellbeing','creative','world'])if(!new RegExp(domain+":\\{prompt:").test(wrapups))throw new Error('Clear wrap-up missing for '+domain);
 if(!app.includes('Audio.prefetch(replacement)')||!app.includes('Audio.prefetchActivity(a)'))throw new Error('Adaptive or trail audio is not warmed before navigation');
 if(/APPLE_MOBILE&&item\.url/.test(audio))throw new Error('iPad playback still reopens a prefetched clip URL');
-if(!progress.includes('fastPass=total>=2')||!progress.includes('question_keys:answers.map'))throw new Error('Fast mastery or answered-only repeat history is missing');
+if(!progress.includes('fastPass=total>=3')||!progress.includes('question_keys:answers.map'))throw new Error('Evidence depth or answered-only repeat history is missing');
+if(!activities.includes('depthTarget')||!activities.includes('coachTip')||!activities.includes("learning_phase='transfer'"))throw new Error('Teach-practice-apply-transfer lesson depth is missing');
+if(app.includes('fast_track_complete'))throw new Error('Two-answer fast-track should not terminate a lesson early');
 if(!adaptive.includes('unused=available.filter'))throw new Error('Trail selection may repeat a used skill while a new one is available');
 if(!templates.includes('gold star')||!templates.includes("g.fillText('★'"))throw new Error('Tracing lacks a clear start-to-finish path');
 
@@ -24,4 +26,4 @@ for(const skill of curriculum.skills.filter(s=>['trace_number','trace_stroke','t
     if(/by yourself/i.test(q.prompt)||!/trace/i.test(q.prompt))throw new Error('Trace instruction is unclear: '+q.prompt);
   }
 }
-console.log('Flow depth passed: four adaptive trail quests, fast mastery advance, clear wrap-ups, unambiguous tracing, and prefetched iPad audio.');
+console.log('Flow depth passed: teach-practice-apply-transfer lessons, no two-answer fast-track, clear wrap-ups, tracing, and prefetched iPad audio.');

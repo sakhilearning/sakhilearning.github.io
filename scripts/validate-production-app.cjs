@@ -33,7 +33,7 @@ if(/SakhiCloud\.speak\(/.test(audio))throw new Error('Narration still depends on
 if(!/Adaptive\.pick\(domain,\[\]\)/.test(read('sakhi-app.js'))||!/advanceTimer=setTimeout/.test(read('sakhi-app.js')))throw new Error('Trail fallback or automatic question progression missing');
 if(!/Test Sakhi voice/.test(read('sakhi-app.js'))||!/ensureVoiceReady/.test(read('sakhi-app.js'))||!/voicePrepare/.test(read('index.template.html')))throw new Error('Kokoro readiness controls missing');
 if(!/startChosenLesson/.test(read('sakhi-app.js'))||!/advanceProgramDay/.test(read('sakhi-app.js'))||!/recentQuestionKeys/.test(read('sakhi-progress.js')))throw new Error('Parent curriculum control or repetition memory missing');
-if(!/\['math','science','language','reading','world','logic','wellbeing','writing','creative'\]/.test(read('sakhi-app.js')))throw new Error('Home trail order must visibly prioritize Math, Science, Listening, and Reading');
+if(!/priorities=\[\{domain:'math'.*\{domain:'science'.*\{domain:'language'.*\{domain:'reading'/s.test(plan))throw new Error('Daily plan must prioritize Math, Science, Listening, and Reading');
 const progress=read('sakhi-progress.js');if(!/completeActivity/.test(progress))throw new Error('Missing completion path');
 const css=read('sakhi-production.css');if(/!important/.test(css))throw new Error('CSS contains !important');if(!/@layer reset,tokens,base,layout,components,experience,cinematic,states,utilities/.test(css))throw new Error('Missing CSS source layers');
 const html=read('index.template.html');const idMatches=[...html.matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]);if(new Set(idMatches).size!==idMatches.length)throw new Error('Duplicate HTML id');
@@ -42,7 +42,7 @@ const kokoroEntry=read('scripts/kokoro-browser-entry.js');if(!/numThreads\s*=\s*
 const narration=JSON.parse(read('assets/audio/narration/manifest.json'));
 const narrationRequired=JSON.parse(read('assets/audio/narration/texts-v5.json'));
 if(narrationRequired.some(text=>!narration.files[text]||!fs.existsSync(path.join(root,'assets/audio/narration',narration.files[text]))))throw new Error('Bundled narration pack is incomplete');
-console.log('Sakhi V4.4.2 source validation passed:');
+console.log('Sakhi V4.5.0 source validation passed:');
 console.log(` - ${c.skills.length} skills across 9 persistent subject trails`);
 console.log(' - prerequisite graph sound');
 console.log(' - 26 weeks / 130 days / 30 minutes validated');
