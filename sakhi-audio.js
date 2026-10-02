@@ -177,25 +177,38 @@ function shouldReadChoices(question,repeatMode){
   var policy=question&&question.narration_policy||'prompt_only';
   return policy==='choices_always'||(policy==='choices_on_repeat'&&!!repeatMode);
 }
-function describeQuestion(question,repeatMode){
-  var prompt=spokenValue(question.prompt||''),guide=spokenValue(question.spoken_instruction||question.narration||''),parts=[guide||prompt];
-  /* A teaching step is useless to a child who cannot read yet, so the
-     explanation and the solved example are spoken before the question. */
+function questionSegments(question,repeatMode){
+  var prompt=spokenValue(question.prompt||''),guide=spokenValue(question.spoken_instruction||question.narration||''),main=guide||prompt,segments=[];
+  /* The teaching is its own utterance rather than a prefix on the question.
+     Joined, every teaching-and-question pair would be a separate recording in
+     the bundled pack -- the cross product instead of the sum -- and the pack
+     has to hold every line the voice can ask for. */
   if(question.teaching){
-    var t=question.teaching,lead=[];
-    if(t.explain)lead.push(spokenValue(t.explain));
-    if(t.worked&&t.worked.prompt)lead.push('Here is one. '+spokenValue(t.worked.prompt)+' The answer is '+spokenValue(String(t.worked.answer))+'.');
-    if(t.because)lead.push(spokenValue(t.because));
-    if(lead.length)parts=[lead.join(' ')].concat(parts);
+    /* Explanation, worked example and reason are three utterances, not one
+       string: the explanation and the reason are fixed per skill, while the
+       worked example changes with the seed, so joining them would re-record
+       the fixed parts once per example. */
+    var t=question.teaching;
+    if(t.explain)segments.push(spokenValue(t.explain));
+    if(t.worked&&t.worked.prompt){
+      /* The worked example is a question from the same bank, so speaking its
+         prompt as its own utterance reuses the clip the question already needs
+         instead of recording a second near-identical line around it. */
+      segments.push('Here is one.');
+      segments.push(spokenValue(t.worked.prompt));
+      segments.push('The answer is '+spokenValue(String(t.worked.answer))+'.');
+    }
+    if(t.because)segments.push(spokenValue(t.because));
   }
-  if(question.template==='choice'&&question.requires_spoken_choices===true&&Array.isArray(question.choices)&&shouldReadChoices(question,repeatMode))parts.push('You can choose '+listValues(question.choices)+'.');
-  return parts.join(' ').replace(/\s+/g,' ').trim();
+  if(main)segments.push(main);
+  if(question.template==='choice'&&question.requires_spoken_choices===true&&Array.isArray(question.choices)&&shouldReadChoices(question,repeatMode))segments.push('You can choose '+listValues(question.choices)+'.');
+  return segments.map(function(x){return String(x).replace(/\s+/g,' ').trim();}).filter(Boolean);
 }
 async function prefetch(question){
   if(!enabled||!question)return false;
   try{
     await loadNaturalVoice();var texts=[],segs=Array.isArray(question.audioSegments)?question.audioSegments:null;
-    if(segs&&segs.length)segs.forEach(function(seg){if(seg&&seg.text)texts.push(seg.text);});else{texts.push(describeQuestion(question,false));if(question.narration_policy==='choices_on_repeat')texts.push(describeQuestion(question,true));}
+    if(segs&&segs.length)segs.forEach(function(seg){if(seg&&seg.text)texts.push(seg.text);});else{texts=texts.concat(questionSegments(question,false));if(question.narration_policy==='choices_on_repeat')texts=texts.concat(questionSegments(question,true));}
     var chunks=[];texts.forEach(function(text){childChunks(text).forEach(function(part){if(part&&chunks.indexOf(part)<0)chunks.push(part);});});
     await Promise.all(chunks.map(fetchServerPart));return true;
   }catch(e){console.warn('[Sakhi] Narration prefetch:',e&&e.message||e);return false;}
@@ -208,7 +221,13 @@ async function playTransitionCue(){
 async function narrate(question,options){
   if(!enabled)throw fault('DISABLED','Spoken guidance is turned off in Parent Settings.');if(!question)return false;
   options=options||{};lastQuestion=question;lastText=describeQuestion(question,!!options.repeat);var segs=Array.isArray(question.audioSegments)?question.audioSegments:null;
-  if(!segs||!segs.length)return speakText(lastText);
+  if(!segs||!segs.length){
+    /* Each segment is spoken on its own so the pack holds one recording per
+       idea rather than one per teaching-and-question combination. */
+    var lines=questionSegments(question,!!options.repeat);
+    for(var s=0;s<lines.length;s++){if(!await speakText(lines[s]))return false;if(s<lines.length-1)await delay(180);}
+    return true;
+  }
   for(var i=0;i<segs.length;i++){
     var seg=segs[i]||{};
     if(seg.type==='phoneme'){
@@ -217,6 +236,8 @@ async function narrate(question,options){
   }
   return true;
 }
+function describeQuestion(question,repeatMode){return questionSegments(question,repeatMode).join(' ');}
+
 function repeat(){return lastQuestion?narrate(lastQuestion,{repeat:true}):(lastText?speak(lastText):Promise.resolve(false));}
 async function loadManifest(){
   if(manifest)return manifest;if(window.SAKHI_PHONEME_MANIFEST){manifest=window.SAKHI_PHONEME_MANIFEST;return manifest;}
@@ -235,5 +256,5 @@ async function report(){var m=await loadManifest();return{required:m.required.le
 function setEnabled(v){enabled=!!v;if(!enabled){stopAll();stopKeepAlive();}}
 function status(){return{enabled:enabled,unlocked:unlocked,provider:lastProvider,lastError:lastError,engine:lastDiag.engine,httpStatus:lastDiag.httpStatus,mime:lastDiag.mime,bytes:lastDiag.bytes,decode:lastDiag.decode,playbackStarted:lastDiag.playbackStarted,cached:lastDiag.cached,naturalState:naturalState,naturalMode:'kokoro-local-first',naturalVoice:NATURAL_VOICE,naturalSpeed:NATURAL_SPEED,naturalProgress:naturalProgress,naturalError:naturalError&&naturalError.message||null,localClips:narrationManifest?Object.keys(narrationManifest).length:0,appleMobile:APPLE_MOBILE};}
 if(typeof document!=='undefined')document.addEventListener('touchend',function(){if(enabled&&ctx&&ctx.state==='suspended')ctx.resume().then(startKeepAlive).catch(function(){});},{passive:true});
-return{unlock:unlock,prepare:loadNaturalVoice,warm:warmNaturalVoice,prefetch:prefetch,prefetchActivity:prefetchActivity,playTransitionCue:playTransitionCue,speak:speak,narrate:narrate,repeat:repeat,describeQuestion:describeQuestion,stopAll:stopAll,playPhoneme:playPhoneme,phonemeReport:report,onFault:onFault,setEnabled:setEnabled,isEnabled:function(){return enabled;},isUnlocked:function(){return unlocked;},status:status};
+return{unlock:unlock,prepare:loadNaturalVoice,warm:warmNaturalVoice,prefetch:prefetch,prefetchActivity:prefetchActivity,playTransitionCue:playTransitionCue,speak:speak,narrate:narrate,repeat:repeat,describeQuestion:describeQuestion,questionSegments:questionSegments,childChunks:childChunks,stopAll:stopAll,playPhoneme:playPhoneme,phonemeReport:report,onFault:onFault,setEnabled:setEnabled,isEnabled:function(){return enabled;},isUnlocked:function(){return unlocked;},status:status};
 })();

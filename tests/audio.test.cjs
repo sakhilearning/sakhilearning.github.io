@@ -60,5 +60,27 @@ function src(f){return fs.readFileSync(path.join(root,f),'utf8');}
   const ipad={window:{},document:{baseURI:'https://sakhilearning.github.io/',addEventListener(){}},location:{protocol:'https:',origin:'https://sakhilearning.github.io'},console,setTimeout,clearTimeout,Promise,ArrayBuffer,URL:IpadURL,Blob:function(){},Audio:FakeAudio,fetch:ipadFetch,navigator:{userAgent:'Mozilla/5.0 (iPad; CPU OS 17_0 like Mac OS X)',platform:'iPad',maxTouchPoints:5}};ipad.window=ipad;ipad.SAKHI_PHONEME_MANIFEST={required:[],verified:[]};vm.createContext(ipad);vm.runInContext(src('sakhi-audio.js'),ipad,{filename:'sakhi-audio-ipad.js'});
   await ipad.SakhiAudio.speak(lines[0]);const ipadStatus=ipad.SakhiAudio.status();
   if(!ipadStatus.appleMobile||ipadStatus.provider!=='kokoro-local'||ipadStatus.engine!=='html-audio'||ipadServerCalls||ipadSrc!=='blob:sakhi-prefetched'||ipadLocalCalls!==1)throw new Error('iPad did not play the single prefetched local clip: '+JSON.stringify(ipadStatus));
+  /* Teaching narration must stay separate utterances. Joined onto the question,
+     every teaching-and-question pair becomes its own recording -- the cross
+     product rather than the sum -- and none of those composites were in the
+     bundled pack, so on iPad the teaching step threw and the child heard
+     nothing. Each piece is also reusable: the worked example is a question from
+     the same bank, so its prompt reuses the clip that question already needs. */
+  const taught={prompt:'Find the missing number: 14, __, 16',answer:15,template:'choice',choices:[14,15,16],
+    spoken_instruction:'Use the number path.',
+    teaching:{explain:'Numbers come in a fixed order.',because:'It follows the counting order.',
+      worked:{prompt:'Find the missing number: 14, __, 16',answer:15}}};
+  const segments=ipad.SakhiAudio.questionSegments(taught,false);
+  if(!Array.isArray(segments))throw new Error('questionSegments must return the separate utterances, not one string');
+  if(segments.some(seg=>seg.includes('Numbers come in a fixed order')&&seg.includes('Use the number path')))
+    throw new Error('Teaching is concatenated onto the question: '+JSON.stringify(segments));
+  if(segments.indexOf(taught.teaching.worked.prompt)<0)
+    throw new Error('The worked example prompt is not its own utterance, so its clip cannot be reused: '+JSON.stringify(segments));
+  if(segments.indexOf('Use the number path.')<0)throw new Error('The question guide is not its own utterance: '+JSON.stringify(segments));
+  if(ipad.SakhiAudio.describeQuestion(taught,false)!==segments.join(' '))throw new Error('describeQuestion must stay the joined form of the segments');
+  /* An untaught question must not gain extra utterances. */
+  const plain=ipad.SakhiAudio.questionSegments({prompt:'Why did the seed grow?',answer:'water',template:'choice',choices:['water','rocks']},false);
+  if(plain.length!==1)throw new Error('An untaught question should be one utterance: '+JSON.stringify(plain));
+
   console.log('Audio core passed: bundled af_heart narration starts locally, cancels overlap, and avoids numbered option reading.');
 })().catch(e=>{console.error(e);process.exit(1);});

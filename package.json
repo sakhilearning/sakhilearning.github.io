@@ -1,7 +1,7 @@
 {
   "name": "sakhi-learning-trails-v3",
   "private": true,
-  "version": "4.5.2",
+  "version": "4.6.0",
   "scripts": {
     "syntax": "node scripts/check-syntax.cjs",
     "validate": "node scripts/validate-production-app.cjs",
@@ -29,7 +29,9 @@
     "test:progress-evidence": "node tests/progress-evidence.test.cjs",
     "test:lesson-coaching": "node tests/lesson-coaching.test.cjs",
     "test:content-depth": "node tests/content-depth.test.cjs",
-    "test:activity-routing": "node tests/activity-routing.test.cjs"
+    "test:activity-routing": "node tests/activity-routing.test.cjs",
+    "narration:collect": "node scripts/collect-narration.cjs",
+    "narration:generate": "node scripts/generate-narration.mjs"
   },
   "dependencies": {
     "@huggingface/transformers": "3.8.1",
