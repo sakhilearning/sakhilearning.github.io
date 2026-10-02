@@ -1,1 +1,7 @@
 node_modules/
+
+# dist/ is generated. CI runs `npm run release` on every deploy and uploads the
+# freshly built dist as the Pages artifact, so the committed copy was never the
+# thing being served -- it only duplicated 85MB of narration clips into every
+# working tree and checkout.
+dist/

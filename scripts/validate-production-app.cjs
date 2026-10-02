@@ -1,4 +1,5 @@
 const fs=require('fs'),path=require('path');
+const version=require('../package.json').version;
 const root=path.join(__dirname,'..');
 function read(f){return fs.readFileSync(path.join(root,f),'utf8');}
 const c=JSON.parse(read('data/curriculum-v3.json')),p=JSON.parse(read('data/six-month-plan.json'));
@@ -42,7 +43,7 @@ const kokoroEntry=read('scripts/kokoro-browser-entry.js');if(!/numThreads\s*=\s*
 const narration=JSON.parse(read('assets/audio/narration/manifest.json'));
 const narrationRequired=JSON.parse(read('assets/audio/narration/texts-v5.json'));
 if(narrationRequired.some(text=>!narration.files[text]||!fs.existsSync(path.join(root,'assets/audio/narration',narration.files[text]))))throw new Error('Bundled narration pack is incomplete');
-console.log('Sakhi V4.6.0 source validation passed:');
+console.log(`Sakhi V${version} source validation passed:`);
 console.log(` - ${c.skills.length} skills across 9 persistent subject trails`);
 console.log(' - prerequisite graph sound');
 console.log(' - 26 weeks / 130 days / 30 minutes validated');

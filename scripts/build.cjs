@@ -3,7 +3,13 @@ const path=require('path');
 let esbuild=null;try{esbuild=require('esbuild');}catch(e){}
 const root=path.join(__dirname,'..');
 const dist=path.join(root,'dist');
-const buildId='4.6.0';
+/* package.json is the one place the version is written. Everything else --
+   the build marker, the ?v= asset stamps, the service worker cache name and the
+   worker registration URL -- carries __SAKHI_VERSION__ and is stamped here. The
+   version used to be hand-maintained in nine files, and a bump missed the
+   worker registration URL, which left a stale worker serving the old build. */
+const buildId=require(path.join(root,'package.json')).version;
+const stamp=text=>text.split('__SAKHI_VERSION__').join(buildId);
 const moduleOrder=[
   'supabase-config.js',
   'sakhi-cloud.js',
@@ -79,10 +85,20 @@ let html=read('index.template.html')
   .replaceAll('/*__SAKHI_ICON_DATA__*/',dataUri('icon-192.png','image/png'))
   .replace('/*__SAKHI_RUNTIME_DATA__*/',runtimeData)
   .replace('/*__SAKHI_RUNTIME_JS__*/',runtimeJs);
+/* after the modules are inlined, so the worker registration URL inside
+   sakhi-app.js is stamped too */
+html=stamp(html);
 fs.writeFileSync(path.join(root,'index.html'),html);
 fs.rmSync(dist,{recursive:true,force:true});fs.mkdirSync(dist,{recursive:true});
 fs.writeFileSync(path.join(dist,'index.html'),html);
-for(const f of ['manifest.json','sw.js','icon-180.png','icon-192.png','icon-512.png'])fs.copyFileSync(path.join(root,f),path.join(dist,f));
+/* sw.js and manifest.json are generated from templates for the same reason
+   index.html is: they carry the version. */
+for(const [template,output] of [['sw.template.js','sw.js'],['manifest.template.json','manifest.json']]){
+  const stamped=stamp(read(template));
+  fs.writeFileSync(path.join(root,output),stamped);
+  fs.writeFileSync(path.join(dist,output),stamped);
+}
+for(const f of ['icon-180.png','icon-192.png','icon-512.png'])fs.copyFileSync(path.join(root,f),path.join(dist,f));
 for(const dir of ['data','assets','vendor']){if(fs.existsSync(path.join(root,dir)))fs.cpSync(path.join(root,dir),path.join(dist,dir),{recursive:true});}
 fs.writeFileSync(path.join(dist,'BUILD.txt'),`Sakhi Learning Trails ${buildId}\nSelf-contained runtime: index.html\n`);
 console.log(`Built self-contained ${buildId}: index.html + dist/`);

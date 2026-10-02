@@ -1,4 +1,5 @@
 const fs = require('fs');
+const version=require('../package.json').version;
 const path = require('path');
 const root = path.join(__dirname, '..');
 const read = file => fs.readFileSync(path.join(root, file), 'utf8');
@@ -62,8 +63,24 @@ if (!manifest.verified.includes('p') || !manifest.verified.includes('t')) {
 const kokoroEntry = read('scripts/kokoro-browser-entry.js');
 if (!/numThreads\s*=\s*1/.test(kokoroEntry) || !/proxy\s*=\s*false/.test(kokoroEntry)) throw new Error('iPad-safe Kokoro runtime settings are missing');
 
+/* The version used to be hand-maintained in nine files. A bump missed the
+ * service worker registration URL in sakhi-app.js, so a stale worker kept
+ * serving the old build. package.json is now the only place it is written and
+ * the build stamps __SAKHI_VERSION__ into everything else, so guard both ends:
+ * the templates must not hardcode it, and the generated files must carry it. */
+for (const template of ['index.template.html', 'sw.template.js', 'manifest.template.json', 'sakhi-app.js']) {
+  const body = read(template);
+  if (body.includes(version)) throw new Error(`${template} hardcodes the version — it should use __SAKHI_VERSION__`);
+  if (!body.includes('__SAKHI_VERSION__')) throw new Error(`${template} lost its __SAKHI_VERSION__ stamp`);
+}
+for (const generated of ['index.html', 'sw.js', 'manifest.json']) {
+  const body = read(generated);
+  if (body.includes('__SAKHI_VERSION__')) throw new Error(`${generated} shipped an unstamped __SAKHI_VERSION__ placeholder`);
+  if (!body.includes(version)) throw new Error(`${generated} does not carry the package.json version ${version} — rebuild`);
+}
+
 const sw = read('sw.js');
-if (!/sakhi-v4-4\.6\.0/.test(sw)||/client\.navigate|clients\.matchAll/.test(sw)) throw new Error('Service worker must refresh caches without navigating clients');
+if (!sw.includes(`sakhi-v4-${version}`)||/client\.navigate|clients\.matchAll/.test(sw)) throw new Error('Service worker must refresh caches without navigating clients');
 if (!sw.includes("cache:'no-store'")) throw new Error('Navigation requests should bypass stale HTTP caches');
 for (const file of [
   'assets/theme-media/generated-v4/unicorn-phonics-meadow.webp',
