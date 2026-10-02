@@ -38,6 +38,41 @@ function media(root,q,domain){
   if(q.media.passage){var p=document.createElement('div');p.className='passage';p.textContent=q.media.passage;root.appendChild(p);}
   if(q.media.count){var d=document.createElement('div');d.className='object-field';d.innerHTML=SakhiPresentation.objectSet(domain,q.media.count);root.appendChild(d);wireCountables(d);var tip=document.createElement('small');tip.className='count-tip';tip.textContent='Tap each treasure as you count.';root.appendChild(tip);}
   if(q.media.shape){var wrap=document.createElement('div');wrap.className='shape-wrap';var im=document.createElement('img');im.className='shape-hero';im.src=q.media.shape.src;im.alt=q.media.shape.name;im.onerror=function(){im.hidden=true;wrap.dataset.fallback=q.media.shape.name;};wrap.appendChild(im);root.appendChild(wrap);}
+  /* Place value and ten-frame questions are about a picture; without one the
+     child has to hold the quantity in her head while reading a sentence she
+     cannot read yet. The numbers already exist in the generator, so the frame
+     is drawn from them rather than described in words. */
+  if(q.media.tenFrame){
+    var tf=q.media.tenFrame,frames=[],loose=0,label='';
+    if(tf.tens!==undefined){for(var t=0;t<tf.tens;t++)frames.push(10);loose=tf.ones||0;label=tf.tens+' ten'+(tf.tens===1?'':'s')+' and '+loose+' one'+(loose===1?'':'s');}
+    else{frames.push(Math.min(10,tf.total||10));loose=0;label=(tf.filled||0)+' of '+(tf.total||10)+' counters placed';}
+    var frameWrap=document.createElement('div');frameWrap.className='ten-frame-field';
+    frameWrap.setAttribute('role','img');frameWrap.setAttribute('aria-label',label);
+    var filledLeft=tf.tens!==undefined?tf.tens*10:(tf.filled||0);
+    frames.forEach(function(cells){
+      var grid=document.createElement('div');grid.className='ten-frame';
+      for(var c=0;c<cells;c++){
+        var cell=document.createElement('span');cell.className='ten-frame-cell';
+        if(filledLeft>0){cell.classList.add('is-filled');filledLeft--;}
+        grid.appendChild(cell);
+      }
+      frameWrap.appendChild(grid);
+    });
+    for(var o=0;o<loose;o++){var one=document.createElement('span');one.className='ten-frame-one';frameWrap.appendChild(one);}
+    root.appendChild(frameWrap);
+  }
+  /* The pattern lives in the prompt as emoji, which the voice reads as "red
+     circle blue circle". Showing the run with an empty slot is what the
+     question is actually asking about. */
+  if(Array.isArray(q.media.patternStrip)&&q.media.patternStrip.length){
+    var strip=document.createElement('div');strip.className='pattern-strip';
+    strip.setAttribute('role','img');strip.setAttribute('aria-label','Pattern: '+q.media.patternStrip.join(', ')+', then what comes next?');
+    q.media.patternStrip.forEach(function(item){
+      var cell=document.createElement('span');cell.className='pattern-cell';cell.textContent=item;strip.appendChild(cell);
+    });
+    var next=document.createElement('span');next.className='pattern-cell is-next';next.textContent='?';strip.appendChild(next);
+    root.appendChild(strip);
+  }
   if(q.media.groups){var groups=document.createElement('div');groups.className='group-field';q.media.groups.forEach(function(n){var g=document.createElement('div');g.innerHTML=SakhiPresentation.objectSet(domain,n);groups.appendChild(g);wireCountables(g);});root.appendChild(groups);}
   if(q.media.subtract){var sub=document.createElement('div');sub.className='object-field';sub.innerHTML=SakhiPresentation.objectSet(domain,q.media.subtract[0]);root.appendChild(sub);wireCountables(sub);}
 }

@@ -11,6 +11,30 @@ const printSkill=curriculum.skills.find(s=>s.kind==='print');
 if(!printSkill)throw new Error('Print-concepts skill missing');
 const printActivity=ctx.window.SakhiActivities.generate(printSkill.skill_id,1,'navigation-regression');
 if(new Set(printActivity.questions.map(q=>q.prompt)).size<3)throw new Error('Print-concepts activity does not provide enough distinct questions');
+/* Place value, ten-frame and pattern questions are about a picture. They used
+ * to ship as text only, so a child who cannot read yet had to hold the quantity
+ * in her head. The numbers were already in the generator; these assert the
+ * media rides along and that a renderer exists for it. Media only -- the
+ * prompts are untouched, so the narration pack is unaffected. */
+for(const [kind,key] of [['teen','tenFrame'],['compose','tenFrame'],['pattern','patternStrip']]){
+  const skill=curriculum.skills.find(s=>s.kind===kind);
+  if(!skill)throw new Error('No skill uses kind '+kind);
+  for(let band=1;band<=5;band++){
+    const a=ctx.window.SakhiActivities.generate(skill.skill_id,band,'media-'+band);
+    for(const q of a.questions){
+      if(!q.media||!q.media[key])throw new Error(`${kind} question has no ${key}: ${q.prompt}`);
+    }
+  }
+  if(!templateSource.includes('q.media.'+key))throw new Error(`No renderer for q.media.${key}`);
+}
+{
+  const patternSkill=curriculum.skills.find(s=>s.kind==='pattern');
+  const q=ctx.window.SakhiActivities.generate(patternSkill.skill_id,2,'strip').questions[0];
+  if(!Array.isArray(q.media.patternStrip)||q.media.patternStrip.length<4)throw new Error('Pattern strip is too short to show a repeat');
+  /* the strip must be the run the prompt names, or picture and question disagree */
+  if(!q.prompt.includes(q.media.patternStrip.join(' ')))throw new Error('Pattern strip does not match the prompt: '+q.prompt);
+}
+
 let activities=0,questions=0;
 for(const s of curriculum.skills)for(let b=1;b<=5;b++)for(let seed=0;seed<50;seed++){
   const a=ctx.window.SakhiActivities.generate(s.skill_id,b,String(seed));
@@ -21,7 +45,7 @@ for(const s of curriculum.skills)for(let b=1;b<=5;b++)for(let seed=0;seed<50;see
     if(!q.template||q.answer===undefined)throw new Error('Bad question '+s.skill_id);
     if(!q.narration_policy)throw new Error('Narration policy missing '+s.skill_id);
     if(q.template==='choice'&&['count_sequence','numeral','count','subitize','compare','compose','add','sub','bond','teen','pattern','measure','shape','data','letter_name','cvc_read','cvc_spell'].includes(s.kind)&&q.narration_policy!=='prompt_only')throw new Error('Self-explanatory assessment will read every option: '+s.skill_id);
-    if(/look at (?:the|this|these)\\s+(?:picture|image|photo|chart|sentence|word|ribbon)|this picture|this sentence|pictures|which ribbon|how many treasures do you see/i.test(q.prompt)){const m=q.media||{};if(!(m.visual||m.count||m.shape||m.groups||m.subtract||m.passage))throw new Error('Question depends on missing visual media: '+s.skill_id+' · '+q.prompt);}
+    if(/look at (?:the|this|these)\\s+(?:picture|image|photo|chart|sentence|word|ribbon)|this picture|this sentence|pictures|which ribbon|how many treasures do you see/i.test(q.prompt)){const m=q.media||{};if(!(m.visual||m.count||m.shape||m.groups||m.subtract||m.passage||m.tenFrame||m.patternStrip))throw new Error('Question depends on missing visual media: '+s.skill_id+' · '+q.prompt);}
     if(q.media&&q.media.visual){if(!['leaves','ribbons','print-line','cat','dog','sun','memory','star','moon','tree','fish','cup','book','bed'].includes(q.media.visual))throw new Error('Unknown assessment visual '+q.media.visual);if(!templateSource.includes("kind==='"+q.media.visual+"'"))throw new Error('Assessment visual has no renderer: '+q.media.visual);}
     if(q.media&&q.media.shape&&(!q.media.shape.src||!fs.existsSync(path.join(root,q.media.shape.src.replace(/^\.\//,'')))))throw new Error('Assessment shape image is missing: '+s.skill_id);
     if(q.template==='choice'){
