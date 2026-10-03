@@ -121,6 +121,17 @@ function wireSingleChoice(root,values,answer,ctx,cls){
   return{immediate:false,isReady:function(){return state.response!==null;},check:function(){return{correct:String(state.response)===String(answer),response:state.response};},reset:function(){state.response=null;buttons.forEach(function(b){b.classList.remove('selected');b.setAttribute('aria-pressed','false');});notify(ctx);}};
 }
 function worksheetTitle(root,label,title){var head=el('div','school-sheet-head'),badge=el('span','school-sheet-badge',label),h=el('strong','school-sheet-title',title);head.appendChild(badge);head.appendChild(h);root.appendChild(head);}
+function referenceStrip(root,kind,target){
+  var row=el('div','school-reference-strip'),items=[];
+  if(kind==='number'){for(var n=0;n<=20;n++)items.push(String(n));}
+  else{
+    var upper=String(target)===String(target).toUpperCase(),letters='abcdefghijklmnopqrstuvwxyz'.split('');
+    items=upper?letters.map(function(x){return x.toUpperCase();}):letters;
+  }
+  items.forEach(function(v){var node=el('span','school-reference-item'+(String(v)===String(target)?' current':''),v);row.appendChild(node);});
+  row.setAttribute('aria-label',(kind==='number'?'Number':'Alphabet')+' reference row. Current '+target+'.');
+  root.appendChild(row);
+}
 
 function renderLetterGap(root,q,ctx){
   clear(root);worksheetTitle(root,'LETTER WORK','Find the missing letter');
@@ -161,7 +172,13 @@ function writingFontSize(target,kind){
 function makePad(holder,target,guided,kind,onMark,label){
   var wrap=el('div','school-pen-wrap'),lab=el('small','school-pen-label',label),c=el('canvas','school-pen-canvas');c.width=440;c.height=250;c.setAttribute('aria-label',label+' '+target);wrap.appendChild(lab);wrap.appendChild(c);holder.appendChild(wrap);
   var g=c.getContext('2d'),drawing=false,marks=0;
-  function guide(){drawWritingGuide(g,c.width,c.height);if(guided){g.save();g.strokeStyle='#b7a6cf';g.lineWidth=5;g.setLineDash([8,9]);g.font='bold '+writingFontSize(target,kind)+'px ui-rounded, system-ui, sans-serif';g.textAlign='center';g.textBaseline='middle';g.strokeText(target,c.width/2,c.height*.51);g.restore();g.fillStyle='#ff72b6';g.beginPath();g.arc(58,56,9,0,Math.PI*2);g.fill();}}
+  function guide(){
+    drawWritingGuide(g,c.width,c.height);
+    if(guided){
+      g.save();g.strokeStyle='#b7a6cf';g.lineWidth=5;g.setLineDash([8,9]);g.font='bold '+writingFontSize(target,kind)+'px ui-rounded, system-ui, sans-serif';g.textAlign='center';g.textBaseline='middle';g.strokeText(target,c.width/2,c.height*.51);var width=Math.min(c.width*.76,g.measureText(target).width),startX=Math.max(34,c.width/2-width/2+8);g.restore();
+      g.fillStyle='#ff72b6';g.beginPath();g.arc(startX,56,9,0,Math.PI*2);g.fill();
+    }
+  }
   function pos(e){var r=c.getBoundingClientRect();return{x:(e.clientX-r.left)*c.width/r.width,y:(e.clientY-r.top)*c.height/r.height};}
   function start(e){drawing=true;if(c.setPointerCapture)try{c.setPointerCapture(e.pointerId);}catch(x){}var p=pos(e);g.beginPath();g.moveTo(p.x,p.y);e.preventDefault();}
   function move(e){if(!drawing)return;var p=pos(e);g.strokeStyle='#7551d6';g.lineWidth=10;g.lineCap='round';g.lineJoin='round';g.lineTo(p.x,p.y);g.stroke();marks++;if(marks===12&&onMark)onMark();e.preventDefault();}
@@ -171,6 +188,7 @@ function makePad(holder,target,guided,kind,onMark,label){
 }
 function renderTraceSheet(root,q,ctx){
   clear(root);worksheetTitle(root,q.sheet.kind==='number'?'NUMBER WRITING':'LETTER WRITING','Trace it, then try it yourself');
+  referenceStrip(root,q.sheet.kind,q.sheet.target);
   var hero=el('div','school-trace-hero',q.sheet.target);root.appendChild(hero);root.appendChild(el('p','school-sheet-help','Follow the dotted model first. Then write one by yourself.'));
   var pads=el('div','school-pen-grid'),all=[];root.appendChild(pads);
   function changed(){notify(ctx);}
