@@ -97,6 +97,9 @@ function get(base, route) {
     if (index.includes('sakhi-art.js')) throw new Error('Built index still loads the removed art runtime');
     if (!index.includes('unicorn-phonics-meadow.webp')) throw new Error('Built index is missing the supplied home artwork');
     if (!index.includes('science-mermaid-lagoon.webp')) throw new Error('Built index is missing subject-world artwork');
+    if (!index.includes('window.SakhiSchoolwork') || !index.includes('school-trace-sheet') || !index.includes('.school-letter-strip')) {
+      throw new Error('Built index is missing the workbook-inspired schoolwork runtime or styles');
+    }
 
     const sw = (await get(base, '/sw.js')).body.toString('utf8');
     if (!sw.includes(`sakhi-v4-${version}`) || sw.includes('client.navigate') || sw.includes('clients.matchAll')) throw new Error('Built service worker must update without reload loops');
@@ -108,7 +111,7 @@ function get(base, route) {
     const clipResponse = await get(base, '/assets/audio/narration/' + firstClip);
     if (clipResponse.status !== 200 || !clipResponse.type.includes('audio/mpeg') || clipResponse.body.length < 100) throw new Error('Bundled narration clip is not playable');
 
-    console.log('Dist server smoke passed: self-contained app, generated artwork, audio, and fresh service worker are reachable');
+    console.log('Dist server smoke passed: self-contained app, workbook practice layer, generated artwork, audio, and fresh service worker are reachable');
   } finally {
     server.close();
   }
