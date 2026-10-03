@@ -1,0 +1,40 @@
+/* Workbook-inspired practice components. Namespaced so they do not override core UI. */
+.school-sheet-head{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin:4px 0 18px}
+.school-sheet-badge{display:inline-flex;align-items:center;min-height:30px;padding:6px 11px;border-radius:999px;background:color-mix(in srgb,var(--world-accent) 18%,white);border:1px solid color-mix(in srgb,var(--world-deep) 18%,white);font-size:11px;font-weight:950;letter-spacing:.12em;color:var(--world-deep)}
+.school-sheet-title{font-size:clamp(19px,3vw,28px);color:var(--ink-strong)}
+.school-sheet-help{max-width:620px;margin:12px auto 18px;text-align:center;color:var(--muted);font-weight:750;line-height:1.45}
+.school-letter-strip{display:grid;grid-template-columns:repeat(3,minmax(72px,130px));justify-content:center;gap:12px;margin:10px auto 18px}
+.school-letter-box{min-height:112px;display:grid;place-items:center;border:2px solid color-mix(in srgb,var(--world-deep) 18%,white);border-radius:28px;background:#fff;font-size:58px;font-weight:900;box-shadow:var(--shadow-soft)}
+.school-letter-box.is-gap{border-style:dashed;background:color-mix(in srgb,var(--world-soft) 82%,white);color:var(--world-deep)}
+.school-letter-bank,.school-number-bank,.school-life-options{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.school-letter-choice,.school-number-choice{min-width:92px;min-height:76px;border-radius:24px;border:2px solid color-mix(in srgb,var(--world-deep) 16%,white);background:#fff;color:var(--ink-strong);font-size:34px;font-weight:950;box-shadow:var(--shadow-soft)}
+.school-letter-choice.selected,.school-number-choice.selected,.school-life-option.selected,.school-compare-number.selected{border-color:var(--world-deep);box-shadow:0 0 0 5px color-mix(in srgb,var(--world-deep) 14%,transparent);transform:translateY(-2px)}
+.school-count-field{display:grid;grid-template-columns:repeat(5,minmax(44px,66px));justify-content:center;gap:10px;max-width:500px;margin:0 auto;padding:20px;border:2px solid color-mix(in srgb,var(--world-deep) 13%,white);border-radius:30px;background:linear-gradient(180deg,#fff,color-mix(in srgb,var(--world-soft) 60%,white))}
+.school-count-object{position:relative;min-height:58px;border-radius:18px;border:1px solid color-mix(in srgb,var(--world-deep) 16%,white);background:#fff;color:var(--world-deep);font-size:27px;font-weight:900}
+.school-count-object.counted{background:color-mix(in srgb,var(--world-accent) 22%,white);transform:scale(.96)}
+.school-count-mark{position:absolute;right:-5px;top:-7px;display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--world-deep);color:#fff;font-size:12px;font-weight:950}
+.school-compare-pair{display:grid;grid-template-columns:repeat(2,minmax(110px,190px));justify-content:center;gap:18px;margin:12px auto}
+.school-compare-number{min-height:138px;border-radius:30px;border:3px solid color-mix(in srgb,var(--world-deep) 16%,white);background:#fff;color:var(--ink-strong);font-size:clamp(48px,8vw,78px);font-weight:950;box-shadow:var(--shadow-soft)}
+.school-compare-sign{width:62px;height:62px;margin:10px auto 0;display:grid;place-items:center;border-radius:50%;background:var(--world-soft);border:2px dashed color-mix(in srgb,var(--world-deep) 28%,white);font-size:28px;font-weight:950;color:var(--world-deep)}
+.school-trace-hero,.school-name-model{display:grid;place-items:center;min-height:92px;width:min(520px,100%);margin:0 auto 10px;border-radius:28px;background:linear-gradient(145deg,#fff,color-mix(in srgb,var(--world-soft) 65%,white));border:2px solid color-mix(in srgb,var(--world-deep) 13%,white);font-size:clamp(56px,10vw,96px);font-weight:950;color:var(--world-deep);letter-spacing:.04em}
+.school-name-model{font-size:clamp(38px,7vw,66px);text-transform:none}
+.school-pen-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:stretch}
+.school-name-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start}
+.school-pen-wrap,.school-portrait-wrap{padding:10px;border-radius:24px;border:1px solid color-mix(in srgb,var(--world-deep) 14%,white);background:#fff;box-shadow:var(--shadow-soft)}
+.school-pen-label{display:block;margin:2px 4px 8px;color:var(--world-deep);font-size:12px;font-weight:950;letter-spacing:.06em;text-transform:uppercase}
+.school-pen-canvas,.school-portrait-canvas{display:block;width:100%;height:auto;border-radius:16px;touch-action:none;background:#fffdf8}
+.school-portrait-wrap{grid-column:1/-1;max-width:620px;width:100%;justify-self:center}
+.school-life-scene{max-width:720px;margin:0 auto 18px;padding:20px;border-radius:30px;background:linear-gradient(145deg,color-mix(in srgb,var(--world-soft) 90%,white),#fff);border:2px solid color-mix(in srgb,var(--world-deep) 13%,white)}
+.school-life-bubble{position:relative;padding:18px 22px;border-radius:24px;background:#fff;font-size:clamp(20px,3vw,28px);font-weight:850;line-height:1.35;color:var(--ink-strong);box-shadow:var(--shadow-soft)}
+.school-life-option{flex:1 1 180px;max-width:310px;min-height:78px;padding:14px 16px;border-radius:24px;border:2px solid color-mix(in srgb,var(--world-deep) 14%,white);background:#fff;color:var(--ink-strong);font-weight:850;line-height:1.25;box-shadow:var(--shadow-soft)}
+@media(max-width:760px){
+  .school-pen-grid{grid-template-columns:1fr}
+  .school-name-grid{grid-template-columns:1fr}
+  .school-count-field{grid-template-columns:repeat(4,minmax(42px,1fr));padding:14px;gap:8px}
+  .school-letter-box{min-height:90px;font-size:48px}
+  .school-letter-choice,.school-number-choice{min-width:76px;min-height:68px;font-size:30px}
+  .school-compare-number{min-height:116px}
+}
+@media(pointer:coarse){
+  .school-letter-choice,.school-number-choice,.school-count-object,.school-compare-number,.school-life-option{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+}
