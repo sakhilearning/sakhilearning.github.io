@@ -153,10 +153,15 @@ function drawWritingGuide(g,w,h){
   g.beginPath();g.moveTo(16,top);g.lineTo(w-16,top);g.moveTo(16,base);g.lineTo(w-16,base);g.stroke();
   g.strokeStyle='#dfd4e9';g.setLineDash([8,8]);g.beginPath();g.moveTo(16,mid);g.lineTo(w-16,mid);g.stroke();g.setLineDash([]);
 }
+function writingFontSize(target,kind){
+  if(kind==='number')return 150;
+  if(kind==='name')return Math.max(54,Math.min(118,Math.floor(380/Math.max(3,String(target||'').length))));
+  return 170;
+}
 function makePad(holder,target,guided,kind,onMark,label){
   var wrap=el('div','school-pen-wrap'),lab=el('small','school-pen-label',label),c=el('canvas','school-pen-canvas');c.width=440;c.height=250;c.setAttribute('aria-label',label+' '+target);wrap.appendChild(lab);wrap.appendChild(c);holder.appendChild(wrap);
   var g=c.getContext('2d'),drawing=false,marks=0;
-  function guide(){drawWritingGuide(g,c.width,c.height);if(guided){g.save();g.strokeStyle='#b7a6cf';g.lineWidth=5;g.setLineDash([8,9]);g.font=(kind==='number'?'bold 150px':'bold 170px')+' ui-rounded, system-ui, sans-serif';g.textAlign='center';g.textBaseline='middle';g.strokeText(target,c.width/2,c.height*.51);g.restore();g.fillStyle='#ff72b6';g.beginPath();g.arc(58,56,9,0,Math.PI*2);g.fill();}}
+  function guide(){drawWritingGuide(g,c.width,c.height);if(guided){g.save();g.strokeStyle='#b7a6cf';g.lineWidth=5;g.setLineDash([8,9]);g.font='bold '+writingFontSize(target,kind)+'px ui-rounded, system-ui, sans-serif';g.textAlign='center';g.textBaseline='middle';g.strokeText(target,c.width/2,c.height*.51);g.restore();g.fillStyle='#ff72b6';g.beginPath();g.arc(58,56,9,0,Math.PI*2);g.fill();}}
   function pos(e){var r=c.getBoundingClientRect();return{x:(e.clientX-r.left)*c.width/r.width,y:(e.clientY-r.top)*c.height/r.height};}
   function start(e){drawing=true;if(c.setPointerCapture)try{c.setPointerCapture(e.pointerId);}catch(x){}var p=pos(e);g.beginPath();g.moveTo(p.x,p.y);e.preventDefault();}
   function move(e){if(!drawing)return;var p=pos(e);g.strokeStyle='#7551d6';g.lineWidth=10;g.lineCap='round';g.lineJoin='round';g.lineTo(p.x,p.y);g.stroke();marks++;if(marks===12&&onMark)onMark();e.preventDefault();}
@@ -184,13 +189,13 @@ function renderNamePage(root,q,ctx){
   var g=c.getContext('2d'),drawing=false,marks=0;g.fillStyle='#fffdf8';g.fillRect(0,0,c.width,c.height);g.strokeStyle='#e3d9ec';g.lineWidth=4;g.strokeRect(8,8,c.width-16,c.height-16);
   function pos(e){var r=c.getBoundingClientRect();return{x:(e.clientX-r.left)*c.width/r.width,y:(e.clientY-r.top)*c.height/r.height};}
   c.addEventListener('pointerdown',function(e){drawing=true;var p=pos(e);g.beginPath();g.moveTo(p.x,p.y);e.preventDefault();});
-  c.addEventListener('pointermove',function(e){if(!drawing)return;var p=pos(e);g.strokeStyle='#7551d6';g.lineWidth=8;g.lineCap='round';g.lineTo(p.x,p.y);g.stroke();marks++;if(marks===18){ready[2]=true;notify(ctx);}e.preventDefault();});
+  c.addEventListener('pointermove',function(e){if(!drawing)return;var p=pos(e);g.strokeStyle='#7551d6';g.lineWidth=8;g.lineCap='round';g.lineTo(p.x,p.y);g.stroke();marks++;if(marks===12){ready[2]=true;notify(ctx);}e.preventDefault();});
   c.addEventListener('pointerup',function(){drawing=false;});c.addEventListener('pointercancel',function(){drawing=false;});
   return{immediate:false,isReady:function(){return p1.ready()&&p2.ready()&&ready[2];},check:function(){return{correct:true,response:'name and portrait completed'};},reset:function(){p1.reset();p2.reset();ready=[false,false,false];drawing=false;marks=0;g.clearRect(0,0,c.width,c.height);g.fillStyle='#fffdf8';g.fillRect(0,0,c.width,c.height);g.strokeStyle='#e3d9ec';g.lineWidth=4;g.strokeRect(8,8,c.width-16,c.height-16);notify(ctx);}};
 }
 function renderLifeChoice(root,q,ctx){
   clear(root);worksheetTitle(root,'LIFE SKILLS',String(q.sheet.area||'good choice').toUpperCase());
-  var scene=el('div','school-life-scene'),bubble=el('div','school-life-bubble',q.prompt);scene.appendChild(bubble);root.appendChild(scene);
+  root.appendChild(el('p','school-sheet-help',q.sheet.area==='safe choice'?'Choose the safest answer.':q.sheet.area==='school routine'?'Choose what belongs in the routine.':'Choose the kind and fair answer.'));
   var bank=el('div','school-life-options');root.appendChild(bank);
   return wireSingleChoice(bank,q.choices,q.answer,ctx,'school-life-option');
 }
