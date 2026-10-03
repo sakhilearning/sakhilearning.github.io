@@ -23,6 +23,7 @@ const moduleOrder=[
   'sakhi-plan.js',
   'sakhi-audio.js',
   'sakhi-templates.js',
+  'sakhi-schoolwork.js',
   'sakhi-wrapups.js',
   'sakhi-app.js'
 ];
@@ -79,7 +80,7 @@ const runtimeData=[
   `window.SAKHI_ICON_DATA=${JSON.stringify(dataUri('icon-192.png','image/png'))};`
 ].join('\n');
 const runtimeJs=moduleOrder.map(f=>`\n/* ===== ${f} ===== */\n${read(f)}\n`).join('');
-const flatCss=flattenLayers(read('sakhi-production.css'));
+const flatCss=flattenLayers(read('sakhi-production.css'))+'\n'+read('sakhi-schoolwork.css');
 let html=read('index.template.html')
   .replace('/*__SAKHI_CSS__*/',flatCss)
   .replaceAll('/*__SAKHI_ICON_DATA__*/',dataUri('icon-192.png','image/png'))

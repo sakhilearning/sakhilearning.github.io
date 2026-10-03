@@ -36,7 +36,7 @@ function runtime() {
   context.URL = URL;
   context.SakhiCurriculum = { skill: id => curriculum.skills.find(s => s.skill_id === id) || null };
   vm.createContext(context);
-  for (const file of ['sakhi-content.js', 'sakhi-activities.js', 'sakhi-wrapups.js', 'sakhi-audio.js']) {
+  for (const file of ['sakhi-content.js', 'sakhi-activities.js', 'sakhi-schoolwork.js', 'sakhi-wrapups.js', 'sakhi-audio.js']) {
     vm.runInContext(read(file), context, { filename: file });
   }
   return { curriculum, context, Audio: context.window.SakhiAudio, Activities: context.SakhiActivities };
