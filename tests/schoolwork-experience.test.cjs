@@ -13,7 +13,10 @@ function baseActivity(skillId){
     if(skillId==='writing.lowercase'){q.template='trace';q.trace_target='letter:p';q.answer='done';q.evidence_mode='practice';}
     if(skillId==='math.write_numerals'||skillId==='writing.numerals'){q.template='trace';q.trace_target='number:8';q.answer='done';q.evidence_mode='practice';}
     if(skillId==='reading.letter_names_upper'){q.answer='P';q.choices=['P','R','B'];q.prompt='Tap the letter P.';q.spoken_instruction='Find uppercase P.';}
-    if(skillId==='reading.letter_names_lower'){q.answer='p';q.choices=['p','r','b'];q.prompt='Tap the letter p.';q.spoken_instruction='Find lowercase p.';}
+    /* Deliberately mirror the core generator's historical defect here: the
+       lowercase skill arrived with uppercase display data. The schoolwork
+       layer must correct the visible case without inventing a new spoken line. */
+    if(skillId==='reading.letter_names_lower'){q.answer='P';q.choices=['P','R','B'];q.prompt='Tap the letter P.';q.spoken_instruction='Find uppercase P.';}
     if(skillId==='math.cardinality_20'){q.answer=7;q.choices=[6,7,8];q.prompt='How many treasures do you see?';q.spoken_instruction='Count the treasures.';q.media={count:7};}
     if(skillId==='math.compare'){q.answer=19;q.choices=[13,19,20];q.prompt='Which number is greater: 13 or 19?';q.spoken_instruction=q.prompt;}
     if(skillId==='writing.name'){q.template='guided';q.answer='done';q.evidence_mode='practice';q.prompt='Write your name carefully.';q.spoken_instruction='Write your name carefully. Complete the three steps shown on screen.';}
@@ -41,6 +44,15 @@ a=gen('reading.letter_names_upper');
 assert(a.questions.every(q=>q.template==='school-letter-gap'));
 assert.deepStrictEqual(Array.from([a.questions[0].sheet.before,a.questions[0].sheet.target,a.questions[0].sheet.after]),['O','P','Q']);
 assert.strictEqual(a.questions[0].spoken_instruction,'Find uppercase P.');
+
+a=gen('reading.letter_names_lower');
+assert(a.questions.every(q=>q.template==='school-letter-gap'));
+assert.deepStrictEqual(Array.from([a.questions[0].sheet.before,a.questions[0].sheet.target,a.questions[0].sheet.after]),['o','p','q']);
+assert.strictEqual(a.questions[0].answer,'p');
+assert(a.questions[0].choices.every(x=>x===String(x).toLowerCase()));
+assert.strictEqual(a.questions[0].prompt,'Tap the letter p.');
+assert.strictEqual(a.questions[0].spoken_instruction,'Tap the letter P.');
+assert(!/uppercase/i.test(a.questions[0].spoken_instruction));
 
 a=gen('math.cardinality_20');
 assert(a.questions.every(q=>q.template==='school-count-match'));
@@ -76,4 +88,41 @@ for(const id of ['writing.uppercase','writing.lowercase','writing.numerals','mat
     assert(q.question_key,'question remains history-addressable');
   });
 }
+
+/* Integration: load the real content and generator, not a hand-built fixture.
+   This is the regression gate for the exact lowercase defect that escaped the
+   stub-only test: the core letter_name generator historically emits uppercase
+   glyphs for both uppercase and lowercase curriculum skills. */
+const curriculum=JSON.parse(fs.readFileSync(path.join(root,'data/curriculum-v3.json'),'utf8'));
+const real={console};
+real.window=real;
+real.SakhiCurriculum={skill:id=>curriculum.skills.find(s=>s.skill_id===id)||null};
+vm.createContext(real);
+for(const file of ['sakhi-content.js','sakhi-activities.js','sakhi-schoolwork.js']){
+  vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),real,{filename:file});
+}
+for(let seed=0;seed<16;seed++){
+  const activity=real.SakhiActivities.generate('reading.letter_names_lower',2,'lowercase-real:'+seed,[],{teachFirst:seed===0});
+  assert(activity.questions.length>=3);
+  activity.questions.forEach(q=>{
+    assert.strictEqual(q.template,'school-letter-gap');
+    assert.strictEqual(q.answer,String(q.answer).toLowerCase());
+    assert(q.choices.every(x=>x===String(x).toLowerCase()));
+    assert(q.prompt.includes(String(q.answer)),'visible prompt must show the lowercase target');
+    assert(!/uppercase/i.test(q.spoken_instruction),'lowercase lesson must never tell the child to find uppercase');
+    assert(/^Tap the letter [A-Z]\.$/.test(q.spoken_instruction),'lowercase lesson should reuse an already-bundled neutral letter-name prompt');
+  });
+  const taught=activity.questions[0].teaching;
+  if(taught&&taught.worked){
+    assert(taught.worked.display_prompt,'lowercase worked example needs a lowercase visual prompt alias');
+    assert.strictEqual(taught.worked.display_answer,String(taught.worked.display_answer).toLowerCase());
+  }
+}
+
+const appSource=fs.readFileSync(path.join(root,'sakhi-app.js'),'utf8');
+/* Until the generic teaching panel consumes display aliases, the aliases are
+   harmless metadata and audio remains correct. Keep this assertion descriptive
+   rather than requiring a special-case lowercase branch in the app. */
+assert(!/reading\.letter_names_lower/.test(appSource),'app presentation must stay generic; lowercase belongs in the schoolwork layer');
+
 console.log('schoolwork-experience: ok');
