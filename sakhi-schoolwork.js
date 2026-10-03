@@ -25,8 +25,8 @@ function copyMeta(base,q){
   q.teaching=base.teaching?clone(base.teaching):undefined;
   q.narration_policy=base.narration_policy||'prompt_only';
   q.hints=clone(base.hints||['Look carefully.','Take your time.']);
-  q.spoken_instruction=base.spoken_instruction||base.narration||base.prompt;
-  q.narration=q.spoken_instruction;
+  q.spoken_instruction=q.spoken_instruction||base.spoken_instruction||base.narration||base.prompt;
+  q.narration=q.narration||q.spoken_instruction;
   return q;
 }
 function traceSheet(base){
@@ -41,17 +41,34 @@ function traceSheet(base){
     sheet:{kind:kind,target:value,tracePads:2,freePads:1}
   });
 }
+function replaceVisibleLetter(text,raw,display){
+  var source=String(text||'');
+  if(!raw)return source;
+  return source.split(String(raw)).join(String(display));
+}
 function letterGap(base,skillId){
   if(!Array.isArray(base.choices)||base.choices.length<2)return null;
-  var answer=String(base.answer||''),upper=skillId==='reading.letter_names_upper',alphabet='abcdefghijklmnopqrstuvwxyz'.split('');
+  var rawAnswer=String(base.answer||''),upper=skillId==='reading.letter_names_upper',answer=upper?rawAnswer.toUpperCase():rawAnswer.toLowerCase(),alphabet='abcdefghijklmnopqrstuvwxyz'.split('');
   if(upper)alphabet=alphabet.map(function(x){return x.toUpperCase();});
   var i=alphabet.indexOf(answer);if(i<0)return null;
-  var prev=alphabet[(i+alphabet.length-1)%alphabet.length],next=alphabet[(i+1)%alphabet.length];
-  return copyMeta(base,{
-    template:'school-letter-gap',prompt:base.prompt,answer:answer,choices:clone(base.choices),
+  var prev=alphabet[(i+alphabet.length-1)%alphabet.length],next=alphabet[(i+1)%alphabet.length],choices=base.choices.map(function(x){return upper?String(x).toUpperCase():String(x).toLowerCase();}),visiblePrompt=upper?base.prompt:replaceVisibleLetter(base.prompt,rawAnswer,answer);
+  /* Lowercase lessons used to come out of the core generator with uppercase
+     display text. Keep the already-bundled neutral spoken prompt ("Tap the
+     letter P") for audio, while the child sees the lowercase shape. The sound
+     of a letter name is unchanged by case, so this does not create new TTS
+     lines or falsely tell the child to find an uppercase letter. */
+  var q=copyMeta(base,{
+    template:'school-letter-gap',prompt:visiblePrompt,answer:answer,choices:choices,
+    spoken_instruction:upper?undefined:base.prompt,
     evidence_mode:base.evidence_mode,
     sheet:{target:answer,before:prev,after:next,case:upper?'uppercase':'lowercase'}
   });
+  if(!upper&&q.teaching&&q.teaching.worked){
+    var worked=q.teaching.worked,workedAnswer=String(worked.answer||'');
+    worked.display_prompt=replaceVisibleLetter(worked.prompt,workedAnswer,workedAnswer.toLowerCase());
+    worked.display_answer=workedAnswer.toLowerCase();
+  }
+  return q;
 }
 function countMatch(base){
   if(!base.media||!base.media.count||!Array.isArray(base.choices))return null;
