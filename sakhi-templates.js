@@ -111,5 +111,5 @@ function render(root,q,ctx){
   var p=document.createElement('div');p.className='practice-card';var icon=document.createElement('div');icon.className='practice-icon';icon.textContent='✏️';var text=document.createElement('p');text.textContent=q.prompt;p.appendChild(icon);p.appendChild(text);root.appendChild(p);
   return{immediate:false,isReady:function(){return true;},check:function(){return{correct:true,response:'done'};},reset:function(){}};
 }
-return{render:render};
+return{render:render,assessmentVisual:assessmentVisual};
 })();

@@ -20,6 +20,7 @@ function baseActivity(skillId){
     if(skillId==='math.cardinality_20'){q.answer=7;q.choices=[6,7,8];q.prompt='How many treasures do you see?';q.spoken_instruction='Count the treasures.';q.media={count:7};}
     if(skillId==='math.compare'){q.answer=19;q.choices=[13,19,20];q.prompt='Which number is greater: 13 or 19?';q.spoken_instruction=q.prompt;}
     if(skillId==='writing.name'){q.template='guided';q.answer='done';q.evidence_mode='practice';q.prompt='Write your name carefully.';q.spoken_instruction='Write your name carefully. Complete the three steps shown on screen.';}
+    if(skillId==='writing.labels'){q.template='build';q.answer=['t','r','e','e'];q.tokens=['t','r','p','e','e','m'];q.media={visual:'tree',alt:'A tall green tree'};q.prompt='Build the label for this picture.';q.spoken_instruction=q.prompt;}
     if(skillId==='wellbeing.friendship'){q.answer='take turns';q.choices=['take turns','grab it','break it'];q.prompt='Two children want one toy. What is fair?';q.spoken_instruction=q.prompt;}
     qs.push(q);
   }
@@ -117,6 +118,80 @@ for(let seed=0;seed<16;seed++){
     assert(taught.worked.display_prompt,'lowercase worked example needs a lowercase visual prompt alias');
     assert.strictEqual(taught.worked.display_answer,String(taught.worked.display_answer).toLowerCase());
   }
+}
+
+/* "Write the Room" from her workbook: a picture, and she writes its word. The
+   worksheet must not change what is asked -- same word, same tiles -- and must
+   not grow its own tile board, since the core build activity already has one. */
+{
+  const sheet=context.window.SakhiSchoolwork.enhanceActivity(baseActivity('writing.labels'),[]).questions[0];
+  assert.strictEqual(sheet.template,'school-write-room');
+  assert.strictEqual(sheet.base_template,'build','the worksheet must delegate to the canonical build renderer');
+  assert.strictEqual(sheet.sheet.word,'tree');
+  assert.strictEqual(sheet.sheet.letters,4,'one box per letter of the word');
+  assert.strictEqual(sheet.sheet.picture,'tree');
+  /* Values cross the vm realm boundary, so compare by value rather than by
+     prototype identity. */
+  assert.strictEqual(JSON.stringify(sheet.answer),JSON.stringify(['t','r','e','e']),'the answer must be unchanged');
+  assert.strictEqual(JSON.stringify(sheet.tokens),JSON.stringify(['t','r','p','e','e','m']),'the letter tiles must be unchanged');
+
+  const schoolSrc=fs.readFileSync(path.join(root,'sakhi-schoolwork.js'),'utf8');
+  const fn=schoolSrc.slice(schoolSrc.indexOf('function renderWriteRoom'),schoolSrc.indexOf('function renderSchool'));
+  assert(/baseTemplateRender\(/.test(fn),'write-room must render the tile board through the canonical renderer');
+  /* Scan code, not prose: the comment above the delegation names the tiles it
+     deliberately does not re-implement. */
+  const fnCode=fn.replace(/\/\*[\s\S]*?\*\//g,'');
+  assert(!/draggable|addEventListener\('dragstart'|createElement\('button'\)[\s\S]{0,80}tile/i.test(fnCode),'write-room must not grow a second tile board');
+  /* The picture comes from the one renderer the core questions use. */
+  const tpl=fs.readFileSync(path.join(root,'sakhi-templates.js'),'utf8');
+  assert(/assessmentVisual:assessmentVisual/.test(tpl),'sakhi-templates must export the shared visual renderer');
+}
+
+/* Stroke order. Her sheets put numbered arrows on the model letter; the pad
+   draws its model from a font glyph, so the sequence is said instead -- shown
+   and spoken. It must be a separate utterance, or every prompt-and-letter pair
+   becomes its own recording. */
+{
+  const SW=context.window.SakhiSchoolwork;
+  const sheet=SW.enhanceActivity(baseActivity('writing.uppercase'),[]).questions[0];
+  assert.strictEqual(sheet.template,'school-trace-sheet');
+  assert(sheet.sheet.strokeOrder,'a letter trace sheet needs its stroke order');
+  assert(Array.isArray(sheet.audioSegments)&&sheet.audioSegments.length===2,'prompt and stroke order are two utterances');
+  assert.strictEqual(sheet.audioSegments[1].text,sheet.sheet.strokeOrder);
+  /* Every letter and numeral the trace sheets can ask for needs one. */
+  const src=fs.readFileSync(path.join(root,'sakhi-schoolwork.js'),'utf8');
+  for(const group of ['upper','lower','number']){
+    const expected=group==='number'?10:26;
+    const body=src.slice(src.indexOf(group+':{',src.indexOf('var STROKE_ORDER=')));
+    const count=(body.slice(0,body.indexOf('}')).match(/'[^']+':'/g)||[]).length;
+    assert.strictEqual(count,expected,`STROKE_ORDER.${group} should cover ${expected} glyphs, found ${count}`);
+  }
+}
+
+/* Every letter page in the school workbook closes with three pictures that start
+   with that letter, which is what links the shape being traced to its sound. A
+   wrong word here teaches the wrong sound, so check all 26 rather than spot ones. */
+{
+  const pics=context.window.SakhiSchoolwork.LETTER_PICTURES;
+  const alphabet='abcdefghijklmnopqrstuvwxyz'.split('');
+  for(const letter of alphabet){
+    const set=pics[letter];
+    assert(Array.isArray(set)&&set.length===3,`letter ${letter} needs three picture cues`);
+    for(const [art,word] of set){
+      assert(art&&art.trim(),`letter ${letter} has a picture cue with no art`);
+      assert(word&&/^[a-z- ]+$/.test(word),`letter ${letter} cue word "${word}" should be plain lowercase`);
+      /* x is the documented exception: English gives a five-year-old no
+         x-initial words, so that page uses the ending sound. */
+      if(letter==='x')assert(word.endsWith('x')||/six/.test(word),`letter x cue "${word}" must end with the x sound`);
+      else assert(word.startsWith(letter),`letter ${letter} cue "${word}" does not start with ${letter}`);
+    }
+    const words=set.map(p=>p[1]);
+    assert(new Set(words).size===3,`letter ${letter} repeats a cue word`);
+  }
+  /* The cues are shown, not spoken, so they must not introduce narration. */
+  const schoolSrc=fs.readFileSync(path.join(root,'sakhi-schoolwork.js'),'utf8');
+  const cueFn=schoolSrc.slice(schoolSrc.indexOf('function pictureCues'),schoolSrc.indexOf('function referenceStrip'));
+  assert(!/spoken_instruction|narration/.test(cueFn),'picture cues must not add spoken lines');
 }
 
 const appSource=fs.readFileSync(path.join(root,'sakhi-app.js'),'utf8');

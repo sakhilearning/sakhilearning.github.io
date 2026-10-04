@@ -178,6 +178,14 @@ function shouldReadChoices(question,repeatMode){
   return policy==='choices_always'||(policy==='choices_on_repeat'&&!!repeatMode);
 }
 function questionSegments(question,repeatMode){
+  /* A question may carry an explicit sequence of utterances. narrate() already
+     plays those, so the pack has to be built from them too -- otherwise they are
+     spoken but never bundled, and on iPad that throws. */
+  if(Array.isArray(question.audioSegments)&&question.audioSegments.length){
+    return question.audioSegments.map(function(seg){
+      return seg&&seg.text?spokenValue(seg.text).replace(/\s+/g,' ').trim():'';
+    }).filter(Boolean);
+  }
   var prompt=spokenValue(question.prompt||''),guide=spokenValue(question.spoken_instruction||question.narration||''),main=guide||prompt,segments=[];
   /* The teaching is its own utterance rather than a prefix on the question.
      Joined, every teaching-and-question pair would be a separate recording in

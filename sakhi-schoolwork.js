@@ -8,6 +8,7 @@ var TRACE_SKILLS={
   'math.write_numerals':true
 };
 var LETTER_SKILLS={'reading.letter_names_upper':true,'reading.letter_names_lower':true};
+var WRITE_ROOM_SKILLS={'writing.labels':true};
 var LIFE_SKILLS={'wellbeing.friendship':true,'wellbeing.routines':true,'wellbeing.safety':true};
 
 function clone(x){return JSON.parse(JSON.stringify(x));}
@@ -32,19 +33,41 @@ function copyMeta(base,q){
 function traceSheet(base){
   var target=String(base.trace_target||''),parts=target.split(':'),kind=parts[0],value=parts.slice(1).join(':');
   if(!value||(kind!=='letter'&&kind!=='number'))return null;
+  var stroke=strokeOrderFor(value,kind);
   return copyMeta(base,{
     template:'school-trace-sheet',
     prompt:base.prompt,
     answer:'done',
     trace_target:target,
     evidence_mode:'practice',
-    sheet:{kind:kind,target:value,tracePads:2,freePads:1}
+    /* The prompt and the stroke order are two utterances, so the stroke line is
+       one recording per letter rather than one per prompt-and-letter pair. */
+    audioSegments:stroke?[{text:base.prompt},{text:stroke}]:undefined,
+    sheet:{kind:kind,target:value,tracePads:2,freePads:1,strokeOrder:stroke||null}
   });
 }
 function replaceVisibleLetter(text,raw,display){
   var source=String(text||'');
   if(!raw)return source;
   return source.split(String(raw)).join(String(display));
+}
+/* "Write the Room" in her workbook: a picture, and you write its word. The
+   core generator already produces exactly that for writing.labels -- a build
+   question carrying a picture and letter tiles -- so this only changes how it
+   is presented, never what is asked. */
+function writeRoom(base){
+  if(base.template!=='build'||!base.media||!base.media.visual||!Array.isArray(base.tokens))return null;
+  var word=Array.isArray(base.answer)?base.answer.join(''):String(base.answer||'');
+  if(!word)return null;
+  return copyMeta(base,{
+    template:'school-write-room',
+    base_template:'build',
+    prompt:base.prompt,
+    answer:clone(base.answer),
+    tokens:clone(base.tokens),
+    media:clone(base.media),
+    sheet:{picture:base.media.visual,alt:base.media.alt||'',word:word,letters:word.length}
+  });
 }
 function letterGap(base,skillId){
   if(!Array.isArray(base.choices)||base.choices.length<2)return null;
@@ -107,6 +130,7 @@ function enhanceQuestion(skillId,base,index){
   else if(skillId==='math.cardinality_20'&&base.template==='choice')q=countMatch(base);
   else if(skillId==='math.compare'&&base.template==='choice')q=compareCard(base);
   else if(skillId==='writing.name'&&index===1)q=namePage(base);
+  else if(WRITE_ROOM_SKILLS[skillId])q=writeRoom(base);
   else if(LIFE_SKILLS[skillId])q=lifeChoice(base,skillId);
   return q||base;
 }
@@ -123,6 +147,7 @@ function enhanceActivity(activity,avoid){
   return activity;
 }
 
+var baseTemplateRender=null;
 function clear(root){while(root&&root.firstChild)root.removeChild(root.firstChild);}
 function notify(ctx){if(ctx&&typeof ctx.onProgress==='function')ctx.onProgress();}
 function activate(el,fn){
@@ -138,6 +163,73 @@ function wireSingleChoice(root,values,answer,ctx,cls){
   return{immediate:false,isReady:function(){return state.response!==null;},check:function(){return{correct:String(state.response)===String(answer),response:state.response};},reset:function(){state.response=null;buttons.forEach(function(b){b.classList.remove('selected');b.setAttribute('aria-pressed','false');});notify(ctx);}};
 }
 function worksheetTitle(root,label,title){var head=el('div','school-sheet-head'),badge=el('span','school-sheet-badge',label),h=el('strong','school-sheet-title',title);head.appendChild(badge);head.appendChild(h);root.appendChild(head);}
+/* Every letter page in her school workbook ends with three pictures that start
+   with that letter -- penguin, pencil, pig for P -- which is what ties the shape
+   she is tracing to the sound it makes. These are shown, not spoken: the letter
+   name is already narrated, and adding words here would mean new recordings for
+   lines the picture already carries. */
+/* Her school sheets put numbered arrows on the model letter. The pad draws its
+   model with strokeText -- a font glyph, not authored outlines -- so arrows
+   cannot be placed on it reliably. What the arrows encode is the stroke
+   sequence, so say it instead: shown on the sheet and spoken, which works for a
+   child who cannot read the numbers yet. Several of her letters come out
+   reversed, which is what stroke order is for. */
+var STROKE_ORDER={
+  upper:{'A':'Slant down to the left. Slant down to the right. Then a line across the middle.','B':'Pull straight down. Go back to the top and curve around twice.','C':'Start near the top. Curve all the way around to the left and stop.','D':'Pull straight down. Go back to the top and curve one big belly around.','E':'Pull straight down. Add a line at the top, one in the middle, and one at the bottom.','F':'Pull straight down. Add a line at the top and one in the middle.','G':'Curve around to the left like a C, then add a short line in toward the middle.','H':'Pull down. Pull down beside it. Then a line across the middle.','I':'Pull straight down. Add a line at the top and a line at the bottom.','J':'Pull straight down, then curve to the left at the bottom.','K':'Pull straight down. Slant in to the middle, then slant back out.','L':'Pull straight down. Then a line across the bottom.','M':'Pull down. Slant down, slant up, then pull down again.','N':'Pull down. Slant down to the bottom, then pull straight up.','O':'Start near the top. Curve all the way around and close it up.','P':'Pull straight down. Go back to the top and curve around halfway.','Q':'Curve all the way around like an O, then add a short slant at the bottom.','R':'Pull straight down. Curve around halfway, then slant out to the bottom.','S':'Curve in at the top, swing back, and curve around at the bottom.','T':'Pull straight down. Then a line across the top.','U':'Pull down, curve along the bottom, and pull back up.','V':'Slant down to the middle, then slant back up.','W':'Slant down, up, down, and up again.','X':'Slant down to the right. Then slant down to the left and cross it.','Y':'Slant in from each side to the middle, then pull straight down.','Z':'Line across the top, slant down to the left, then a line across the bottom.'},
+  lower:{'a':'Curve around to the left, then pull straight down.','b':'Pull straight down. Then curve around the bottom.','c':'Start near the top. Curve around to the left and stop.','d':'Curve around to the left, then pull straight down from the top.','e':'A little line across, then curve around to the left.','f':'Curve over at the top and pull down. Add a line across the middle.','g':'Curve around to the left, pull down, then hook to the left under the line.','h':'Pull straight down. Go back up, curve over, and pull down.','i':'Pull straight down. Then add a dot on top.','j':'Pull down and hook to the left. Then add a dot on top.','k':'Pull straight down. Slant in to the middle, then slant back out.','l':'Pull straight down.','m':'Pull down. Go back up, curve over and down, then curve over and down again.','n':'Pull down. Go back up, curve over, and pull down.','o':'Start near the top. Curve all the way around and close it up.','p':'Pull straight down below the line. Go back up and curve around.','q':'Curve around to the left, pull down below the line, then hook to the right.','r':'Pull straight down. Go back up and curve over a little.','s':'Curve in at the top, swing back, and curve around at the bottom.','t':'Pull straight down. Then a line across near the top.','u':'Pull down, curve along the bottom, pull up, then pull down again.','v':'Slant down to the middle, then slant back up.','w':'Slant down, up, down, and up again.','x':'Slant down to the right. Then slant down to the left and cross it.','y':'Slant down to the middle, then slant all the way down below the line.','z':'Line across the top, slant down to the left, then a line across the bottom.'},
+  number:{'0':'Start near the top. Curve all the way around and close it up.','1':'Pull straight down.','2':'Curve over at the top, slant down to the left, then a line across the bottom.','3':'Curve around the top, then curve around the bottom.','4':'Slant down to the middle, line across, then pull straight down.','5':'Pull down, curve around the bottom, then add a line across the top.','6':'Curve down to the left, then loop around the bottom.','7':'Line across the top, then slant down to the left.','8':'Curve around the top, cross over, and curve around the bottom.','9':'Curve around a small circle at the top, then pull straight down.'}
+};
+function strokeOrderFor(target,kind){
+  var v=String(target||'');
+  if(kind==='number')return STROKE_ORDER.number[v]||null;
+  if(v&&v===v.toUpperCase()&&STROKE_ORDER.upper[v])return STROKE_ORDER.upper[v];
+  return STROKE_ORDER.lower[v.toLowerCase()]||null;
+}
+var LETTER_PICTURES={
+  'a':[['🐜','ant'],['🍎','apple'],['🐊','alligator']],
+  'b':[['🐻','bear'],['🎈','balloon'],['🦋','butterfly']],
+  'c':[['🐱','cat'],['🎂','cake'],['🐄','cow']],
+  'd':[['🐶','dog'],['🦆','duck'],['🥁','drum']],
+  'e':[['🐘','elephant'],['🥚','egg'],['🦅','eagle']],
+  'f':[['🐟','fish'],['🌸','flower'],['🦊','fox']],
+  'g':[['🐐','goat'],['🍇','grapes'],['🎁','gift']],
+  'h':[['🏠','house'],['🐴','horse'],['🎩','hat']],
+  'i':[['🍦','ice cream'],['🧊','ice'],['🪲','insect']],
+  'j':[['🫙','jar'],['🧃','juice'],['🧩','jigsaw']],
+  'k':[['🔑','key'],['🪁','kite'],['🦘','kangaroo']],
+  'l':[['🦁','lion'],['🍋','lemon'],['🍃','leaf']],
+  'm':[['🌙','moon'],['🐒','monkey'],['🥛','milk']],
+  'n':[['🪺','nest'],['👃','nose'],['📓','notebook']],
+  'o':[['🐙','octopus'],['🦉','owl'],['🍊','orange']],
+  'p':[['🐧','penguin'],['✏️','pencil'],['🐷','pig']],
+  'q':[['👑','queen'],['❓','question'],['🧵','quilt']],
+  'r':[['🌈','rainbow'],['🐇','rabbit'],['🌹','rose']],
+  's':[['🐍','snake'],['☀️','sun'],['⭐','star']],
+  't':[['🌳','tree'],['🚂','train'],['🚜','tractor']],
+  'u':[['☂️','umbrella'],['🦄','unicorn'],['⬆️','up']],
+  'v':[['🎻','violin'],['🌋','volcano'],['🚐','van']],
+  'w':[['🐋','whale'],['🍉','watermelon'],['🌊','wave']],
+  /* x is the one letter with no x-initial words a five-year-old knows, so letter-x
+     pages use the ending sound, which is what her school sheets do too. */
+  'x':[['🦊','fox'],['📦','box'],['6️⃣','six']],
+  'y':[['🧶','yarn'],['🪀','yo-yo'],['🥱','yawn']],
+  'z':[['🦓','zebra'],['⚡','zap'],['🤐','zip']]
+};
+function pictureCues(root,target){
+  var letter=String(target||'').toLowerCase(),set=LETTER_PICTURES[letter];
+  if(!set)return;
+  var row=el('div','school-picture-cues');
+  row.setAttribute('role','img');
+  var endsWith=letter==='x';
+  row.setAttribute('aria-label','Pictures that '+(endsWith?'end':'start')+' with '+String(target)+': '+set.map(function(x){return x[1];}).join(', ')+'.');
+  set.forEach(function(pair){
+    var cell=el('figure','school-picture-cue');
+    cell.appendChild(el('span','school-picture-art',pair[0]));
+    cell.appendChild(el('figcaption','school-picture-word',pair[1]));
+    row.appendChild(cell);
+  });
+  root.appendChild(row);
+}
 function referenceStrip(root,kind,target){
   var row=el('div','school-reference-strip'),items=[];
   if(kind==='number'){for(var n=0;n<=20;n++)items.push(String(n));}
@@ -151,11 +243,22 @@ function referenceStrip(root,kind,target){
 }
 
 function renderLetterGap(root,q,ctx){
-  clear(root);worksheetTitle(root,'LETTER WORK','Find the missing letter');
-  var strip=el('div','school-letter-strip');
-  [q.sheet.before,null,q.sheet.after].forEach(function(v){var box=el('div','school-letter-box'+(v===null?' is-gap':''),v===null?'?':v);strip.appendChild(box);});
-  root.appendChild(strip);
-  var hint=el('p','school-sheet-help','Choose the letter that belongs between the two letters.');root.appendChild(hint);
+  clear(root);worksheetTitle(root,'LETTER WORK','Fill in the missing letter');
+  /* Her school sheet shows the whole alphabet with blanks, not a three-cell
+     window, so the child has to hold the sequence rather than just one
+     neighbour. The gap is the letter being asked for. */
+  var upper=q.sheet['case']==='uppercase',letters='abcdefghijklmnopqrstuvwxyz'.split('');
+  if(upper)letters=letters.map(function(x){return x.toUpperCase();});
+  var target=String(q.sheet.target);
+  var grid=el('div','school-alphabet-grid');
+  grid.setAttribute('role','img');
+  grid.setAttribute('aria-label','The alphabet with '+target+' missing.');
+  letters.forEach(function(v){
+    var isGap=String(v)===target;
+    grid.appendChild(el('div','school-alphabet-cell'+(isGap?' is-gap':''),isGap?'?':v));
+  });
+  root.appendChild(grid);
+  var hint=el('p','school-sheet-help','One letter is missing. Which one belongs in the empty space?');root.appendChild(hint);
   var bank=el('div','school-letter-bank');root.appendChild(bank);
   return wireSingleChoice(bank,q.choices,q.answer,ctx,'school-letter-choice');
 }
@@ -206,11 +309,12 @@ function makePad(holder,target,guided,kind,onMark,label){
 function renderTraceSheet(root,q,ctx){
   clear(root);worksheetTitle(root,q.sheet.kind==='number'?'NUMBER WRITING':'LETTER WRITING','Trace it, then try it yourself');
   referenceStrip(root,q.sheet.kind,q.sheet.target);
-  var hero=el('div','school-trace-hero',q.sheet.target);root.appendChild(hero);root.appendChild(el('p','school-sheet-help','Follow the dotted model first. Then write one by yourself.'));
+  var hero=el('div','school-trace-hero',q.sheet.target);root.appendChild(hero);if(q.sheet.strokeOrder)root.appendChild(el('p','school-stroke-order',q.sheet.strokeOrder));root.appendChild(el('p','school-sheet-help','Follow the dotted model first. Then write one by yourself.'));
   var pads=el('div','school-pen-grid'),all=[];root.appendChild(pads);
   function changed(){notify(ctx);}
   for(var i=0;i<(q.sheet.tracePads||2);i++)all.push(makePad(pads,q.sheet.target,true,q.sheet.kind,changed,'Trace '+(i+1)));
   for(var j=0;j<(q.sheet.freePads||1);j++)all.push(makePad(pads,q.sheet.target,false,q.sheet.kind,changed,'My turn'));
+  if(q.sheet.kind==='letter')pictureCues(root,q.sheet.target);
   return{immediate:false,isReady:function(){return all.every(function(p){return p.ready();});},check:function(){return{correct:true,response:'traced and wrote '+q.sheet.target};},reset:function(){all.forEach(function(p){p.reset();});notify(ctx);}};
 }
 function renderNamePage(root,q,ctx){
@@ -234,6 +338,28 @@ function renderLifeChoice(root,q,ctx){
   var bank=el('div','school-life-options');root.appendChild(bank);
   return wireSingleChoice(bank,q.choices,q.answer,ctx,'school-life-option');
 }
+function renderWriteRoom(root,q,ctx){
+  if(!baseTemplateRender)return null;
+  clear(root);worksheetTitle(root,'WRITE THE ROOM','Look at the picture, then write its word');
+  var frame=el('div','school-room-frame');
+  var pic=el('div','school-room-picture');
+  pic.setAttribute('role','img');
+  pic.setAttribute('aria-label',q.sheet.alt||q.sheet.word);
+  if(window.SakhiTemplates&&typeof window.SakhiTemplates.assessmentVisual==='function')pic.innerHTML=window.SakhiTemplates.assessmentVisual(q.sheet.picture);
+  frame.appendChild(pic);
+  root.appendChild(frame);
+  /* The letter tiles and slots are the core build activity. Re-implementing
+     them here would be a second copy of behaviour that already exists, so the
+     canonical renderer draws the working area below the worksheet picture. */
+  var work=el('div','school-room-work');root.appendChild(work);
+  var inner={};Object.keys(q).forEach(function(k){inner[k]=q[k];});
+  inner.template=q.base_template||'build';
+  /* The worksheet already shows the picture and the core renderer draws its own
+     slots, so hand it the question without the media -- otherwise the child sees
+     the same picture twice and two answer rows. */
+  inner.media=null;
+  return baseTemplateRender(work,inner,ctx);
+}
 function renderSchool(root,q,ctx){
   if(!q||String(q.template||'').indexOf('school-')!==0)return null;
   if(q.template==='school-letter-gap')return renderLetterGap(root,q,ctx);
@@ -242,6 +368,7 @@ function renderSchool(root,q,ctx){
   if(q.template==='school-trace-sheet')return renderTraceSheet(root,q,ctx);
   if(q.template==='school-name-page')return renderNamePage(root,q,ctx);
   if(q.template==='school-life-choice')return renderLifeChoice(root,q,ctx);
+  if(q.template==='school-write-room')return renderWriteRoom(root,q,ctx);
   return null;
 }
 function install(){
@@ -254,10 +381,11 @@ function install(){
   }
   if(window.SakhiTemplates&&!window.SakhiTemplates.__schoolworkWrapped){
     var T=window.SakhiTemplates,baseRender=T.render,next={};Object.keys(T).forEach(function(k){next[k]=T[k];});
+    baseTemplateRender=function(root,q,ctx){return baseRender.call(T,root,q,ctx);};
     next.render=function(root,q,ctx){var rendered=renderSchool(root,q,ctx);return rendered||baseRender.call(T,root,q,ctx);};
     next.__schoolworkWrapped=true;window.SakhiTemplates=next;
   }
 }
 install();
-return{VERSION:VERSION,enhanceActivity:enhanceActivity,renderSchool:renderSchool,mappedAvoid:mappedAvoid,install:install};
+return{VERSION:VERSION,LETTER_PICTURES:LETTER_PICTURES,enhanceActivity:enhanceActivity,renderSchool:renderSchool,mappedAvoid:mappedAvoid,install:install};
 })();

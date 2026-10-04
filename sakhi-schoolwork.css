@@ -2,7 +2,26 @@
 .school-sheet-head{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin:4px 0 18px}
 .school-sheet-badge{display:inline-flex;align-items:center;min-height:30px;padding:6px 11px;border-radius:999px;background:color-mix(in srgb,var(--world-accent) 18%,white);border:1px solid color-mix(in srgb,var(--world-deep) 18%,white);font-size:11px;font-weight:950;letter-spacing:.12em;color:var(--world-deep)}
 .school-sheet-title{font-size:clamp(19px,3vw,28px);color:var(--ink-strong)}
+.school-stroke-order{max-width:640px;margin:6px auto 2px;text-align:center;font-size:17px;font-weight:800;color:#5a3f7d;line-height:1.45}
 .school-sheet-help{max-width:620px;margin:12px auto 18px;text-align:center;color:var(--muted);font-weight:750;line-height:1.45}
+/* Three pictures that start with the letter, the way the school sheets close
+   every letter page. Sized so the art reads from across an iPad. */
+/* Write the Room: the picture in a worksheet cell, blank boxes showing how many
+   letters the word needs, then the tile board the core build activity draws. */
+.school-room-frame{display:flex;flex-direction:column;align-items:center;gap:14px;margin:10px auto 6px;padding:16px;border-radius:20px;background:rgba(255,255,255,.55);box-shadow:inset 0 0 0 3px rgba(108,76,140,.25)}
+.school-room-picture{width:min(420px,78vw)}
+.school-room-picture svg{width:100%;height:auto}
+.school-room-work{margin-top:4px}
+/* The whole alphabet, wrapped, with one blank -- the shape of her school sheet.
+   These cells are their own component: .school-letter-box is the big
+   three-letter strip and its type is sized for that, not for 26 across. */
+.school-alphabet-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(46px,1fr));gap:8px;max-width:640px;margin:12px auto 6px;padding:0 6px}
+.school-alphabet-cell{display:flex;align-items:center;justify-content:center;aspect-ratio:1;border-radius:12px;background:rgba(255,255,255,.75);color:#4a3663;font-size:24px;font-weight:800;box-shadow:inset 0 0 0 2px rgba(108,76,140,.22)}
+.school-alphabet-cell.is-gap{background:rgba(124,77,255,.1);color:#7c4dff;box-shadow:inset 0 0 0 3px rgba(124,77,255,.55)}
+.school-picture-cues{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin:18px auto 6px;padding:14px 10px;border-top:3px dashed rgba(108,76,140,.3)}
+.school-picture-cue{display:flex;flex-direction:column;align-items:center;gap:6px;margin:0;min-width:92px}
+.school-picture-art{font-size:46px;line-height:1}
+.school-picture-word{font-size:15px;font-weight:800;letter-spacing:.02em;color:var(--muted);text-transform:lowercase}
 .school-reference-strip{display:flex;gap:5px;overflow-x:auto;overscroll-behavior-inline:contain;padding:8px 4px 12px;margin:0 auto 8px;max-width:760px;scrollbar-width:thin}
 .school-reference-item{flex:0 0 31px;min-height:31px;display:grid;place-items:center;border-radius:9px;border:1px solid color-mix(in srgb,var(--world-deep) 13%,white);background:#fff;color:var(--muted);font-size:13px;font-weight:850}
 .school-reference-item.current{background:var(--world-deep);border-color:var(--world-deep);color:#fff;box-shadow:0 4px 12px color-mix(in srgb,var(--world-deep) 22%,transparent)}
