@@ -3,6 +3,7 @@
 var scheduled=false;
 var PHASES=[['learn','Discover'],['connect','Remember'],['practice','Try'],['apply','Explore'],['transfer','Challenge']];
 var DOMAIN_ICONS={reading:'📖',math:'🔢',writing:'✏️',language:'🎧',science:'🔭',logic:'🧩',wellbeing:'💗',creative:'🎨',world:'🌍'};
+var WRAP_LABELS={reading:'Reading treasure',math:'Math treasure',writing:'Proud writing treasure',language:'Storyteller treasure',science:'Mini scientist mission',logic:'Puzzle-maker mission',wellbeing:'Kindness mission',creative:'Creator upgrade',world:'Explorer mission'};
 function qs(s){return document.querySelector(s);}
 function all(s){return Array.prototype.slice.call(document.querySelectorAll(s));}
 function text(n){return n?String(n.textContent||'').trim():'';}
@@ -23,12 +24,18 @@ function ensureJourney(){
  var html=PHASES.map(function(p,i){var cls=i<active?' done':i===active?' active':'';return'<span class="learning-journey-step'+cls+'"><b>'+p[1]+'</b><small>'+(i+1)+'</small></span>';}).join('');
  if(rail.innerHTML!==html)rail.innerHTML=html;
 }
+function enhanceWrapUp(){
+ if(text(qs('#activitySkill'))!=='Trail finish')return;
+ var prompt=qs('#questionPrompt'),label=WRAP_LABELS[domain()]||'Finish-line treasure';if(!prompt)return;
+ var current=text(prompt);if(current&&current.indexOf(label)!==0)prompt.textContent=label+' · '+current;
+ var story=qs('#missionStory');if(story)story.textContent='One last hands-on discovery. Take it away from the screen and make it yours.';
+}
 function enhanceActivity(){
  if(document.body.dataset.view!=='activity')return;
- ensureJourney();
+ ensureJourney();enhanceWrapUp();
  var card=qs('.quest-card'),story=qs('.mission-story');if(card&&story){var power=card.querySelector('.mission-power'),skill=text(qs('#activitySkill')),trail=text(qs('#activityTrail'));if(!power){power=document.createElement('div');power.className='mission-power';story.insertAdjacentElement('afterend',power);}var content='<span>'+(DOMAIN_ICONS[domain()]||'✨')+' <b>'+skill+'</b></span><span>Inside '+trail+'</span>';if(power.innerHTML!==content)power.innerHTML=content;}
  var hear=qs('#hearBtn');if(hear){hear.classList.add('voice-listen');if(!hear.getAttribute('aria-busy'))hear.textContent='Listen to Sakhi';}
- var pill=qs('#voicePill');if(pill&&!pill.dataset.experienceLabel){pill.textContent='♪ Gentle Sakhi voice';pill.dataset.experienceLabel='1';}
+ var pill=qs('#voicePill');if(pill&&text(pill)!=='♪ Gentle Sakhi voice')pill.textContent='♪ Gentle Sakhi voice';
 }
 function enhanceCelebrate(){
  var overlay=qs('#celebrate'),card=overlay&&overlay.querySelector('.celebrate-card');if(!card)return;
