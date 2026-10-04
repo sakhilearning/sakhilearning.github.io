@@ -24,6 +24,7 @@ const moduleOrder=[
   'sakhi-audio.js',
   'sakhi-templates.js',
   'sakhi-schoolwork.js',
+  'sakhi-quality.js',
   'sakhi-wrapups.js',
   'sakhi-app.js'
 ];
@@ -80,7 +81,7 @@ const runtimeData=[
   `window.SAKHI_ICON_DATA=${JSON.stringify(dataUri('icon-192.png','image/png'))};`
 ].join('\n');
 const runtimeJs=moduleOrder.map(f=>`\n/* ===== ${f} ===== */\n${read(f)}\n`).join('');
-const flatCss=flattenLayers(read('sakhi-production.css'))+'\n'+read('sakhi-schoolwork.css');
+const flatCss=flattenLayers(read('sakhi-production.css'))+'\n'+read('sakhi-schoolwork.css')+'\n'+read('sakhi-elite.css');
 /* Every substitution uses a replacer FUNCTION, never a replacement string.
    String.replace treats $&, $`, $' and $n in a replacement string as special
    patterns: sakhi-schoolwork.js contains the regex anchor '$' -- the characters
