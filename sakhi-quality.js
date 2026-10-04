@@ -4,6 +4,7 @@ var BANNED=[/show a grown-up one specific thing you learned/i,/draw one by yours
 function text(v){return String(v===undefined||v===null?'':v).trim();}
 function unique(a){var seen={};return(a||[]).filter(function(x){var k=String(x);if(seen[k])return false;seen[k]=true;return true;});}
 function hasMedia(q,path){var cur=q;for(var i=0;i<path.length;i++){if(!cur||cur[path[i]]===undefined||cur[path[i]]===null)return false;cur=cur[path[i]];}return true;}
+function taskKey(q){return text(q&&q.prompt)+'|'+JSON.stringify(q&&q.answer);}
 function visualIssue(q,skill){
   var k=skill&&skill.kind||'',id=skill&&skill.skill_id||'',tpl=q.template||'';
   if(k==='count'||k==='subitize')return hasMedia(q,['media','count'])||hasMedia(q,['sheet','count'])?null:'count question has no represented count';
@@ -46,19 +47,40 @@ function auditActivity(activity){
   qs.forEach(function(q,i){
     var r=auditQuestion(q,activity,i);errors=errors.concat(r.errors);warnings=warnings.concat(r.warnings);
     var key=text(q.question_key);if(key){if(keys[key])errors.push('question_key repeats inside activity: '+key);keys[key]=true;}
-    var task=text(q.prompt)+'|'+JSON.stringify(q.answer);if(tasks[task])errors.push('same task repeats inside activity');tasks[task]=true;
+    var task=taskKey(q);if(tasks[task])errors.push('same task repeats inside activity');tasks[task]=true;
   });
   if(qs.length>=4){var phases=qs.map(function(q){return q.learning_phase;});if(phases.indexOf('transfer')<0)errors.push('deep lesson has no transfer question');if(phases.indexOf('practice')<0&&phases.indexOf('apply')<0)errors.push('deep lesson has no practice/application step');}
   return{ok:errors.length===0,errors:unique(errors),warnings:unique(warnings)};
 }
+function repairRepeatedTasks(activity,args,generate){
+  if(!activity||!Array.isArray(activity.questions)||activity.questions.length<2)return activity;
+  var seen={},usedKeys=activity.questions.map(function(q){return q.question_key;}).filter(Boolean),seed=text(args[2]||activity.activity_id||activity.skill_id||'quality'),baseAvoid=Array.isArray(args[3])?args[3].slice():[],options=args[4]&&typeof args[4]==='object'?Object.assign({},args[4]):{};
+  activity.questions=activity.questions.map(function(q,index){
+    var key=taskKey(q);if(!seen[key]){seen[key]=true;return q;}
+    var phase=q.learning_phase,evidence=q.evidence_mode,candidate=null;
+    for(var attempt=0;attempt<6&&!candidate;attempt++){
+      var alternate=generate.call(window.SakhiActivities,args[0],args[1],seed+'|quality-repair|'+index+'|'+attempt,baseAvoid.concat(usedKeys),Object.assign({},options,{teachFirst:false}));
+      if(!alternate||!Array.isArray(alternate.questions))continue;
+      candidate=alternate.questions.find(function(x){return x&&x.question_key&&usedKeys.indexOf(x.question_key)<0&&!seen[taskKey(x)];})||null;
+    }
+    if(!candidate)return q;
+    candidate=JSON.parse(JSON.stringify(candidate));
+    if(phase)candidate.learning_phase=phase;
+    if(evidence!==undefined)candidate.evidence_mode=evidence;
+    seen[taskKey(candidate)]=true;usedKeys.push(candidate.question_key);
+    console.info('[Sakhi quality repaired duplicate task]',activity.skill_id,'question',index+1);
+    return candidate;
+  });
+  return activity;
+}
 function installGeneratorGuard(){
   var A=window.SakhiActivities;if(!A||typeof A.generate!=='function'||A.__qualityWrapped)return;
-  var generate=A.generate;A.generate=function(){var activity=generate.apply(A,arguments),report=auditActivity(activity);activity.quality_report=report;if(!report.ok){console.error('[Sakhi quality contract]',activity.skill_id,report.errors);if(window.SAKHI_STRICT_QUALITY)throw new Error('Sakhi quality contract failed: '+report.errors.join('; '));}else if(report.warnings.length)console.warn('[Sakhi quality warning]',activity.skill_id,report.warnings);return activity;};A.__qualityWrapped=true;
+  var generate=A.generate;A.generate=function(){var args=Array.prototype.slice.call(arguments),activity=generate.apply(A,args);activity=repairRepeatedTasks(activity,args,generate);var report=auditActivity(activity);activity.quality_report=report;if(!report.ok){console.error('[Sakhi quality contract]',activity.skill_id,report.errors);if(window.SAKHI_STRICT_QUALITY)throw new Error('Sakhi quality contract failed: '+report.errors.join('; '));}else if(report.warnings.length)console.warn('[Sakhi quality warning]',activity.skill_id,report.warnings);return activity;};A.__qualityWrapped=true;
 }
 function installLibraryGallery(){
   var P=window.SakhiPresentation;if(!P||typeof P.gallery!=='function'||P.__libraryGalleryWrapped)return;
   var gallery=P.gallery;P.gallery=function(){return '<section class="library-reward-showcase" aria-label="Sakhi’s generated learning artwork"><figure><img src="./assets/library-media/luna-unicorn.webp" alt="Luna the Rainbow Unicorn from Sakhi’s original ChatGPT artwork" loading="lazy" decoding="async"><figcaption>Luna returns as Sakhi’s familiar learning companion from the original artwork set.</figcaption></figure><figure><img src="./assets/theme-media/generated-v4/princess-story-forest.webp" alt="Princess story forest for language adventures" loading="lazy" decoding="async"><figcaption>Story artwork supports listening and imagination while the question stays in its own clear space.</figcaption></figure></section>'+gallery.apply(P,arguments);};P.__libraryGalleryWrapped=true;
 }
 installGeneratorGuard();installLibraryGallery();
-return{auditActivity:auditActivity,auditQuestion:auditQuestion,visualIssue:visualIssue,installGeneratorGuard:installGeneratorGuard};
+return{auditActivity:auditActivity,auditQuestion:auditQuestion,visualIssue:visualIssue,repairRepeatedTasks:repairRepeatedTasks,installGeneratorGuard:installGeneratorGuard};
 })();
