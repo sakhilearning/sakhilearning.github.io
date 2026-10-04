@@ -9,6 +9,7 @@ const dist=path.join(root,'dist');
    version used to be hand-maintained in nine files, and a bump missed the
    worker registration URL, which left a stale worker serving the old build. */
 const buildId=require(path.join(root,'package.json')).version;
+const FEEDBACK_DWELL_MS=1650;
 const stamp=text=>text.split('__SAKHI_VERSION__').join(buildId);
 const moduleOrder=[
   'supabase-config.js',
@@ -29,6 +30,17 @@ const moduleOrder=[
   'sakhi-app.js'
 ];
 function read(f,enc='utf8'){return fs.readFileSync(path.join(root,f),enc);}
+function moduleSource(f){
+  let source=read(f);
+  if(f==='sakhi-app.js'){
+    const marker='advanceTimer=setTimeout(function(){advanceQuestion(false);},950);';
+    const replacement='advanceTimer=setTimeout(function(){advanceQuestion(false);},window.SAKHI_FEEDBACK_DWELL_MS||1650);';
+    const hits=source.split(marker).length-1;
+    if(hits!==1)throw new Error('Expected exactly one Sakhi feedback auto-advance marker; found '+hits+'. Review pacing intentionally before changing this controller.');
+    source=source.replace(marker,replacement);
+  }
+  return source;
+}
 function flattenLayers(css){
   let out='',i=0;
   while(i<css.length){
@@ -74,13 +86,14 @@ try{phonemes=JSON.parse(read('assets/audio/phonemes/manifest.json'));}catch(e){}
 const narrationManifest=JSON.parse(read('assets/audio/narration/manifest.json'));
 const runtimeData=[
   `window.SAKHI_BUILD_ID=${JSON.stringify(buildId)};`,
+  `window.SAKHI_FEEDBACK_DWELL_MS=${FEEDBACK_DWELL_MS};`,
   `window.SAKHI_CURRICULUM_DATA=${JSON.stringify(curriculum)};`,
   `window.SAKHI_SIX_MONTH_PLAN=${JSON.stringify(sixMonth)};`,
   `window.SAKHI_PHONEME_MANIFEST=${JSON.stringify(phonemes)};`,
   `window.SAKHI_NARRATION_MANIFEST=${JSON.stringify(narrationManifest)};`,
   `window.SAKHI_ICON_DATA=${JSON.stringify(dataUri('icon-192.png','image/png'))};`
 ].join('\n');
-const runtimeJs=moduleOrder.map(f=>`\n/* ===== ${f} ===== */\n${read(f)}\n`).join('');
+const runtimeJs=moduleOrder.map(f=>`\n/* ===== ${f} ===== */\n${moduleSource(f)}\n`).join('');
 const flatCss=flattenLayers(read('sakhi-production.css'))+'\n'+read('sakhi-schoolwork.css')+'\n'+read('sakhi-elite.css');
 /* Every substitution uses a replacer FUNCTION, never a replacement string.
    String.replace treats $&, $`, $' and $n in a replacement string as special
@@ -113,6 +126,7 @@ for(const dir of ['data','assets','vendor']){if(fs.existsSync(path.join(root,dir
 fs.writeFileSync(path.join(dist,'BUILD.txt'),`Sakhi Learning Trails ${buildId}\nSelf-contained runtime: index.html\n`);
 console.log(`Built self-contained ${buildId}: index.html + dist/`);
 console.log(`  runtime modules: ${moduleOrder.length}`);
+console.log(`  feedback dwell: ${FEEDBACK_DWELL_MS}ms`);
 console.log(`  curriculum skills: ${curriculum.skills.length}`);
 console.log(`  deployment CSS bytes: ${Buffer.byteLength(flatCss)}`);
 console.log(`  deployment HTML bytes: ${Buffer.byteLength(html)}`);
