@@ -27,6 +27,7 @@ const moduleOrder=[
   'sakhi-audio.js',
   'sakhi-templates.js',
   'sakhi-schoolwork.js',
+  'sakhi-library-art.js',
   'sakhi-wrapups.js',
   'sakhi-app.js'
 ];
