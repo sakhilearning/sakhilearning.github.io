@@ -11,6 +11,29 @@ global.fetch=()=>Promise.reject(new Error('offline in tests'));
 global.addEventListener=()=>{};
 global.window={addEventListener:()=>{}};
 global.document={addEventListener:()=>{},readyState:'complete'};
+
+function stripComments(source){return String(source||'').replace(/\/\*[\s\S]*?\*\//g,'').replace(/(^|[^:])\/\/.*$/gm,'$1');}
+function guardExperienceSource(){
+  const source=fs.readFileSync(path.join(root,'sakhi-experience.js'),'utf8');
+  const code=stripComments(source);
+  const forbidden=[
+    [/\bMutationObserver\b/,'MutationObserver'],
+    [/\.querySelector(?:All)?\s*\(/,'querySelector/querySelectorAll'],
+    [/\.getElementById\s*\(/,'getElementById'],
+    [/\.appendChild\s*\(/,'appendChild'],
+    [/\.insertAdjacentHTML\s*\(/,'insertAdjacentHTML'],
+    [/\.replaceChildren\s*\(/,'replaceChildren'],
+    [/\.(?:innerHTML|outerHTML|textContent|innerText)\s*=/,'direct DOM text/html assignment'],
+    [/\.classList\s*\./,'classList mutation'],
+    [/\.setAttribute\s*\(/,'setAttribute mutation']
+  ];
+  forbidden.forEach(([re,label])=>{if(re.test(code))failures.push(`sakhi-experience.js reintroduced renderer-owned DOM patching: ${label}`);});
+  if(!/window\.SakhiExperience\s*=/.test(code))failures.push('sakhi-experience.js should only expose the SakhiExperience metadata contract.');
+  if(!/ownsDom\s*:\s*false/.test(code))failures.push('sakhi-experience.js must declare ownsDom:false so future work keeps DOM ownership in canonical renderers.');
+  if(!/integrated\s*:\s*true/.test(code))failures.push('sakhi-experience.js must declare integrated:true after the old runtime patch layer is retired.');
+}
+guardExperienceSource();
+
 const curriculum=JSON.parse(fs.readFileSync(path.join(root,'data/curriculum-v3.json'),'utf8'));
 window.SAKHI_CURRICULUM_DATA=curriculum;
 for(const f of ['sakhi-curriculum.js','sakhi-progress.js','sakhi-content.js','sakhi-activities.js','sakhi-normalize.js'])require(path.join(root,f));
@@ -43,4 +66,4 @@ for(const sk of curriculum.skills){
 if(academic<80)failures.push(`academic audit covered only ${academic} question-asking skills`);
 if(questions<8000)failures.push(`student experience audit generated too few questions: ${questions}`);
 if(failures.length){console.error('student-experience FAILED:\n- '+failures.slice(0,120).join('\n- '));if(failures.length>120)console.error(`... and ${failures.length-120} more`);process.exit(1);}
-console.log(`student-experience passed: ${academic} core academic skills meet meaningful task-depth floors; ${questions} generated questions avoid placeholder and unnecessary adult-dependency prompts.`);
+console.log(`student-experience passed: ${academic} core academic skills meet meaningful task-depth floors; ${questions} generated questions avoid placeholder and unnecessary adult-dependency prompts; experience layer stays metadata-only.`);
