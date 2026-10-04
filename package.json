@@ -5,6 +5,7 @@
   "scripts": {
     "syntax": "node scripts/check-syntax.cjs",
     "validate": "node scripts/validate-production-app.cjs",
+    "test:source-architecture": "node tests/source-architecture.test.cjs",
     "test:activities": "node tests/activities.test.cjs",
     "test:plan": "node tests/plan.test.cjs",
     "test:theme-media": "node tests/theme-media.test.cjs",
@@ -21,7 +22,7 @@
     "audit:security": "node scripts/audit-production.cjs",
     "build": "node scripts/build.cjs",
     "validate:dist": "node scripts/validate-dist.cjs",
-    "qa": "npm run syntax && npm run validate && npm run test:activities && npm run test:plan && npm run test:runtime-core && npm run test:learner-model && npm run test:progress-evidence && npm run test:lesson-coaching && npm run test:flow-depth && npm run test:activity-routing && npm run test:content-depth && npm run test:schoolwork && npm run test:quality-contracts && npm run test:adaptive-pacing && npm run test:mastery-policy && npm run test:library-phonics-art && npm run test:layout-safety && npm run test:student-experience && npm run test:cloud-sync && npm run test:account-history && npm run test:audio && npm run test:narration-coverage && npm run test:no-robo-voice && npm run test:theme-media && npm run test:navigation && npm run test:interaction-regression && npm run test:touch-interaction && npm run test:startup-refresh && npm run test:runtime-logistics && npm run audit:security",
+    "qa": "npm run syntax && npm run validate && npm run test:source-architecture && npm run test:activities && npm run test:plan && npm run test:runtime-core && npm run test:learner-model && npm run test:progress-evidence && npm run test:lesson-coaching && npm run test:flow-depth && npm run test:activity-routing && npm run test:content-depth && npm run test:schoolwork && npm run test:quality-contracts && npm run test:adaptive-pacing && npm run test:mastery-policy && npm run test:library-phonics-art && npm run test:layout-safety && npm run test:student-experience && npm run test:cloud-sync && npm run test:account-history && npm run test:audio && npm run test:narration-coverage && npm run test:no-robo-voice && npm run test:theme-media && npm run test:navigation && npm run test:interaction-regression && npm run test:touch-interaction && npm run test:startup-refresh && npm run test:runtime-logistics && npm run audit:security",
     "release": "npm run build && npm run qa && npm run validate:dist && npm run test:dist-smoke",
     "preview": "node scripts/serve-local.cjs",
     "test:runtime-core": "node tests/runtime-core.test.cjs",
