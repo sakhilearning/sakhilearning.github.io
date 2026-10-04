@@ -29,7 +29,8 @@ const moduleOrder=[
   'sakhi-schoolwork.js',
   'sakhi-library-art.js',
   'sakhi-wrapups.js',
-  'sakhi-app.js'
+  'sakhi-app.js',
+  'sakhi-experience.js'
 ];
 function read(f,enc='utf8'){return fs.readFileSync(path.join(root,f),enc);}
 function flattenLayers(css){
@@ -84,7 +85,7 @@ const runtimeData=[
   `window.SAKHI_ICON_DATA=${JSON.stringify(dataUri('icon-192.png','image/png'))};`
 ].join('\n');
 const runtimeJs=moduleOrder.map(f=>`\n/* ===== ${f} ===== */\n${read(f)}\n`).join('');
-const flatCss=flattenLayers(read('sakhi-production.css'))+'\n'+read('sakhi-schoolwork.css')+'\n'+read('sakhi-layout-guardrails.css');
+const flatCss=flattenLayers(read('sakhi-production.css'))+'\n'+read('sakhi-schoolwork.css')+'\n'+read('sakhi-layout-guardrails.css')+'\n'+read('sakhi-experience.css');
 /* Every substitution uses a replacer FUNCTION, never a replacement string.
    String.replace treats $&, $`, $' and $n in a replacement string as special
    patterns: sakhi-schoolwork.js contains the regex anchor '$' -- the characters
