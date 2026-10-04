@@ -21,6 +21,7 @@ const moduleOrder=[
   'sakhi-normalize.js',
   'sakhi-quality.js',
   'sakhi-progress.js',
+  'sakhi-mastery-policy.js',
   'sakhi-adaptive.js',
   'sakhi-plan.js',
   'sakhi-audio.js',
