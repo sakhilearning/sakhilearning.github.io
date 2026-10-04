@@ -1,0 +1,87 @@
+/* Enterprise presentation guardrails: artwork supports the lesson; it never sits
+   underneath instructional copy or interaction controls. */
+.scene-card{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  grid-template-areas:"visual visual" "copy path";
+  min-height:0;
+  overflow:hidden;
+  background:#fff;
+  color:var(--ink);
+}
+.scene-card>.world-art{
+  grid-area:visual;
+  position:relative;
+  inset:auto;
+  width:100%;
+  height:clamp(220px,34vw,360px);
+  object-fit:cover;
+  transform:none;
+  transition:transform .7s ease;
+}
+.scene-card:hover>.world-art{transform:scale(1.018)}
+.scene-card>.scene-vignette{display:none}
+.scene-card>.scene-copy{
+  grid-area:copy;
+  position:relative;
+  left:auto;
+  right:auto;
+  bottom:auto;
+  max-width:none;
+  padding:18px 22px 20px;
+  background:linear-gradient(180deg,#fff,color-mix(in srgb,var(--world-soft) 62%,white));
+  color:var(--ink);
+  text-shadow:none;
+  align-self:stretch;
+}
+.scene-card>.scene-copy small{color:var(--world-deep);opacity:1}
+.scene-card>.scene-copy b{color:var(--ink-strong);font-size:clamp(23px,3vw,35px)}
+.scene-card>.scene-copy span{color:var(--muted)}
+.scene-card>.scene-path{
+  grid-area:path;
+  position:relative;
+  right:auto;
+  bottom:auto;
+  padding:18px 22px 20px 8px;
+  align-self:end;
+  justify-self:end;
+}
+.scene-card>.scene-path i{background:color-mix(in srgb,var(--world-deep) 22%,white)}
+.scene-card>.scene-path i.reached{background:var(--world-deep);box-shadow:0 0 0 4px color-mix(in srgb,var(--world-deep) 12%,transparent)}
+
+/* Cards already have their own copy below the thumbnail. Keep thumbnails purely
+   visual so labels can never collide with art on narrow iPad layouts. */
+.mini-scene .scene-card{display:block;position:relative;height:100%;min-height:155px;background:var(--world-soft)}
+.mini-scene .scene-card>.world-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.025)}
+.mini-scene .scene-card>.scene-copy,.mini-scene .scene-card>.scene-path,.mini-scene .scene-card>.scene-vignette{display:none}
+
+.library-reward-showcase{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:18px;
+  margin:18px 0 26px;
+}
+.library-reward-showcase figure{
+  margin:0;
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:26px;
+  background:#fff;
+  box-shadow:var(--shadow-soft);
+}
+.library-reward-showcase img{display:block;width:100%;aspect-ratio:1.45/1;object-fit:cover;background:#fff}
+.library-reward-showcase figcaption{padding:13px 16px 16px;color:var(--muted);font-weight:800;line-height:1.4}
+
+/* Learning controls remain visually dominant. Artwork never escapes into the
+   question card, answer grid, handwriting sheet, or tile board. */
+.quest-card,.answer-grid,.token-bank,.school-pen-wrap,.school-count-field,.school-letter-strip{isolation:isolate}
+.quest-card img:not(.assessment-visual img),.answer-grid img{max-width:100%}
+
+@media(max-width:700px){
+  .scene-card{grid-template-columns:1fr;grid-template-areas:"visual" "copy" "path"}
+  .scene-card>.world-art{height:220px}
+  .scene-card>.scene-copy{padding:15px 17px 10px}
+  .scene-card>.scene-path{padding:0 17px 16px;justify-self:start}
+  .library-reward-showcase{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){.scene-card>.world-art{transition:none}.scene-card:hover>.world-art{transform:none}}
