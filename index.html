@@ -356,10 +356,10 @@ body[data-view="activity"] .activity-actions .primary{width:100%;margin-left:0}
 <div class="toast" id="toast" role="status"></div>
 <div class="boot-fallback" id="bootFallback" hidden role="alert" aria-modal="true">
   <div class="boot-fallback-card">
-    <h2>Sakhi needs one refresh ✨</h2>
-    <p>The learning app did not finish starting. Your progress has not been erased.</p>
+    <h2>Sakhi couldn’t finish starting ✨</h2>
+    <p>The learning app hit a startup error. Your progress has not been erased.</p>
     <p class="muted" data-boot-detail></p>
-    <button type="button" onclick="location.reload()">Refresh Sakhi</button>
+    <button type="button" onclick="location.reload()">Try Sakhi again</button>
   </div>
 </div>
 <script>
@@ -1483,13 +1483,9 @@ var LIFE_SKILLS={'wellbeing.friendship':true,'wellbeing.routines':true,'wellbein
 function clone(x){return JSON.parse(JSON.stringify(x));}
 function baseKey(key){return String(key||'').replace(new RegExp('\\|'+VERSION+'
 </script>
-<script>
-setTimeout(function(){
-  if(window.__SAKHI_BOOTED)return;
-  var box=document.getElementById('bootFallback');
-  if(box){box.hidden=false;var d=box.querySelector('[data-boot-detail]');if(d&&!d.textContent)d.textContent='Build '+(window.SAKHI_BUILD_ID||'4.7.0')+' did not initialize.';}
-},3500);
-</script>
+<!-- Startup errors are surfaced by SakhiApp.bootFailure. Do not use a timer-based
+     refresh prompt here: account verification and history sync may legitimately
+     take longer on iPad or a slow connection even while the app is starting normally. -->
 </body>
 </html>
 ),'');}
@@ -1963,12 +1959,8 @@ window.SakhiApp={boot:boot,show:show};if(document.readyState==='loading')documen
 
 
 </script>
-<script>
-setTimeout(function(){
-  if(window.__SAKHI_BOOTED)return;
-  var box=document.getElementById('bootFallback');
-  if(box){box.hidden=false;var d=box.querySelector('[data-boot-detail]');if(d&&!d.textContent)d.textContent='Build '+(window.SAKHI_BUILD_ID||'4.7.0')+' did not initialize.';}
-},3500);
-</script>
+<!-- Startup errors are surfaced by SakhiApp.bootFailure. Do not use a timer-based
+     refresh prompt here: account verification and history sync may legitimately
+     take longer on iPad or a slow connection even while the app is starting normally. -->
 </body>
 </html>
