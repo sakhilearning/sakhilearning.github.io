@@ -3,18 +3,35 @@
 var scheduled=false;
 var PHASES=[['learn','Discover'],['connect','Remember'],['practice','Try'],['apply','Explore'],['transfer','Challenge']];
 var DOMAIN_ICONS={reading:'📖',math:'🔢',writing:'✏️',language:'🎧',science:'🔭',logic:'🧩',wellbeing:'💗',creative:'🎨',world:'🌍'};
+var DOMAIN_LABELS={reading:'Rainbow Library',math:'Crystal Palace',writing:'Lantern Studio',language:'Story Castle',science:'Discovery Lagoon',logic:'Puzzle Garden',wellbeing:'Friendship Garden',creative:'Starlight Stage',world:'Discovery Atlas'};
 var WRAP_LABELS={reading:'Reading treasure',math:'Math treasure',writing:'Proud writing treasure',language:'Storyteller treasure',science:'Mini scientist mission',logic:'Puzzle-maker mission',wellbeing:'Kindness mission',creative:'Creator upgrade',world:'Explorer mission'};
+var WORLD_ART={
+ reading:['./assets/theme-media/generated/reading-enchanted-library.webp','./assets/theme-media/generated-v4/unicorn-phonics-meadow.webp'],
+ math:['./assets/theme-media/generated/math-ice-gems.webp','./assets/theme-media/generated/logic-crystal-number-palace.webp'],
+ writing:['./assets/theme-media/generated/writing-rainbow-storybook.webp','./assets/theme-media/generated/creative-tower-art-studio.webp'],
+ language:['./assets/theme-media/generated/language-golden-ballroom.webp','./assets/theme-media/generated-v4/princess-story-forest.webp'],
+ science:['./assets/theme-media/generated/science-mermaid-lagoon.webp','./assets/theme-media/generated-v4/safari-discovery-valley.webp'],
+ logic:['./assets/theme-media/generated/logic-crystal-number-palace.webp','./assets/theme-media/generated/math-ice-gems.webp'],
+ wellbeing:['./assets/theme-media/generated/wellbeing-enchanted-forest.webp','./assets/theme-media/generated/home-unicorn-storytime.webp'],
+ creative:['./assets/theme-media/generated/creative-tower-art-studio.webp','./assets/theme-media/generated/writing-rainbow-storybook.webp'],
+ world:['./assets/theme-media/generated-v4/princess-story-forest.webp','./assets/theme-media/generated-v4/safari-discovery-valley.webp']
+};
 function qs(s){return document.querySelector(s);}
 function all(s){return Array.prototype.slice.call(document.querySelectorAll(s));}
 function text(n){return n?String(n.textContent||'').trim():'';}
 function phaseFromLabel(label){label=String(label||'').toLowerCase();if(label.indexOf('learn')>=0)return'learn';if(label.indexOf('warm')>=0||label.indexOf('connect')>=0)return'connect';if(label.indexOf('try')>=0||label.indexOf('practice')>=0)return'practice';if(label.indexOf('use')>=0||label.indexOf('apply')>=0)return'apply';if(label.indexOf('deeper')>=0||label.indexOf('transfer')>=0||label.indexOf('challenge')>=0)return'transfer';return'practice';}
 function phaseIndex(phase){for(var i=0;i<PHASES.length;i++)if(PHASES[i][0]===phase)return i;return 2;}
 function domain(){return document.body.dataset.domain||'reading';}
+function cardDomain(card){var scene=card&&card.querySelector('.scene-card');if(!scene)return'';for(var i=0;i<scene.classList.length;i++){var c=scene.classList[i];if(c.indexOf('scene-')===0)return c.slice(6);}return'';}
+function setWorldArtwork(card,d,index){var pool=WORLD_ART[d],img=card&&card.querySelector('.mini-scene img.world-art');if(!pool||!pool.length||!img)return;var next=pool[index%pool.length];if(img.getAttribute('src')!==next)img.setAttribute('src',next);img.setAttribute('alt',(DOMAIN_LABELS[d]||'Learning world')+' learning scene');}
+function decorateCard(card,index){var d=cardDomain(card);if(!d)return;card.classList.add('domain-'+d);card.dataset.world=d;setWorldArtwork(card,d,index);var badge=card.querySelector('.world-badge');if(!badge){badge=document.createElement('span');badge.className='world-badge';var scene=card.querySelector('.mini-scene');if(scene)scene.appendChild(badge);}if(badge)badge.textContent=(DOMAIN_ICONS[d]||'✨')+' '+(DOMAIN_LABELS[d]||'Learning world');}
 function enhanceHome(){
- var stage=qs('.home-stage'),path=qs('.today-path');if(!stage||!path)return;
- var strip=qs('.daily-focus-strip');if(!strip){strip=document.createElement('div');strip.className='daily-focus-strip';strip.setAttribute('aria-label','Today’s learning powers');path.parentNode.insertBefore(strip,path);}
- var cards=all('#trailPreview .today-world-card').slice(0,5),items=cards.map(function(card,i){var title=text(card.querySelector('h3'))||text(card.querySelector('b'))||'Discovery';return'<span class="daily-focus-chip"><i>'+(i+1)+'</i>'+title.replace(/^\S+\s+/,'')+'</span>';});
- var html='<strong>Today’s magic</strong>'+items.join('');if(strip.innerHTML!==html)strip.innerHTML=html;
+ var stage=qs('.home-stage');if(!stage)return;
+ var duplicate=qs('.daily-focus-strip');if(duplicate)duplicate.remove();
+ var summary=qs('#todaySummary');if(summary)summary.setAttribute('aria-hidden','true');
+ all('#trailPreview .today-world-card').forEach(function(card,i){decorateCard(card,i);});
+ all('.trail-card').forEach(function(card,i){decorateCard(card,i+1);});
+ var preview=qs('#trailPreview');if(preview)preview.classList.add('world-bento');
 }
 function ensureJourney(){
  var card=qs('.quest-card');if(!card)return;
