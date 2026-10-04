@@ -81,11 +81,19 @@ const runtimeData=[
 ].join('\n');
 const runtimeJs=moduleOrder.map(f=>`\n/* ===== ${f} ===== */\n${read(f)}\n`).join('');
 const flatCss=flattenLayers(read('sakhi-production.css'))+'\n'+read('sakhi-schoolwork.css');
+/* Every substitution uses a replacer FUNCTION, never a replacement string.
+   String.replace treats $&, $`, $' and $n in a replacement string as special
+   patterns: sakhi-schoolwork.js contains the regex anchor '$' -- the characters
+   $ and ' -- so inlining it with a string replacement silently swapped $' for
+   "everything after the match" and threw away the rest of the bundle, including
+   all of sakhi-app.js. The page then shipped a SyntaxError and nothing ran.
+   A function replacer disables that interpretation entirely. */
+const inject=value=>()=>value;
 let html=read('index.template.html')
-  .replace('/*__SAKHI_CSS__*/',flatCss)
-  .replaceAll('/*__SAKHI_ICON_DATA__*/',dataUri('icon-192.png','image/png'))
-  .replace('/*__SAKHI_RUNTIME_DATA__*/',runtimeData)
-  .replace('/*__SAKHI_RUNTIME_JS__*/',runtimeJs);
+  .replace('/*__SAKHI_CSS__*/',inject(flatCss))
+  .replaceAll('/*__SAKHI_ICON_DATA__*/',inject(dataUri('icon-192.png','image/png')))
+  .replace('/*__SAKHI_RUNTIME_DATA__*/',inject(runtimeData))
+  .replace('/*__SAKHI_RUNTIME_JS__*/',inject(runtimeJs));
 /* after the modules are inlined, so the worker registration URL inside
    sakhi-app.js is stamped too */
 html=stamp(html);
