@@ -393,6 +393,78 @@ body[data-view="activity"] .activity-actions .primary{width:100%;margin-left:0}
   }
   .school-room-picture{width:min(100%,420px)}
 }
+
+/* Sakhi 4.9 visible experience layer: makes the existing learning engine feel like a coherent child journey. */
+body[data-view="home"] .home-stage{isolation:isolate;overflow:hidden}
+body[data-view="home"] .hero-message{position:relative;z-index:3}
+body[data-view="home"] .hero-message:before{content:"";position:absolute;inset:-22px -28px -20px;border-radius:34px;background:linear-gradient(145deg,rgba(255,255,255,.88),rgba(255,250,255,.58));box-shadow:0 20px 60px rgba(84,46,135,.18);backdrop-filter:blur(12px);z-index:-1}
+.daily-focus-strip{position:relative;z-index:4;display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:16px auto 0;padding:10px 12px;width:min(900px,calc(100% - 32px));border:1px solid rgba(255,255,255,.72);border-radius:22px;background:rgba(64,35,94,.72);box-shadow:0 12px 28px rgba(49,24,78,.16);backdrop-filter:blur(16px);color:#fff}
+.daily-focus-strip>strong{padding:5px 9px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:#fff2ad}
+.daily-focus-chip{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.15);font-size:.85rem;font-weight:800}
+.daily-focus-chip i{display:grid;place-items:center;width:25px;height:25px;border-radius:50%;background:#fff;color:#7045a5;font-style:normal;font-size:.78rem}
+.today-world-card{transition:transform .2s ease,box-shadow .2s ease}
+.today-world-card:hover{transform:translateY(-4px);box-shadow:0 20px 46px rgba(71,40,104,.18)}
+.today-world-card .mini-scene{position:relative;overflow:hidden}
+.today-world-card .mini-scene:after{content:"Today";position:absolute;left:12px;top:12px;padding:6px 10px;border-radius:999px;background:rgba(56,30,82,.74);color:#fff;font-size:.68rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;backdrop-filter:blur(8px)}
+
+/* A visible learning journey, not a stack of disconnected questions. */
+.learning-journey{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin:0 0 14px;padding:11px;border-radius:22px;background:linear-gradient(135deg,rgba(255,255,255,.94),rgba(250,243,255,.88));box-shadow:0 10px 32px rgba(54,31,80,.1);border:1px solid rgba(131,88,177,.12)}
+.learning-journey-step{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0;padding:7px 4px;border-radius:14px;color:#8c789e;font-size:.67rem;font-weight:850;text-align:center}
+.learning-journey-step:before{content:"";width:11px;height:11px;border-radius:50%;background:#dccfe8;box-shadow:0 0 0 4px rgba(220,207,232,.3)}
+.learning-journey-step.done{color:#5c4770}
+.learning-journey-step.done:before{background:#72cca1;box-shadow:0 0 0 4px rgba(114,204,161,.18)}
+.learning-journey-step.active{background:linear-gradient(135deg,#fff4b8,#ffe7f6);color:#5c326e;transform:translateY(-2px);box-shadow:0 8px 20px rgba(114,71,145,.12)}
+.learning-journey-step.active:before{background:#9b4be6;box-shadow:0 0 0 5px rgba(155,75,230,.15)}
+.learning-journey-step b{font-size:.73rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.activity-shell{position:relative}
+.activity-shell:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background:radial-gradient(circle at 8% 18%,rgba(255,255,255,.82),transparent 20%),radial-gradient(circle at 91% 31%,rgba(255,229,247,.72),transparent 22%)}
+#activityScene{position:relative;overflow:hidden;border-radius:30px;box-shadow:0 18px 48px rgba(42,26,66,.14)}
+#activityScene:after{content:"LEARNING WORLD";position:absolute;right:14px;bottom:12px;padding:7px 11px;border-radius:999px;background:rgba(39,22,58,.62);color:#fff;font-size:.66rem;letter-spacing:.09em;font-weight:900;backdrop-filter:blur(8px)}
+.quest-card{position:relative;border:1px solid rgba(122,83,159,.12);box-shadow:0 24px 60px rgba(62,35,91,.13)}
+.quest-card:before{content:"";position:absolute;left:28px;right:28px;top:0;height:4px;border-radius:0 0 999px 999px;background:linear-gradient(90deg,#ff81bd,#ffd86f,#65d6dd,#9b76ef)}
+.mission-power{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0 16px;padding:10px 13px;border-radius:16px;background:linear-gradient(110deg,rgba(155,75,230,.08),rgba(255,194,224,.16));color:#5d4072;font-size:.82rem}
+.mission-power b{color:#6b38a1}
+body[data-phase="learn"] .quest-card:before{background:linear-gradient(90deg,#ffd36e,#ff9dca)}
+body[data-phase="practice"] .quest-card:before{background:linear-gradient(90deg,#67d1c8,#75bfff)}
+body[data-phase="apply"] .quest-card:before{background:linear-gradient(90deg,#9b76ef,#ff78b5)}
+body[data-phase="transfer"] .quest-card:before{background:linear-gradient(90deg,#ffb75e,#9b4be6)}
+#hearBtn.voice-listen{position:relative;padding-left:42px}
+#hearBtn.voice-listen:before{content:"♪";position:absolute;left:14px;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:rgba(155,75,230,.12);color:#7c43bd;font-weight:900}
+#hearBtn[aria-busy="true"]{box-shadow:0 0 0 5px rgba(155,75,230,.1)}
+#voicePill{transition:background .2s ease,transform .2s ease}
+#hearBtn[aria-busy="true"]~* #voicePill{transform:scale(1.02)}
+
+/* Completion should feel earned and specific, not like a generic modal. */
+#celebrate .celebrate-card{position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.84);background:linear-gradient(155deg,#fff 0%,#fff7d8 42%,#f9ecff 100%);box-shadow:0 30px 100px rgba(36,18,58,.34)}
+#celebrate .celebrate-card:before,#celebrate .celebrate-card:after{content:"✦";position:absolute;color:#f2b542;font-size:34px;opacity:.75;animation:treasureTwinkle 1.9s ease-in-out infinite}
+#celebrate .celebrate-card:before{left:9%;top:12%}
+#celebrate .celebrate-card:after{right:10%;top:18%;animation-delay:.5s}
+.treasure-burst{display:flex;justify-content:center;gap:18px;margin:-2px 0 8px;font-size:22px;color:#9b4be6}
+.treasure-burst span{display:block;animation:treasureFloat 2.2s ease-in-out infinite}
+.treasure-burst span:nth-child(2){animation-delay:.35s;color:#eaa63e}
+.treasure-burst span:nth-child(3){animation-delay:.7s;color:#e864a1}
+#celebrate .celebrate-icon{width:min(230px,64vw);height:150px;margin:10px auto 16px;border-radius:28px;overflow:hidden;background:linear-gradient(135deg,#ffe8f5,#efe6ff);box-shadow:0 16px 34px rgba(87,49,121,.16)}
+#celebrate .celebrate-icon img{width:100%;height:100%;object-fit:cover}
+#celebrate .celebrate-reward{display:inline-flex;align-items:center;gap:7px;padding:10px 15px;border-radius:999px;background:#563075;color:#fff;box-shadow:0 10px 26px rgba(73,39,98,.2)}
+.reward-recent .library-reward-showcase{border-radius:28px;overflow:hidden;box-shadow:0 18px 50px rgba(67,38,96,.13)}
+.reward-history{display:grid;gap:9px;margin-top:18px}
+.reward-row{border-radius:18px;background:linear-gradient(110deg,#fff,#fff8e8);box-shadow:0 8px 24px rgba(65,39,88,.08)}
+@keyframes treasureFloat{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-7px) rotate(5deg)}}
+@keyframes treasureTwinkle{0%,100%{transform:scale(.85);opacity:.45}50%{transform:scale(1.18);opacity:1}}
+
+/* iPad/phone: keep the journey legible without shrinking the lesson. */
+@media(max-width:760px){
+ .daily-focus-strip{gap:6px;padding:8px;width:calc(100% - 20px)}
+ .daily-focus-strip>strong{width:100%;padding:3px 7px}
+ .daily-focus-chip{padding:7px 9px;font-size:.76rem}
+ .learning-journey{gap:3px;padding:8px 5px;border-radius:17px}
+ .learning-journey-step{padding:6px 1px;font-size:.58rem}
+ .learning-journey-step b{font-size:.61rem}
+ .learning-journey-step:before{width:9px;height:9px}
+ #activityScene{border-radius:22px}
+ .mission-power{align-items:flex-start;flex-direction:column;gap:3px}
+}
+@media(prefers-reduced-motion:reduce){.today-world-card,.treasure-burst span,#celebrate .celebrate-card:before,#celebrate .celebrate-card:after{animation:none;transition:none}}
 </style>
 </head>
 <body>
@@ -2162,17 +2234,17 @@ window.SakhiLibraryArt.install();
 (function(window){
 'use strict';
 var WRAP_UPS={
-  reading:{prompt:'Reading finish: choose one word from today and show how you read it.',steps:['Say the word slowly.','Point out one sound, vowel, or word part that helped you.','Use the word in a new sentence.'],success:'The word is read and used in a meaningful sentence.'},
-  math:{prompt:'Math finish: build one problem from today with toys, blocks, or crayons.',steps:['Choose a number idea you used today.','Build it and solve it once.','Change one number, solve again, and say what changed.'],success:'Two connected examples are solved and compared.'},
-  writing:{prompt:'Writing finish: make one clear example from today on paper.',steps:['Write one letter, number, word, or sentence from the lesson.','Check its order, spacing, or shape.','Fix one part that could be clearer.'],success:'The work is checked and improved once.'},
-  language:{prompt:'Listening finish: retell one idea you heard today in your own words.',steps:['Say what the idea was about.','Give one important detail.','Answer one how or why question about it.'],success:'The retell includes the main idea and one useful detail.'},
-  science:{prompt:'Science finish: make one claim from today and support it with evidence.',steps:['Name what you observed or learned.','Say what you think it shows.','Give one fact or observation that supports your idea.'],success:'A clear claim is connected to evidence.'},
-  logic:{prompt:'Thinking finish: make a small puzzle that uses today’s rule.',steps:['Build or draw an example.','Say the rule clearly.','Change one part and decide whether the rule still works.'],success:'The example, rule, and changed case all connect.'},
-  wellbeing:{prompt:'Life-skill finish: practice one safe choice from today.',steps:['Name the situation.','Act out or describe the helpful choice.','Say when you could use that choice again.'],success:'The child connects a helpful choice to a real situation.'},
-  creative:{prompt:'Creative finish: improve one thing you made, drew, built, or performed.',steps:['Choose one part to change.','Make the change.','Say why the new version works better or feels different.'],success:'One intentional change is made and explained.'},
-  world:{prompt:'World finish: connect one idea from today to a real place, person, or time.',steps:['Name the idea.','Give one clue or fact about it.','Compare it with something you know today.'],success:'One world or history idea is supported and compared.'}
+  reading:{prompt:'Reading finish: choose one word from today and show how you read it.',label:'Reading treasure',steps:['Say the word slowly.','Point out one sound, vowel, or word part that helped you.','Use the word in a silly new sentence.'],success:'The word is read and used in a meaningful new sentence.'},
+  math:{prompt:'Math finish: build one problem from today with toys, blocks, or crayons.',label:'Math treasure',steps:['Choose a number idea you used today.','Build it and solve it once.','Change one number, solve again, and say what changed.'],success:'Two connected examples are solved and compared.'},
+  writing:{prompt:'Writing finish: make one clear example from today on paper.',label:'Proud writing treasure',steps:['Write one letter, number, word, or sentence from the lesson.','Check its order, spacing, shape, or punctuation like a detective.','Fix one small part that could be clearer.'],success:'The work is checked and improved once.'},
+  language:{prompt:'Listening finish: retell one idea you heard today in your own words.',label:'Storyteller treasure',steps:['Say what the idea was mostly about.','Give one important detail.','Add one thing you wondered, predicted, or figured out.'],success:'The retell includes the main idea and one useful detail.'},
+  science:{prompt:'Science finish: make one claim from today and support it with evidence.',label:'Mini scientist mission',steps:['Find a safe real example or remember one from today.','Say what you notice or learned.','Tell how that observation supports your idea.'],success:'A clear claim is connected to evidence.'},
+  logic:{prompt:'Thinking finish: make a small puzzle that uses today’s rule.',label:'Puzzle-maker mission',steps:['Build, draw, or say your puzzle.','Say the rule clearly.','Change one part and decide whether the rule still works.'],success:'The example, rule, and changed case all connect.'},
+  wellbeing:{prompt:'Life-skill finish: practice one safe choice from today.',label:'Kindness mission',steps:['Think of one everyday situation.','Show or say the helpful choice.','Say when you could use that choice again.'],success:'The child connects a helpful choice to a real situation.'},
+  creative:{prompt:'Creative finish: improve one thing you made, drew, built, or performed.',label:'Creator upgrade',steps:['Choose one part to change.','Make the change.','Give the new version a name or say why you like it better.'],success:'One intentional change is made and explained.'},
+  world:{prompt:'World finish: connect one idea from today to a real place, person, or time.',label:'Explorer mission',steps:['Name the place, person, time, map clue, or invention.','Give one clue or fact about it.','Compare it with something you know today.'],success:'One world or history idea is supported and compared.'}
 };
-var FALLBACK={prompt:'Finish line: use one idea from today in a new example.',steps:['Choose the idea.','Make or explain one example.','Check that the example matches the idea.'],success:'The new example matches today’s learning.'};
+var FALLBACK={prompt:'Finish line: use one idea from today in a new example.',label:'Finish-line treasure',steps:['Choose the idea.','Make or explain one example.','Check that the example matches the idea.'],success:'The new example matches today’s learning.'};
 function forDomain(domain){return WRAP_UPS[domain]||FALLBACK;}
 window.SakhiWrapUps={all:WRAP_UPS,fallback:FALLBACK,forDomain:forDomain};
 })(window);
@@ -2373,6 +2445,65 @@ async function boot(){
   catch(e){bootFailure(e);}
 }
 window.SakhiApp={boot:boot,show:show};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+})();
+
+
+/* ===== sakhi-experience.js ===== */
+(function(){
+'use strict';
+var scheduled=false;
+var PHASES=[['learn','Discover'],['connect','Remember'],['practice','Try'],['apply','Explore'],['transfer','Challenge']];
+var DOMAIN_ICONS={reading:'📖',math:'🔢',writing:'✏️',language:'🎧',science:'🔭',logic:'🧩',wellbeing:'💗',creative:'🎨',world:'🌍'};
+var WRAP_LABELS={reading:'Reading treasure',math:'Math treasure',writing:'Proud writing treasure',language:'Storyteller treasure',science:'Mini scientist mission',logic:'Puzzle-maker mission',wellbeing:'Kindness mission',creative:'Creator upgrade',world:'Explorer mission'};
+function qs(s){return document.querySelector(s);}
+function all(s){return Array.prototype.slice.call(document.querySelectorAll(s));}
+function text(n){return n?String(n.textContent||'').trim():'';}
+function phaseFromLabel(label){label=String(label||'').toLowerCase();if(label.indexOf('learn')>=0)return'learn';if(label.indexOf('warm')>=0||label.indexOf('connect')>=0)return'connect';if(label.indexOf('try')>=0||label.indexOf('practice')>=0)return'practice';if(label.indexOf('use')>=0||label.indexOf('apply')>=0)return'apply';if(label.indexOf('deeper')>=0||label.indexOf('transfer')>=0||label.indexOf('challenge')>=0)return'transfer';return'practice';}
+function phaseIndex(phase){for(var i=0;i<PHASES.length;i++)if(PHASES[i][0]===phase)return i;return 2;}
+function domain(){return document.body.dataset.domain||'reading';}
+function enhanceHome(){
+ var stage=qs('.home-stage'),path=qs('.today-path');if(!stage||!path)return;
+ var strip=qs('.daily-focus-strip');if(!strip){strip=document.createElement('div');strip.className='daily-focus-strip';strip.setAttribute('aria-label','Today’s learning powers');path.parentNode.insertBefore(strip,path);}
+ var cards=all('#trailPreview .today-world-card').slice(0,5),items=cards.map(function(card,i){var title=text(card.querySelector('h3'))||text(card.querySelector('b'))||'Discovery';return'<span class="daily-focus-chip"><i>'+(i+1)+'</i>'+title.replace(/^\S+\s+/,'')+'</span>';});
+ var html='<strong>Today’s magic</strong>'+items.join('');if(strip.innerHTML!==html)strip.innerHTML=html;
+}
+function ensureJourney(){
+ var card=qs('.quest-card');if(!card)return;
+ var rail=qs('.learning-journey');if(!rail){rail=document.createElement('div');rail.className='learning-journey';rail.setAttribute('aria-label','Learning journey');card.parentNode.insertBefore(rail,card);}
+ var currentPhase=phaseFromLabel(text(qs('#missionStep'))),active=phaseIndex(currentPhase);
+ document.body.dataset.phase=currentPhase;
+ var html=PHASES.map(function(p,i){var cls=i<active?' done':i===active?' active':'';return'<span class="learning-journey-step'+cls+'"><b>'+p[1]+'</b><small>'+(i+1)+'</small></span>';}).join('');
+ if(rail.innerHTML!==html)rail.innerHTML=html;
+}
+function enhanceWrapUp(){
+ if(text(qs('#activitySkill'))!=='Trail finish')return;
+ var prompt=qs('#questionPrompt'),label=WRAP_LABELS[domain()]||'Finish-line treasure';if(!prompt)return;
+ var current=text(prompt);if(current&&current.indexOf(label)!==0)prompt.textContent=label+' · '+current;
+ var story=qs('#missionStory');if(story)story.textContent='One last hands-on discovery. Take it away from the screen and make it yours.';
+}
+function enhanceActivity(){
+ if(document.body.dataset.view!=='activity')return;
+ ensureJourney();enhanceWrapUp();
+ var card=qs('.quest-card'),story=qs('.mission-story');if(card&&story){var power=card.querySelector('.mission-power'),skill=text(qs('#activitySkill')),trail=text(qs('#activityTrail'));if(!power){power=document.createElement('div');power.className='mission-power';story.insertAdjacentElement('afterend',power);}var content='<span>'+(DOMAIN_ICONS[domain()]||'✨')+' <b>'+skill+'</b></span><span>Inside '+trail+'</span>';if(power.innerHTML!==content)power.innerHTML=content;}
+ var hear=qs('#hearBtn');if(hear){hear.classList.add('voice-listen');if(!hear.getAttribute('aria-busy'))hear.textContent='Listen to Sakhi';}
+ var pill=qs('#voicePill');if(pill&&text(pill)!=='♪ Gentle Sakhi voice')pill.textContent='♪ Gentle Sakhi voice';
+}
+function enhanceCelebrate(){
+ var overlay=qs('#celebrate'),card=overlay&&overlay.querySelector('.celebrate-card');if(!card)return;
+ var burst=card.querySelector('.treasure-burst');if(!burst){burst=document.createElement('div');burst.className='treasure-burst';burst.setAttribute('aria-hidden','true');burst.innerHTML='<span>✦</span><span>★</span><span>✦</span>';var icon=qs('#celebrateIcon');if(icon)icon.insertAdjacentElement('beforebegin',burst);}
+ var title=qs('#celebrateTitle'),reward=qs('#celebrateReward');if(overlay.classList.contains('show')&&title&&reward){card.dataset.rewardReady='1';if(text(title).indexOf('Trail complete')>=0)reward.setAttribute('aria-label','Trail treasure earned');}
+}
+function enhanceRewards(){var box=qs('#rewardRecent');if(box)box.dataset.experience='treasure-room';}
+function enhance(){scheduled=false;enhanceHome();enhanceActivity();enhanceCelebrate();enhanceRewards();}
+function schedule(){if(scheduled)return;scheduled=true;requestAnimationFrame(enhance);}
+function start(){
+ schedule();
+ var root=qs('#app')||document.body;
+ var appObserver=new MutationObserver(schedule);appObserver.observe(root,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['class','data-view','aria-busy']});
+ var celebration=qs('#celebrate');if(celebration){var celebrationObserver=new MutationObserver(schedule);celebrationObserver.observe(celebration,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['class']});}
+ document.addEventListener('click',function(){setTimeout(schedule,0);});
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
 
 
