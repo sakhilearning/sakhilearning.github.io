@@ -9,9 +9,10 @@ function text(value){
     .trim();
   /* The generator historically used this as a generic transfer task. It is
      cognitively vague for a five-year-old and makes completion depend on an
-     adult. Map it to another line that already exists in the bundled Kokoro
-     narration pack, so the iPad remains fully offline/local-first. */
+     adult. Map both the visible line and its spoken-prefixed form to variants
+     that are already present in the bundled Kokoro narration pack. */
   out=out.replace(/^Teach a grown-up one thing about (.+)\.$/i,'Try $1 in a new way.');
+  out=out.replace(/^Take your time\. Teach a grown-up one thing about (.+)\.$/i,'Take your time. Try $1 in a new way.');
   return out;
 }
 function normalizeQuestion(q){
