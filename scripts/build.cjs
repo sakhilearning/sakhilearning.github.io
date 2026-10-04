@@ -18,6 +18,7 @@ const moduleOrder=[
   'sakhi-presentation.js',
   'sakhi-content.js',
   'sakhi-activities.js',
+  'sakhi-normalize.js',
   'sakhi-quality.js',
   'sakhi-progress.js',
   'sakhi-adaptive.js',
