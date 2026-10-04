@@ -1,0 +1,77 @@
+/* Global instructional layout invariants.
+   Decorative world art is intentionally excluded: these rules apply to media that
+   participates in a question, worksheet, or answer interaction. */
+.assessment-visual,
+.object-field,
+.ten-frame-field,
+.shape-wrap,
+.school-room-frame,
+.school-count-field,
+.school-alphabet-grid,
+.school-picture-cues,
+.school-letter-strip,
+.school-pen-grid,
+.school-name-grid,
+.school-portrait-wrap{
+  width:min(100%,760px);
+  max-width:100%;
+  min-width:0;
+  margin-inline:auto;
+  box-sizing:border-box;
+}
+.assessment-visual svg,
+.object-field svg,
+.ten-frame-field svg,
+.shape-wrap svg,
+.shape-wrap img,
+.school-room-picture,
+.school-room-picture svg,
+.school-pen-canvas,
+.school-portrait-canvas{
+  display:block;
+  max-width:100%;
+  height:auto;
+  box-sizing:border-box;
+}
+.assessment-visual,
+.object-field,
+.ten-frame-field,
+.shape-wrap,
+.school-room-frame{
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+}
+.question-prompt,
+.prompt,
+.school-sheet-help,
+.school-stroke-order,
+.school-picture-word{
+  max-width:100%;
+  overflow-wrap:anywhere;
+  word-break:normal;
+}
+.answer-grid,
+.answers,
+.school-letter-bank,
+.school-number-bank,
+.school-life-options{
+  position:relative;
+  z-index:2;
+  max-width:100%;
+  min-width:0;
+  box-sizing:border-box;
+}
+@media(max-width:760px){
+  .assessment-visual,
+  .object-field,
+  .ten-frame-field,
+  .shape-wrap,
+  .school-room-frame,
+  .school-count-field,
+  .school-alphabet-grid,
+  .school-picture-cues{
+    width:100%;
+  }
+  .school-room-picture{width:min(100%,420px)}
+}
