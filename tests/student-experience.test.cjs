@@ -13,7 +13,7 @@ global.window={addEventListener:()=>{}};
 global.document={addEventListener:()=>{},readyState:'complete'};
 const curriculum=JSON.parse(fs.readFileSync(path.join(root,'data/curriculum-v3.json'),'utf8'));
 window.SAKHI_CURRICULUM_DATA=curriculum;
-for(const f of ['sakhi-curriculum.js','sakhi-progress.js','sakhi-content.js','sakhi-activities.js'])require(path.join(root,f));
+for(const f of ['sakhi-curriculum.js','sakhi-progress.js','sakhi-content.js','sakhi-activities.js','sakhi-normalize.js'])require(path.join(root,f));
 window.SakhiCurriculum.load();
 const A=window.SakhiActivities;
 const CORE=new Set(['reading','math','science','logic','world','language']);
