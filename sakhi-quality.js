@@ -6,7 +6,7 @@ function words(s){return String(s||'').trim().split(/\s+/).filter(Boolean);}
 function issue(code,message,severity){return{code:code,message:message,severity:severity||'error'};}
 function numeric(v){return typeof v==='number'&&isFinite(v);}
 function text(v){return String(v===undefined||v===null?'':v).trim();}
-function taskKey(q){return text(q&&q.prompt)+'|'+JSON.stringify(q&&q.answer===undefined?null:q.answer);}
+function taskKey(q){var passage=q&&q.media&&q.media.passage?text(q.media.passage):'';return passage+'|'+text(q&&q.prompt)+'|'+JSON.stringify(q&&q.answer===undefined?null:q.answer);}
 function mediaMatches(skill,q){var out=[],m=q&&q.media||null,k=skill&&skill.kind||'';
  if(REQUIRED_VISUAL_KINDS[k]&&!m)out.push(issue('VISUAL_REQUIRED','This skill depends on a concrete visual, but the generated question has no media.'));
  if(!m)return out;
@@ -41,11 +41,12 @@ function inspectActivity(activity){
  if(!activity||typeof activity!=='object')return[issue('ACTIVITY_MISSING','Generated activity is missing.')];
  var skill=window.SakhiCurriculum&&activity?window.SakhiCurriculum.skill(activity.skill_id):null,qs=Array.isArray(activity.questions)?activity.questions:[];
  if(!qs.length)return[issue('QUESTIONS_MISSING','Activity has no questions.')];
- var keys={},tasks={},phases=[];
+ var keys={},tasks={},prompts={},phases=[];
  qs.forEach(function(q,i){
   inspectQuestion(skill,q).forEach(function(x){x.question_index=i;x.skill_id=activity.skill_id;out.push(x);});
   var key=text(q&&q.question_key);if(key){if(keys[key]){var d=issue('QUESTION_KEY_DUPLICATE','The same stable question key appears more than once in one lesson.');d.question_index=i;d.skill_id=activity.skill_id;out.push(d);}keys[key]=true;}
   var task=taskKey(q);if(tasks[task]){var t=issue('TASK_REPEATED','The same child-facing task repeats inside one lesson.');t.question_index=i;t.skill_id=activity.skill_id;out.push(t);}tasks[task]=true;
+  var prompt=text(q&&q.prompt);if(prompt){if(prompts[prompt]){var p=issue('PROMPT_REPEATED','The same prompt wording appears more than once in one lesson.','warning');p.question_index=i;p.skill_id=activity.skill_id;out.push(p);}prompts[prompt]=true;}
   phases.push(text(q&&q.learning_phase));
  });
  if(qs.length>=4){
