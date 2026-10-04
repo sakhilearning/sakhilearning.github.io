@@ -1,5 +1,6 @@
 window.SakhiNormalize=(function(){
 'use strict';
+var ORAL_KINDS={fluency:true,retell:true,conversation:true,oral_reasoning:true,blend:true,rhyme:true,phoneme_change:true,listen:true,segment:true};
 function text(value){
   if(typeof value!=='string')return value;
   var out=value
@@ -7,10 +8,6 @@ function text(value){
     .replace(/ {2,}/g,' ')
     .replace(/\s+([,.;:!?])/g,'$1')
     .trim();
-  /* The generator historically used this as a generic transfer task. It is
-     cognitively vague for a five-year-old and makes completion depend on an
-     adult. Map both the visible line and its spoken-prefixed form to variants
-     that are already present in the bundled Kokoro narration pack. */
   out=out.replace(/^Teach a grown-up one thing about (.+)\.$/i,'Try $1 in a new way.');
   out=out.replace(/^Take your time\. Teach a grown-up one thing about (.+)\.$/i,'Take your time. Try $1 in a new way.');
   return out;
@@ -31,7 +28,9 @@ function normalizeQuestion(q){
 function activity(a){
   if(!a||typeof a!=='object')return a;
   if(typeof a.skill_title==='string')a.skill_title=text(a.skill_title);
-  if(Array.isArray(a.questions))a.questions.forEach(normalizeQuestion);
+  var skill=window.SakhiCurriculum&&a.skill_id?window.SakhiCurriculum.skill(a.skill_id):null;
+  var oral=!!(skill&&ORAL_KINDS[skill.kind]);
+  if(Array.isArray(a.questions))a.questions.forEach(function(q){normalizeQuestion(q);if(oral&&q.template!=='trace'&&q.template!=='school-trace-sheet')q.voice_practice=true;});
   return a;
 }
 function install(){
@@ -40,6 +39,6 @@ function install(){
   Act.generate=function(){return activity(original.apply(Act,arguments));};
   Act.__normalized=true;return true;
 }
-return{text:text,question:normalizeQuestion,activity:activity,install:install};
+return{text:text,question:normalizeQuestion,activity:activity,install:install,oralKinds:Object.keys(ORAL_KINDS)};
 })();
 window.SakhiNormalize.install();
