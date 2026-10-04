@@ -1120,10 +1120,12 @@ window.SakhiNormalize.install();
 window.SakhiQuality=(function(){
 'use strict';
 var REQUIRED_VISUAL_KINDS={count:true,subitize:true,compose:true,add:true,sub:true,teen:true,pattern:true};
-var BANNED_PLACEHOLDERS=[/\bchoice\s*[1234]\b/i,/\boption\s*[1234]\b/i,/lorem ipsum/i,/todo\b/i,/tbd\b/i];
+var BANNED_PLACEHOLDERS=[/\bchoice\s*[1234]\b/i,/\boption\s*[1234]\b/i,/lorem ipsum/i,/todo\b/i,/tbd\b/i,/show a grown[- ]?up one specific thing you learned/i,/draw one by yourself/i,/write it once by yourself/i,/choice\s*\d+\s+is/i];
 function words(s){return String(s||'').trim().split(/\s+/).filter(Boolean);}
 function issue(code,message,severity){return{code:code,message:message,severity:severity||'error'};}
 function numeric(v){return typeof v==='number'&&isFinite(v);}
+function text(v){return String(v===undefined||v===null?'':v).trim();}
+function taskKey(q){var passage=q&&q.media&&q.media.passage?text(q.media.passage):'';return passage+'|'+text(q&&q.prompt)+'|'+JSON.stringify(q&&q.answer===undefined?null:q.answer);}
 function mediaMatches(skill,q){var out=[],m=q&&q.media||null,k=skill&&skill.kind||'';
  if(REQUIRED_VISUAL_KINDS[k]&&!m)out.push(issue('VISUAL_REQUIRED','This skill depends on a concrete visual, but the generated question has no media.'));
  if(!m)return out;
@@ -1137,18 +1139,41 @@ function mediaMatches(skill,q){var out=[],m=q&&q.media||null,k=skill&&skill.kind
  return out;
 }
 function inspectQuestion(skill,q){var out=[];if(!q||typeof q!=='object')return[issue('QUESTION_MISSING','Generated question is missing.')];
- var prompt=String(q.prompt||'').trim();if(!prompt)out.push(issue('PROMPT_EMPTY','Question prompt is empty.'));
+ var prompt=text(q.prompt);if(!prompt)out.push(issue('PROMPT_EMPTY','Question prompt is empty.'));
+ if(!text(q.template))out.push(issue('TEMPLATE_MISSING','Question has no interaction template.'));
+ if(!text(q.question_key))out.push(issue('QUESTION_KEY_MISSING','Question has no stable question key.'));
+ if(!text(q.learning_phase))out.push(issue('LEARNING_PHASE_MISSING','Question is not assigned to a learning phase.'));
+ if(!text(q.coach_tip))out.push(issue('COACHING_MISSING','Question has no strategy coaching.'));
  if(/\s{2,}/.test(prompt))out.push(issue('PROMPT_SPACING','Question prompt contains repeated spaces.'));
- BANNED_PLACEHOLDERS.forEach(function(re){if(re.test(prompt))out.push(issue('PLACEHOLDER_LANGUAGE','Question contains placeholder-style wording.'));});
+ var spoken=text(q.spoken_instruction||q.narration);
+ BANNED_PLACEHOLDERS.forEach(function(re){if(re.test(prompt)||re.test(spoken))out.push(issue('PLACEHOLDER_LANGUAGE','Question contains placeholder, vague, or mechanically narrated wording.'));});
  if(words(prompt).length>34&&!(q.media&&q.media.passage))out.push(issue('PROMPT_TOO_DENSE','Child-facing prompt exceeds 34 words without a separate passage.','warning'));
  if(q.template==='choice'){
   if(!Array.isArray(q.choices)||q.choices.length<2)out.push(issue('CHOICES_MISSING','Multiple-choice question needs at least two choices.'));
   else{var normalized=q.choices.map(function(x){return String(x);});if(new Set(normalized).size!==normalized.length)out.push(issue('CHOICES_DUPLICATE','Multiple-choice question contains duplicate choices.'));if(normalized.indexOf(String(q.answer))<0)out.push(issue('ANSWER_NOT_IN_CHOICES','Correct answer is not present among the choices.'));}
  }
- var spoken=String(q.spoken_instruction||q.narration||'').trim();if(!spoken)out.push(issue('NARRATION_MISSING','Question has no spoken instruction.'));
+ if(!spoken)out.push(issue('NARRATION_MISSING','Question has no spoken instruction.'));
  out=out.concat(mediaMatches(skill,q));return out;
 }
-function inspectActivity(activity){var skill=window.SakhiCurriculum&&activity?window.SakhiCurriculum.skill(activity.skill_id):null,out=[];(activity&&activity.questions||[]).forEach(function(q,i){inspectQuestion(skill,q).forEach(function(x){x.question_index=i;x.skill_id=activity.skill_id;out.push(x);});});return out;}
+function inspectActivity(activity){
+ var out=[];
+ if(!activity||typeof activity!=='object')return[issue('ACTIVITY_MISSING','Generated activity is missing.')];
+ var skill=window.SakhiCurriculum&&activity?window.SakhiCurriculum.skill(activity.skill_id):null,qs=Array.isArray(activity.questions)?activity.questions:[];
+ if(!qs.length)return[issue('QUESTIONS_MISSING','Activity has no questions.')];
+ var keys={},tasks={},prompts={},phases=[];
+ qs.forEach(function(q,i){
+  inspectQuestion(skill,q).forEach(function(x){x.question_index=i;x.skill_id=activity.skill_id;out.push(x);});
+  var key=text(q&&q.question_key);if(key){if(keys[key]){var d=issue('QUESTION_KEY_DUPLICATE','The same stable question key appears more than once in one lesson.');d.question_index=i;d.skill_id=activity.skill_id;out.push(d);}keys[key]=true;}
+  var task=taskKey(q);if(tasks[task]){var t=issue('TASK_REPEATED','The same child-facing task repeats inside one lesson.');t.question_index=i;t.skill_id=activity.skill_id;out.push(t);}tasks[task]=true;
+  var prompt=text(q&&q.prompt);if(prompt){if(prompts[prompt]){var p=issue('PROMPT_REPEATED','The same prompt wording appears more than once in one lesson.','warning');p.question_index=i;p.skill_id=activity.skill_id;out.push(p);}prompts[prompt]=true;}
+  phases.push(text(q&&q.learning_phase));
+ });
+ if(qs.length>=4){
+  if(phases.indexOf('transfer')<0)out.push(issue('TRANSFER_PHASE_MISSING','Deep lesson has no transfer question.'));
+  if(phases.indexOf('practice')<0&&phases.indexOf('apply')<0)out.push(issue('APPLICATION_PHASE_MISSING','Deep lesson has no practice or application step.'));
+ }
+ return out;
+}
 function errors(activity){return inspectActivity(activity).filter(function(x){return x.severity!=='warning';});}
 function warnings(activity){return inspectActivity(activity).filter(function(x){return x.severity==='warning';});}
 return{inspectQuestion:inspectQuestion,inspectActivity:inspectActivity,errors:errors,warnings:warnings,requiredVisualKinds:Object.keys(REQUIRED_VISUAL_KINDS)};
@@ -1230,16 +1255,19 @@ window.SakhiAdaptive=(function(){
 'use strict';
 var BASELINE={reading:'reading.short_vowels',math:'math.compare',writing:'writing.cvc_words',language:'language.listening',logic:'logic.patterns',science:'science.observe',wellbeing:'wellbeing.emotions',creative:'creative.imaginative_play',world:'world.past_present'};
 function attempts(domain){return(SakhiProgress.load().attempts||[]).filter(function(a){return a.domain_id===domain&&a.objective;});}
+function reviewDue(e){return!!(e&&e.next_review&&Date.parse(e.next_review)<=Date.now());}
 function needsConsolidation(e){if(!e)return false;var tries=e.objective_attempts||0,strong=e.last_accuracy!==null&&e.last_accuracy>=.9&&(e.independent_correct_count||0)>=3;return tries<2&&(strong||e.mastery_state==='MOSTLY_MASTERED'||e.mastery_state==='MASTERED');}
-function score(sk,used){var e=SakhiProgress.evidence(sk.skill_id),s=0,tries=e.objective_attempts||0;if(used.indexOf(sk.skill_id)>=0)s-=100;if(e.next_review&&Date.parse(e.next_review)<=Date.now())s+=55;if(e.mastery_state==='LEARNING')s+=40;if(e.mastery_state==='DEVELOPING')s+=32;if(e.mastery_state==='NOT_INTRODUCED')s+=24;if(e.last_accuracy!==null&&e.last_accuracy<.6)s+=28;
- if(needsConsolidation(e))s+=22;else{if(e.last_accuracy>=.9&&e.independent_correct_count>=3)s-=18;if(e.mastery_state==='MOSTLY_MASTERED')s-=24;if(e.mastery_state==='MASTERED')s-=36;}
- s-=Math.min(15,e.attempt_count||0);if(tries>=2&&e.last_accuracy>=.9)s-=6;return s;}
+function recentlyStrong(sk){var e=SakhiProgress.evidence(sk.skill_id),p=SakhiProgress.skillProfile?SakhiProgress.skillProfile(sk.skill_id):null,last=Date.parse(e.last_practiced||0);return!!(p&&(p.signal==='LIKELY_KNOWS'||p.signal==='SECURE')&&last&&Date.now()-last<12*60*60*1000&&!reviewDue(e));}
+function score(sk,used){var e=SakhiProgress.evidence(sk.skill_id),p=SakhiProgress.skillProfile?SakhiProgress.skillProfile(sk.skill_id):null,s=0,tries=e.objective_attempts||0;if(used.indexOf(sk.skill_id)>=0)s-=100;if(reviewDue(e))s+=55;if(e.mastery_state==='LEARNING')s+=40;if(e.mastery_state==='DEVELOPING')s+=32;if(e.mastery_state==='NOT_INTRODUCED')s+=24;if(e.last_accuracy!==null&&e.last_accuracy<.6)s+=28;
+ if(recentlyStrong(sk))s-=p&&p.signal==='SECURE'?72:62;else if(needsConsolidation(e))s+=22;else{if(e.last_accuracy>=.9&&e.independent_correct_count>=3)s-=18;if(e.mastery_state==='MOSTLY_MASTERED')s-=24;if(e.mastery_state==='MASTERED')s-=36;}
+ s+=Math.max(0,Math.min(5,Number(sk.difficulty_level)||1))*4;s-=Math.min(15,e.attempt_count||0);if(tries>=2&&e.last_accuracy>=.9)s-=6;return s;}
 function bandForPick(skillId){var e=SakhiProgress.evidence(skillId),b=SakhiProgress.bandFor(skillId),tries=e.objective_attempts||0;if(tries===0)b=Math.min(b,3);else if(tries<2)b=Math.min(b,4);return Math.max(1,Math.min(5,b));}
-function reasonFor(e){if(!e)return'best next teaching step';if(e.next_review&&Date.parse(e.next_review)<=Date.now())return'spaced review';if(e.last_accuracy!==null&&e.last_accuracy<.6)return'targeted teaching and practice';if(e.mastery_state==='NOT_INTRODUCED')return'next lesson in the learning sequence';if(needsConsolidation(e))return'confirm independently before moving on';if(e.last_accuracy>=.9)return'ready for a harder application';return'best next teaching step';}
+function reasonFor(e,profile){if(!e)return'best next teaching step';if(reviewDue(e))return'spaced review';if(e.last_accuracy!==null&&e.last_accuracy<.6)return'targeted teaching and practice';if(e.mastery_state==='NOT_INTRODUCED')return'next lesson in the learning sequence';if(profile&&profile.signal==='LIKELY_KNOWS')return'new application while evidence is still early';if(needsConsolidation(e))return'confirm independently before moving on';if(e.last_accuracy>=.9)return'ready for a harder application';return'best next teaching step';}
 function pick(domain,used){used=used||[];var seen=attempts(domain),baseline=SakhiCurriculum.skill(BASELINE[domain]);if(!seen.length&&baseline&&used.indexOf(baseline.skill_id)<0&&SakhiCurriculum.isAvailable(baseline.skill_id,SakhiProgress.masteryOf))return{skill_id:baseline.skill_id,band:Math.max(2,bandForPick(baseline.skill_id)),reason:'age-appropriate starting lesson',placement:true};
- var available=SakhiCurriculum.skillsIn(domain).filter(function(sk){return SakhiCurriculum.isAvailable(sk.skill_id,SakhiProgress.masteryOf);}),unused=available.filter(function(sk){return used.indexOf(sk.skill_id)<0;}),pool=unused.length?unused:available,candidates=SakhiCurriculum.frontier(domain,SakhiProgress.masteryOf).concat(pool).filter(function(x,i,a){return pool.indexOf(x)>=0&&a.findIndex(function(y){return y.skill_id===x.skill_id;})===i;}).sort(function(a,b){return score(b,used)-score(a,used);}),best=candidates[0];if(!best)return null;var e=SakhiProgress.evidence(best.skill_id);return{skill_id:best.skill_id,band:bandForPick(best.skill_id),reason:reasonFor(e)};}
+ var available=SakhiCurriculum.skillsIn(domain).filter(function(sk){return SakhiCurriculum.isAvailable(sk.skill_id,SakhiProgress.masteryOf);}),unused=available.filter(function(sk){return used.indexOf(sk.skill_id)<0;}),pool=unused.length?unused:available,freshPool=pool.filter(function(sk){return!recentlyStrong(sk);});if(freshPool.length)pool=freshPool;
+ var candidates=SakhiCurriculum.frontier(domain,SakhiProgress.masteryOf).concat(pool).filter(function(x,i,a){return pool.indexOf(x)>=0&&a.findIndex(function(y){return y.skill_id===x.skill_id;})===i;}).sort(function(a,b){var delta=score(b,used)-score(a,used);if(delta)return delta;return(Number(b.difficulty_level)||1)-(Number(a.difficulty_level)||1);}),best=candidates[0];if(!best)return null;var e=SakhiProgress.evidence(best.skill_id),profile=SakhiProgress.skillProfile?SakhiProgress.skillProfile(best.skill_id):null;return{skill_id:best.skill_id,band:bandForPick(best.skill_id),reason:reasonFor(e,profile)};}
 function explain(p){if(!p)return'Practice complete for now.';var s=SakhiCurriculum.skill(p.skill_id);return s.title+' — '+p.reason+'.';}
-return{pick:pick,explain:explain,needsConsolidation:needsConsolidation,bandForPick:bandForPick};
+return{pick:pick,explain:explain,needsConsolidation:needsConsolidation,recentlyStrong:recentlyStrong,bandForPick:bandForPick};
 })();
 
 
