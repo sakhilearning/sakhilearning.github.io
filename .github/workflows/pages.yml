@@ -23,6 +23,15 @@ jobs:
         with:
           node-version: 24
           cache: npm
+      - name: Refresh lock for patched dependency override
+        if: github.event_name == 'pull_request'
+        run: npm install --package-lock-only --ignore-scripts
+      - name: Capture refreshed lock
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: sakhi-4.9-lockfile
+          path: package-lock.json
       - run: npm ci
       - run: npm run release
       - name: Persist generated Kokoro runtime
@@ -52,4 +61,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-# manual redeploy retry 2026-10-01T18:13Z landing-fix
