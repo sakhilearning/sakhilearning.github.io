@@ -21,7 +21,7 @@ function inspectQuestion(skill,q){var out=[];if(!q||typeof q!=='object')return[i
  var prompt=String(q.prompt||'').trim();if(!prompt)out.push(issue('PROMPT_EMPTY','Question prompt is empty.'));
  if(/\s{2,}/.test(prompt))out.push(issue('PROMPT_SPACING','Question prompt contains repeated spaces.'));
  BANNED_PLACEHOLDERS.forEach(function(re){if(re.test(prompt))out.push(issue('PLACEHOLDER_LANGUAGE','Question contains placeholder-style wording.'));});
- if(words(prompt).length>34&&!q.media?.passage)out.push(issue('PROMPT_TOO_DENSE','Child-facing prompt exceeds 34 words without a separate passage.','warning'));
+ if(words(prompt).length>34&&!(q.media&&q.media.passage))out.push(issue('PROMPT_TOO_DENSE','Child-facing prompt exceeds 34 words without a separate passage.','warning'));
  if(q.template==='choice'){
   if(!Array.isArray(q.choices)||q.choices.length<2)out.push(issue('CHOICES_MISSING','Multiple-choice question needs at least two choices.'));
   else{var normalized=q.choices.map(function(x){return String(x);});if(new Set(normalized).size!==normalized.length)out.push(issue('CHOICES_DUPLICATE','Multiple-choice question contains duplicate choices.'));if(normalized.indexOf(String(q.answer))<0)out.push(issue('ANSWER_NOT_IN_CHOICES','Correct answer is not present among the choices.'));}
@@ -29,7 +29,7 @@ function inspectQuestion(skill,q){var out=[];if(!q||typeof q!=='object')return[i
  var spoken=String(q.spoken_instruction||q.narration||'').trim();if(!spoken)out.push(issue('NARRATION_MISSING','Question has no spoken instruction.'));
  out=out.concat(mediaMatches(skill,q));return out;
 }
-function inspectActivity(activity){var skill=window.SakhiCurriculum&&activity?SakhiCurriculum.skill(activity.skill_id):null,out=[];(activity&&activity.questions||[]).forEach(function(q,i){inspectQuestion(skill,q).forEach(function(x){x.question_index=i;x.skill_id=activity.skill_id;out.push(x);});});return out;}
+function inspectActivity(activity){var skill=window.SakhiCurriculum&&activity?window.SakhiCurriculum.skill(activity.skill_id):null,out=[];(activity&&activity.questions||[]).forEach(function(q,i){inspectQuestion(skill,q).forEach(function(x){x.question_index=i;x.skill_id=activity.skill_id;out.push(x);});});return out;}
 function errors(activity){return inspectActivity(activity).filter(function(x){return x.severity!=='warning';});}
 function warnings(activity){return inspectActivity(activity).filter(function(x){return x.severity==='warning';});}
 return{inspectQuestion:inspectQuestion,inspectActivity:inspectActivity,errors:errors,warnings:warnings,requiredVisualKinds:Object.keys(REQUIRED_VISUAL_KINDS)};
