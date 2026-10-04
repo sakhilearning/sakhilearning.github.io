@@ -38,6 +38,12 @@ function enhanceCelebrate(){
 function enhanceRewards(){var box=qs('#rewardRecent');if(box)box.dataset.experience='treasure-room';}
 function enhance(){scheduled=false;enhanceHome();enhanceActivity();enhanceCelebrate();enhanceRewards();}
 function schedule(){if(scheduled)return;scheduled=true;requestAnimationFrame(enhance);}
-function start(){schedule();var root=qs('#app')||document.body,new MutationObserver(schedule).observe(root,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['class','data-view','aria-busy']});var celebration=qs('#celebrate');if(celebration)new MutationObserver(schedule).observe(celebration,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['class']});document.addEventListener('click',function(){setTimeout(schedule,0);});}
+function start(){
+ schedule();
+ var root=qs('#app')||document.body;
+ var appObserver=new MutationObserver(schedule);appObserver.observe(root,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['class','data-view','aria-busy']});
+ var celebration=qs('#celebrate');if(celebration){var celebrationObserver=new MutationObserver(schedule);celebrationObserver.observe(celebration,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['class']});}
+ document.addEventListener('click',function(){setTimeout(schedule,0);});
+}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
