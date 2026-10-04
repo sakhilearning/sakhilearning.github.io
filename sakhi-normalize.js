@@ -2,11 +2,17 @@ window.SakhiNormalize=(function(){
 'use strict';
 function text(value){
   if(typeof value!=='string')return value;
-  return value
+  var out=value
     .replace(/[\t\r\n]+/g,' ')
     .replace(/ {2,}/g,' ')
     .replace(/\s+([,.;:!?])/g,'$1')
     .trim();
+  /* The generator historically used this as a generic transfer task. It is
+     cognitively vague for a five-year-old and makes completion depend on an
+     adult. Map it to another line that already exists in the bundled Kokoro
+     narration pack, so the iPad remains fully offline/local-first. */
+  out=out.replace(/^Teach a grown-up one thing about (.+)\.$/i,'Try $1 in a new way.');
+  return out;
 }
 function normalizeQuestion(q){
   if(!q||typeof q!=='object')return q;
