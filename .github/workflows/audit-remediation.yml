@@ -1,44 +1,13 @@
 name: Audit remediation
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'scripts/audit-remediation-pass.cjs'
-      - '.github/workflows/audit-remediation.yml'
+  workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  remediate:
-    if: github.actor != 'github-actions[bot]'
+  noop:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - name: Apply audit remediation
-        run: node scripts/audit-remediation-pass.cjs
-      - name: Install dependencies
-        run: npm install
-      - name: Focused verification
-        run: |
-          node scripts/check-syntax.cjs
-          npm run test:source-architecture
-          npm run test:schoolwork
-      - name: Commit remediation
-        run: |
-          if [ -z "$(git status --porcelain)" ]; then
-            echo "No remediation changes to commit"
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add sakhi-activities.js sakhi-templates.js sakhi-schoolwork.js tests/source-architecture.test.cjs
-          git commit -m "Apply audit remediation architecture hooks"
-          git push
-# trigger 2
+      - run: echo "Audit remediation workflow retired."
