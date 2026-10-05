@@ -33,4 +33,4 @@ if(!arch.includes('schoolwork must not monkey-patch')){
  w('tests/source-architecture.test.cjs',arch);
 }
 console.log('audit remediation source hooks complete');
-// trigger 6
+// trigger 7
