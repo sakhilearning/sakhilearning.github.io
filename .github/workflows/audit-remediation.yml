@@ -18,12 +18,18 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Install audio runtime dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg espeak-ng espeak-ng-data
       - uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 22
           cache: npm
       - run: npm ci
       - name: Apply layer three visual enrichment and release hygiene
+        env:
+          ESPEAK_DATA_PATH: /usr/share/espeak-ng-data
         run: |
           node <<'NODE'
           const fs=require('fs');
@@ -55,47 +61,10 @@ jobs:
           fs.writeFileSync('sakhi-activities.js',activities);
           NODE
           npm run narration:collect
-          node <<'NODE'
-          const fs=require('fs');
-          const path=require('path');
-          const {createHash}=require('crypto');
-          const OUT='assets/audio/narration';
-          const manifestPath=path.join(OUT,'manifest.json');
-          const texts=JSON.parse(fs.readFileSync(path.join(OUT,'texts-v5.json'),'utf8'));
-          const manifest=JSON.parse(fs.readFileSync(manifestPath,'utf8'));
-          manifest.files=manifest.files||{};
-          const missing=texts.filter(t=>!manifest.files[t]||!fs.existsSync(path.join(OUT,manifest.files[t])));
-          console.log(`${texts.length} runtime lines; ${texts.length-missing.length} already bundled; filling ${missing.length} through Sakhi TTS endpoint.`);
-          const url='https://interview.amarikit.com/api/sakhi-tts/speak';
-          async function speak(text,attempt=1){
-            const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,voice:'af_heart',speed:.86})});
-            const mime=res.headers.get('content-type')||'';
-            if(!res.ok||!mime.toLowerCase().startsWith('audio/')){
-              const detail=await res.text().catch(()=>String(res.status));
-              if(attempt<3){await new Promise(r=>setTimeout(r,1000*attempt));return speak(text,attempt+1);}
-              throw new Error(`TTS failed ${res.status} ${mime}: ${detail.slice(0,180)} for ${text}`);
-            }
-            return {bytes:Buffer.from(await res.arrayBuffer()),mime};
-          }
-          (async()=>{
-            let done=0;
-            for(const text of missing){
-              const item=await speak(text);
-              if(item.bytes.length<100)throw new Error('TTS returned empty audio for '+text);
-              const ext=item.mime.toLowerCase().includes('mpeg')||item.mime.toLowerCase().includes('mp3')?'mp3':'wav';
-              const name='server-'+createHash('sha256').update('af_heart|0.86|'+text).digest('hex').slice(0,20)+'.'+ext;
-              fs.writeFileSync(path.join(OUT,name),item.bytes);
-              manifest.files[text]=name;
-              done++;
-              if(done%25===0||done===missing.length){
-                fs.writeFileSync(manifestPath,JSON.stringify(manifest,null,0));
-                console.log(`${done}/${missing.length} narration files filled`);
-              }
-            }
-            fs.writeFileSync(manifestPath,JSON.stringify(manifest,null,0));
-          })().catch(err=>{console.error(err);process.exit(1);});
-          NODE
+          node scripts/generate-narration.mjs
       - name: Verify full functionality
+        env:
+          ESPEAK_DATA_PATH: /usr/share/espeak-ng-data
         run: |
           npm run release
           npm run test:navigation
