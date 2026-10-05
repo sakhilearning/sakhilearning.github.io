@@ -34,7 +34,7 @@ context.SakhiProgress={snapshot:()=>({learner:{name:'Sakhi'}})};
 vm.createContext(context);
 vm.runInContext(src,context,{filename:'sakhi-schoolwork.js'});
 
-function gen(id,avoid=[]){return context.SakhiActivities.generate(id,2,'seed',avoid,{});}
+function gen(id,avoid=[]){return context.SakhiSchoolwork.enhanceActivity(baseActivity(id),avoid);}
 let a=gen('writing.uppercase');
 assert(a.questions.every(q=>q.template==='school-trace-sheet'));
 assert(a.questions.every(q=>q.evidence_mode==='practice'));

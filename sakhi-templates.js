@@ -76,7 +76,9 @@ function media(root,q,domain){
   if(q.media.groups){var groups=document.createElement('div');groups.className='group-field';q.media.groups.forEach(function(n){var g=document.createElement('div');g.innerHTML=SakhiPresentation.objectSet(domain,n);groups.appendChild(g);wireCountables(g);});root.appendChild(groups);}
   if(q.media.subtract){var sub=document.createElement('div');sub.className='object-field';sub.innerHTML=SakhiPresentation.objectSet(domain,q.media.subtract[0]);root.appendChild(sub);wireCountables(sub);}
 }
+function renderBase(root,q,ctx){return render(root,q,ctx);}
 function render(root,q,ctx){
+  var school=window.SakhiSchoolwork&&typeof window.SakhiSchoolwork.renderSchool==='function'?window.SakhiSchoolwork.renderSchool(root,q,ctx):null;if(school)return school;
   clear(root);media(root,q,ctx.domain);var state={response:null};
   if(q.template==='choice'){
     var grid=document.createElement('div');grid.className='answer-grid';
@@ -111,5 +113,5 @@ function render(root,q,ctx){
   var p=document.createElement('div');p.className='practice-card';var icon=document.createElement('div');icon.className='practice-icon';icon.textContent='✏️';var text=document.createElement('p');text.textContent=q.prompt;p.appendChild(icon);p.appendChild(text);root.appendChild(p);
   return{immediate:false,isReady:function(){return true;},check:function(){return{correct:true,response:'done'};},reset:function(){}};
 }
-return{render:render,assessmentVisual:assessmentVisual};
+return{render:render,renderBase:renderBase,assessmentVisual:assessmentVisual};
 })();

@@ -26,6 +26,9 @@ assert(!/window\.SakhiTemplates\s*=/.test(school),'schoolwork must not replace w
 assert(!/\b__schoolworkWrapped\b/.test(school),'schoolwork must not revive the old wrapped-copy install path');
 assert(!/\bwrapped\s*=\s*\{\}/.test(school),'schoolwork must not clone SakhiActivities into a wrapper object');
 assert(!/\bnext\s*=\s*\{\}/.test(school),'schoolwork must not clone SakhiTemplates into a wrapper object');
-assert(/\b__schoolworkInstalled\b/.test(school),'schoolwork should use an explicit installed marker for its bridge');
+assert(!/\bA\.generate\s*=/.test(school),'schoolwork must not replace SakhiActivities.generate; the canonical generator owns generation');
+assert(!/\bA\.canGenerate\s*=/.test(school),'schoolwork must not replace SakhiActivities.canGenerate');
+assert(!/\bT\.render\s*=/.test(school),'schoolwork must not replace SakhiTemplates.render; the canonical renderer owns routing');
+assert(/function install\(\)\{return true;\}/.test(school),'schoolwork install must remain a no-op compatibility bridge');
 
 console.log('source-architecture: ok');
