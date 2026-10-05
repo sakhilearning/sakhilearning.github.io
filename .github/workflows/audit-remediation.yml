@@ -28,114 +28,28 @@ jobs:
           const fs=require('fs');
           const file='sakhi-activities.js';
           let s=fs.readFileSync(file,'utf8');
-          const marker="function layer2Question(skill,band,r,questionIndex,n){";
-          const bank=`function layer2Question(skill,band,r,questionIndex,n){
- var k=skill.kind,id=skill.skill_id||'',banks={
-  astronomy:[
-   ['Why do we see the Moon change shape during the month?','We see different lit parts of the Moon.',['We see different lit parts of the Moon.','The Moon becomes a new planet.','Clouds cut the Moon into pieces.','The Sun turns off at night.'],'The Moon does not really change shape. We see different sunlit parts.'],
-   ['Which object is a star?','the Sun',['the Sun','the Moon','Earth','a rocket'],'The Sun is a star close enough to warm Earth.'],
-   ['Why does daytime happen?','Our side of Earth faces the Sun.',['Our side of Earth faces the Sun.','The Moon pushes light down.','Earth stops moving.','Clouds become bright.'],'Day happens when your side of Earth faces the Sun.'],
-   ['What tool helps people look at faraway stars and planets?','a telescope',['a telescope','a spoon','a thermometer','a rain boot'],'A telescope makes faraway space objects easier to see.'],
-   ['Which is safest for looking at the Sun?','Do not stare at it directly.',['Do not stare at it directly.','Look with wide open eyes.','Use regular sunglasses only.','Look longer to see better.'],'The Sun is too bright to stare at directly.']
-  ],
-  space:[
-   ['What keeps astronauts breathing inside a spacecraft?','stored air and life-support systems',['stored air and life-support systems','open windows','tree branches','rain clouds'],'Spacecraft carry systems that provide safe air.'],
-   ['What is one reason astronauts wear space suits outside a spacecraft?','Space has no air to breathe.',['Space has no air to breathe.','Space suits make rain.','Space is full of grass.','Space suits grow food.'],'A space suit protects the astronaut and provides air.'],
-   ['Which is closest to Earth?','the Moon',['the Moon','Jupiter','Saturn','another galaxy'],'The Moon is Earths closest natural neighbor in space.'],
-   ['Why do rockets need a lot of force to launch?','They must push away from Earth.',['They must push away from Earth.','They are made of paper.','They are trying to become clouds.','They move only downhill.'],'A rocket needs a strong push to lift off.'],
-   ['What should we call Earth in space?','a planet',['a planet','a spoon','a seed','a candle'],'Earth is the planet where we live.']
-  ],
-  solar_system:[
-   ['What do planets in our solar system move around?','the Sun',['the Sun','a tree','the classroom','a mountain'],'Planets travel around the Sun.'],
-   ['Which planet do we live on?','Earth',['Earth','Mars','Saturn','Neptune'],'Earth is our home planet.'],
-   ['Which planet is known for bright rings?','Saturn',['Saturn','Earth','Mercury','Mars'],'Saturn has large visible rings.'],
-   ['Why is Mars often called the red planet?','Its surface has rusty-colored dust.',['Its surface has rusty-colored dust.','It is covered in red paint.','It is made of strawberries.','It glows like a stop sign.'],'Mars looks reddish because of rusty-colored minerals in its dust.'],
-   ['Which is bigger: Earth or the Sun?','the Sun',['the Sun','Earth','they are the same size','a school bus'],'The Sun is much bigger than Earth.']
-  ],
-  animal_diets:[
-   ['A cow mostly eats grass. What kind of eater is it?','herbivore',['herbivore','carnivore','omnivore','meteorologist'],'Herbivores eat plants.'],
-   ['A lion hunts and eats other animals. What kind of eater is it?','carnivore',['carnivore','herbivore','map maker','gardener'],'Carnivores eat animals.'],
-   ['A bear can eat berries and fish. What kind of eater is it?','omnivore',['omnivore','herbivore only','carnivore only','astronaut'],'Omnivores eat both plants and animals.'],
-   ['Which food best fits a rabbit?','leafy plants',['leafy plants','a metal nail','a glass marble','a plastic block'],'Rabbits are plant eaters.'],
-   ['Which clue shows an animal may be a carnivore?','sharp teeth for catching prey',['sharp teeth for catching prey','flat leaves on its head','roots in soil','wheels under its feet'],'Carnivores often have body parts that help catch or eat animals.']
-  ],
-  food_chain:[
-   ['In a simple chain grass -> rabbit -> fox, who eats the grass?','rabbit',['rabbit','fox','grass','cloud'],'The rabbit eats the grass.'],
-   ['In grass -> rabbit -> fox, what does the fox eat?','rabbit',['rabbit','grass','sunlight','soil'],'The fox gets energy by eating the rabbit.'],
-   ['Where does a food chain usually get its first energy?','the Sun',['the Sun','a backpack','a pencil','a shoe'],'Plants use sunlight, then animals get energy from plants or other animals.'],
-   ['Which is a producer in a pond food chain?','algae',['algae','frog','fish','heron'],'Producers are living things like plants or algae that make their own food.'],
-   ['What can happen if many rabbits disappear from a grass -> rabbit -> fox chain?','foxes may have less food',['foxes may have less food','grass turns into rocks','the Sun stops shining','fish grow wings'],'If prey decreases, predators may have less food.']
-  ],
-  ecosystems:[
-   ['Which habitat is very dry and has animals adapted to little water?','desert',['desert','rainforest','pond','ice rink'],'A desert is dry and living things there save or find water carefully.'],
-   ['What do pond animals need from their habitat?','water, food, and shelter',['water, food, and shelter','only crayons','a rocket engine','a refrigerator'],'A habitat must provide what living things need.'],
-   ['Why do some animals blend into leaves or bark?','to hide from danger or sneak up on food',['to hide from danger or sneak up on food','to become a plant','to change the weather','to make maps'],'Camouflage helps animals survive.'],
-   ['Which pair belongs together in an ocean ecosystem?','fish and seaweed',['fish and seaweed','camel and cactus snow','lion and traffic light','frog and toaster'],'Fish and seaweed can both be part of an ocean ecosystem.'],
-   ['What happens when a habitat loses many plants?','some animals may lose food or shelter',['some animals may lose food or shelter','animals get extra houses','the Moon gets closer','rocks start flying'],'Plants often provide food and shelter in ecosystems.']
-  ],
-  history_compare:[
-   ['How was sending a message long ago different from sending one today?','It often took longer.',['It often took longer.','It was always faster.','People could only sing messages.','Messages were made of rain.'],'Older communication often moved more slowly than phones or internet messages.'],
-   ['What did many people use before cars were common?','horses or walking',['horses or walking','space ships','tablet computers','electric scooters only'],'People often walked or used animals before cars were common.'],
-   ['Why do we compare then and now?','to notice how life changed over time',['to notice how life changed over time','to erase old stories','to make clocks stop','to turn maps into food'],'Comparing past and present helps us understand change.'],
-   ['Which item is more likely from long ago?','a handwritten letter delivered by mail',['a handwritten letter delivered by mail','a video call','a touch-screen tablet','a robot vacuum'],'Handwritten letters were a common way to send messages long ago.'],
-   ['What stayed important both long ago and today?','families helping each other',['families helping each other','only riding dinosaurs','never learning new things','sleeping in trees'],'Some needs and values stay important across time.']
-  ],
-  maps_globes:[
-   ['What does a map help us do?','find where places are',['find where places are','cook soup','hear music','grow teeth'],'A map shows where places are.'],
-   ['What does a globe show?','Earth as a round model',['Earth as a round model','a flat lunch plate','a weather sound','a tiny car'],'A globe is a round model of Earth.'],
-   ['Which map symbol might show water?','blue area',['blue area','a loud bell','a cookie crumb','a shoe lace'],'Maps often show water in blue.'],
-   ['If north is at the top of a map, which direction is usually at the bottom?','south',['south','north','inside','yesterday'],'On many maps, south is opposite north.'],
-   ['Why do maps use symbols?','to show places and features in a small space',['to show places and features in a small space','to hide every place','to make paper heavier','to erase roads'],'Symbols help maps show information clearly.']
-  ],
-  inventions:[
-   ['Why do people invent tools?','to solve problems or make work easier',['to solve problems or make work easier','to make problems bigger','to stop asking questions','to turn off learning'],'Inventions are created to solve needs or problems.'],
-   ['Which invention helps people talk across far distances?','telephone',['telephone','spoon','pillow','paintbrush'],'A telephone helps people communicate far away.'],
-   ['Which problem did the wheel help solve?','moving heavy things more easily',['moving heavy things more easily','making rain stop','growing hair faster','reading minds'],'Wheels help objects move with less effort.'],
-   ['What should an inventor do after an idea does not work?','try, test, and improve it',['try, test, and improve it','throw away all ideas','never ask why','stop building forever'],'Inventors learn from tests and improve designs.'],
-   ['Which is a good question for an inventor?','What problem am I trying to solve?',['What problem am I trying to solve?','How do I avoid testing?','Can I ignore the user?','How do I make it confusing?'],'Good inventions start with understanding the problem.']
-  ],
-  data_reason:[
-   ['Three kids chose apples and five chose bananas. Which fruit got more votes?','bananas',['bananas','apples','both same','no one voted'],'Five is more than three.'],
-   ['A chart shows 2 sunny days and 6 rainy days. Which happened more?','rainy days',['rainy days','sunny days','both same','snowy days'],'Six rainy days is more than two sunny days.'],
-   ['If a graph bar is taller, what does that usually mean?','it shows more',['it shows more','it shows less','it is always blue','it means stop'],'Taller bars usually show a greater amount.'],
-   ['There are 4 red blocks and 4 blue blocks. What is true?','They are equal.',['They are equal.','Red is more.','Blue is more.','There are no blocks.'],'Four and four are the same amount.'],
-   ['Which question can data answer?','Which snack did our class choose most?',['Which snack did our class choose most?','What does the Moon taste like?','Can pencils dream?','Why is purple sleepy?'],'Data can answer counting and comparison questions.']
-  ],
-  measure_reason:[
-   ['Which tool measures how long a pencil is?','ruler',['ruler','cup','clock','thermometer'],'A ruler measures length.'],
-   ['Which is heavier: a full backpack or one sheet of paper?','full backpack',['full backpack','one sheet of paper','they are always the same','a shadow'],'A full backpack usually weighs more than paper.'],
-   ['Which tool measures temperature?','thermometer',['thermometer','ruler','basket','map key'],'A thermometer measures how hot or cold something is.'],
-   ['If one tower has 8 blocks and another has 5, which is taller if blocks match?','the 8-block tower',['the 8-block tower','the 5-block tower','both same','the paper tower'],'Eight same-size blocks make a taller tower than five.'],
-   ['Why should we line up objects at the same starting point to compare length?','so the comparison is fair',['so the comparison is fair','so they disappear','so they change color','so they become food'],'Same starting points make length comparisons fair.']
-  ],
-  plant:[
-   ['What do roots do for a plant?','take in water and hold the plant',['take in water and hold the plant','make animal sounds','shine like a lamp','fly to the Moon'],'Roots help plants get water and stay anchored.'],
-   ['What does a seed need to start growing?','water, warmth, and time',['water, warmth, and time','a television','a pencil case','a loud horn'],'Seeds need the right conditions to sprout.'],
-   ['Which part of a plant often makes seeds?','flower',['flower','rock','shoe','cloud'],'Many flowers help make seeds.'],
-   ['Why do leaves help a plant?','They help make food using sunlight.',['They help make food using sunlight.','They work like wheels.','They turn into fish.','They make thunder.'],'Leaves help plants use sunlight to make food.'],
-   ['What should you observe to see plant growth?','height, leaves, and changes over days',['height, leaves, and changes over days','only the pot color','only the room noise','only your shoes'],'Plant growth can be observed over time.']
-  ],
-  weather:[
-   ['Which clothing fits a rainy day best?','raincoat',['raincoat','swimsuit only','snow skis','party crown'],'Raincoats help keep us dry in rain.'],
-   ['What does wind move?','air',['air','the Sun','the Moon','mountains every day'],'Wind is moving air.'],
-   ['Which tool can show how hot or cold the air is?','thermometer',['thermometer','map key','paintbrush','fork'],'A thermometer measures temperature.'],
-   ['Dark clouds and thunder can be a clue for what weather?','storm',['storm','very dry desert only','perfectly still air','no weather'],'Dark clouds and thunder can signal a storm.'],
-   ['Why do we check weather before going outside?','to choose safe clothes and plans',['to choose safe clothes and plans','to make the Sun rise','to stop clocks','to count pencils'],'Weather helps us plan what to wear and do.']
-  ]
- };
- var key=banks[k]?k:(banks[id]?id:null);if(!key)return null;
- var item=pick(r,banks[key]);
- return choice(item[0],item[1],opts(r,item[1],item[2],n),item[3]||item[0],item[4]||null);
-}
-`;
-          if(!s.includes(marker)){
-            const needle="function qFor(skill,band,r,questionIndex){var k=skill.kind,d=skill.domain_id,B=BANDS[band]||BANDS[3],n=B.choices;";
+          const banks={
+            astronomy:[['Why do we see the Moon change shape during the month?','We see different lit parts of the Moon.',['We see different lit parts of the Moon.','The Moon becomes a new planet.','Clouds cut the Moon into pieces.','The Sun turns off at night.'],'The Moon does not really change shape. We see different sunlit parts.'],['Which object is a star?','the Sun',['the Sun','the Moon','Earth','a rocket'],'The Sun is a star close enough to warm Earth.'],['Why does daytime happen?','Our side of Earth faces the Sun.',['Our side of Earth faces the Sun.','The Moon pushes light down.','Earth stops moving.','Clouds become bright.'],'Day happens when your side of Earth faces the Sun.']],
+            space:[['Why do astronauts wear space suits outside a spacecraft?','Space has no air to breathe.',['Space has no air to breathe.','Space suits make rain.','Space is full of grass.','Space suits grow food.'],'A space suit protects the astronaut and provides air.'],['Which is closest to Earth?','the Moon',['the Moon','Jupiter','Saturn','another galaxy'],'The Moon is Earths closest natural neighbor in space.'],['Why do rockets need a lot of force to launch?','They must push away from Earth.',['They must push away from Earth.','They are made of paper.','They are trying to become clouds.','They move only downhill.'],'A rocket needs a strong push to lift off.']],
+            solar_system:[['What do planets in our solar system move around?','the Sun',['the Sun','a tree','the classroom','a mountain'],'Planets travel around the Sun.'],['Which planet do we live on?','Earth',['Earth','Mars','Saturn','Neptune'],'Earth is our home planet.'],['Which planet is known for bright rings?','Saturn',['Saturn','Earth','Mercury','Mars'],'Saturn has large visible rings.']],
+            animal_diets:[['A cow mostly eats grass. What kind of eater is it?','herbivore',['herbivore','carnivore','omnivore','meteorologist'],'Herbivores eat plants.'],['A lion hunts and eats other animals. What kind of eater is it?','carnivore',['carnivore','herbivore','map maker','gardener'],'Carnivores eat animals.'],['A bear can eat berries and fish. What kind of eater is it?','omnivore',['omnivore','herbivore only','carnivore only','astronaut'],'Omnivores eat both plants and animals.']],
+            food_chain:[['In a simple chain grass -> rabbit -> fox, who eats the grass?','rabbit',['rabbit','fox','grass','cloud'],'The rabbit eats the grass.'],['Where does a food chain usually get its first energy?','the Sun',['the Sun','a backpack','a pencil','a shoe'],'Plants use sunlight, then animals get energy from plants or other animals.'],['Which is a producer in a pond food chain?','algae',['algae','frog','fish','heron'],'Producers are living things like plants or algae that make their own food.']],
+            ecosystems:[['Which habitat is very dry and has animals adapted to little water?','desert',['desert','rainforest','pond','ice rink'],'A desert is dry and living things there save or find water carefully.'],['Why do some animals blend into leaves or bark?','to hide from danger or sneak up on food',['to hide from danger or sneak up on food','to become a plant','to change the weather','to make maps'],'Camouflage helps animals survive.'],['What happens when a habitat loses many plants?','some animals may lose food or shelter',['some animals may lose food or shelter','animals get extra houses','the Moon gets closer','rocks start flying'],'Plants often provide food and shelter in ecosystems.']],
+            history_compare:[['How was sending a message long ago different from sending one today?','It often took longer.',['It often took longer.','It was always faster.','People could only sing messages.','Messages were made of rain.'],'Older communication often moved more slowly than phones or internet messages.'],['What did many people use before cars were common?','horses or walking',['horses or walking','space ships','tablet computers','electric scooters only'],'People often walked or used animals before cars were common.'],['Why do we compare then and now?','to notice how life changed over time',['to notice how life changed over time','to erase old stories','to make clocks stop','to turn maps into food'],'Comparing past and present helps us understand change.']],
+            maps_globes:[['What does a map help us do?','find where places are',['find where places are','cook soup','hear music','grow teeth'],'A map shows where places are.'],['What does a globe show?','Earth as a round model',['Earth as a round model','a flat lunch plate','a weather sound','a tiny car'],'A globe is a round model of Earth.'],['Why do maps use symbols?','to show places and features in a small space',['to show places and features in a small space','to hide every place','to make paper heavier','to erase roads'],'Symbols help maps show information clearly.']],
+            inventions:[['Why do people invent tools?','to solve problems or make work easier',['to solve problems or make work easier','to make problems bigger','to stop asking questions','to turn off learning'],'Inventions are created to solve needs or problems.'],['Which invention helps people talk across far distances?','telephone',['telephone','spoon','pillow','paintbrush'],'A telephone helps people communicate far away.'],['What should an inventor do after an idea does not work?','try, test, and improve it',['try, test, and improve it','throw away all ideas','never ask why','stop building forever'],'Inventors learn from tests and improve designs.']],
+            data_reason:[['Three kids chose apples and five chose bananas. Which fruit got more votes?','bananas',['bananas','apples','both same','no one voted'],'Five is more than three.'],['If a graph bar is taller, what does that usually mean?','it shows more',['it shows more','it shows less','it is always blue','it means stop'],'Taller bars usually show a greater amount.'],['There are 4 red blocks and 4 blue blocks. What is true?','They are equal.',['They are equal.','Red is more.','Blue is more.','There are no blocks.'],'Four and four are the same amount.']],
+            measure_reason:[['Which tool measures how long a pencil is?','ruler',['ruler','cup','clock','thermometer'],'A ruler measures length.'],['Which tool measures temperature?','thermometer',['thermometer','ruler','basket','map key'],'A thermometer measures how hot or cold something is.'],['Why should we line up objects at the same starting point to compare length?','so the comparison is fair',['so the comparison is fair','so they disappear','so they change color','so they become food'],'Same starting points make length comparisons fair.']]
+          };
+          const bank="function layer2Question(skill,band,r,questionIndex,n){var k=skill.kind,id=skill.skill_id||'',banks="+JSON.stringify(banks)+";var key=banks[k]?k:(banks[id]?id:null);if(!key)return null;var item=pick(r,banks[key]);return choice(item[0],item[1],opts(r,item[1],item[2],n),item[3]||item[0],item[4]||null);}\n";
+          const hook="var l2=layer2Question(skill,band,r,questionIndex,n);if(l2)return l2;";
+          const needle="function qFor(skill,band,r,questionIndex){var k=skill.kind,d=skill.domain_id,B=BANDS[band]||BANDS[3],n=B.choices;";
+          if(!s.includes('function layer2Question(skill,band,r,questionIndex,n){')){
             if(!s.includes(needle)) throw new Error('qFor header not found for layer2 insertion');
-            s=s.replace(needle,bank+needle+"\n var l2=layer2Question(skill,band,r,questionIndex,n);if(l2)return l2;");
-          }else if(!s.includes('var l2=layer2Question(skill,band,r,questionIndex,n);if(l2)return l2;')){
-            const needle="function qFor(skill,band,r,questionIndex){var k=skill.kind,d=skill.domain_id,B=BANDS[band]||BANDS[3],n=B.choices;";
-            if(!s.includes(needle)) throw new Error('qFor header not found for existing layer2 hook');
-            s=s.replace(needle,needle+"\n var l2=layer2Question(skill,band,r,questionIndex,n);if(l2)return l2;");
+            s=s.replace(needle,bank+needle+'\n '+hook);
+          }else if(!s.includes(hook)){
+            if(!s.includes(needle)) throw new Error('qFor header not found for layer2 hook');
+            s=s.replace(needle,needle+'\n '+hook);
           }
           fs.writeFileSync(file,s);
           NODE
