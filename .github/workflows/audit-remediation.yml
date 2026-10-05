@@ -1,13 +1,90 @@
 name: Audit remediation
 
 on:
+  push:
+    branches: [ main ]
+    paths:
+      - .github/workflows/audit-remediation.yml
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  noop:
+  layer-one:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Audit remediation workflow retired."
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Apply canonical schoolwork integration
+        run: |
+          node <<'NODE'
+          const fs=require('fs');
+          function mustReplace(file,from,to){
+            let s=fs.readFileSync(file,'utf8');
+            if(!s.includes(from)) throw new Error(file+' missing expected text: '+from.slice(0,100));
+            s=s.replace(from,to);
+            fs.writeFileSync(file,s);
+          }
+          function addOnce(file,needle,insert){
+            let s=fs.readFileSync(file,'utf8');
+            if(s.includes(insert.trim())) return;
+            if(!s.includes(needle)) throw new Error(file+' missing insert needle: '+needle.slice(0,100));
+            s=s.replace(needle,insert+needle);
+            fs.writeFileSync(file,s);
+          }
+          mustReplace('sakhi-activities.js',
+            "var r=rng(skillId+':'+band+':'+seed),qs=[],seen={},blocked={};(avoid||[]).forEach(function(x){blocked[x]=true;});",
+            "var r=rng(skillId+':'+band+':'+seed),qs=[],seen={},blocked={},sourceAvoid=avoid||[];if(window.SakhiSchoolwork&&typeof window.SakhiSchoolwork.mapAvoid==='function')sourceAvoid=window.SakhiSchoolwork.mapAvoid(sourceAvoid);sourceAvoid.forEach(function(x){blocked[x]=true;});");
+          mustReplace('sakhi-activities.js',
+            "}return{activity_id:skillId+':'+band+':'+seed,skill_id:skillId,skill_title:sk.title,domain_id:sk.domain_id,band:band,band_name:BANDS[band].name,evidence_mode:qs.every(function(q){return q.evidence_mode==='practice';})?'practice':'objective',questions:qs};}\nfunction canGenerate",
+            "}var activity={activity_id:skillId+':'+band+':'+seed,skill_id:skillId,skill_title:sk.title,domain_id:sk.domain_id,band:band,band_name:BANDS[band].name,evidence_mode:qs.every(function(q){return q.evidence_mode==='practice';})?'practice':'objective',questions:qs};if(window.SakhiSchoolwork&&typeof window.SakhiSchoolwork.enhanceActivity==='function')activity=window.SakhiSchoolwork.enhanceActivity(activity,avoid||[]);return activity;}\nfunction canGenerate");
+          addOnce('sakhi-templates.js',
+            "function render(root,q,ctx){\n  clear(root);media(root,q,ctx.domain);var state={response:null};",
+            "function renderBase(root,q,ctx){return render(root,q,ctx);}\n");
+          mustReplace('sakhi-templates.js',
+            "function render(root,q,ctx){\n  clear(root);media(root,q,ctx.domain);var state={response:null};",
+            "function render(root,q,ctx){\n  var school=window.SakhiSchoolwork&&typeof window.SakhiSchoolwork.renderSchool==='function'?window.SakhiSchoolwork.renderSchool(root,q,ctx):null;if(school)return school;\n  clear(root);media(root,q,ctx.domain);var state={response:null};");
+          mustReplace('sakhi-templates.js',
+            "return{render:render,assessmentVisual:assessmentVisual};",
+            "return{render:render,renderBase:renderBase,assessmentVisual:assessmentVisual};");
+          mustReplace('sakhi-schoolwork.js',
+            "function renderWriteRoom(root,q,ctx){if(!baseTemplateRender)return null;clear(root);worksheetTitle(root,'WRITE THE ROOM','Look at the picture, then write its word');var frame=el('div','school-room-frame'),pic=el('div','school-room-picture');pic.setAttribute('role','img');pic.setAttribute('aria-label',q.sheet.alt||q.sheet.word);if(window.SakhiTemplates&&typeof window.SakhiTemplates.assessmentVisual==='function')pic.innerHTML=window.SakhiTemplates.assessmentVisual(q.sheet.picture);frame.appendChild(pic);root.appendChild(frame);var work=el('div','school-room-work');root.appendChild(work);var inner={};Object.keys(q).forEach(function(k){inner[k]=q[k];});inner.template=q.base_template||'build';inner.media=null;return baseTemplateRender(work,inner,ctx);}",
+            "function renderWriteRoom(root,q,ctx){var base=baseTemplateRender||(window.SakhiTemplates&&window.SakhiTemplates.renderBase);if(!base)return null;clear(root);worksheetTitle(root,'WRITE THE ROOM','Look at the picture, then write its word');var frame=el('div','school-room-frame'),pic=el('div','school-room-picture');pic.setAttribute('role','img');pic.setAttribute('aria-label',q.sheet.alt||q.sheet.word);if(window.SakhiTemplates&&typeof window.SakhiTemplates.assessmentVisual==='function')pic.innerHTML=window.SakhiTemplates.assessmentVisual(q.sheet.picture);frame.appendChild(pic);root.appendChild(frame);var work=el('div','school-room-work');root.appendChild(work);var inner={};Object.keys(q).forEach(function(k){inner[k]=q[k];});inner.template=q.base_template||'build';inner.media=null;return base(work,inner,ctx);}");
+          const school=fs.readFileSync('sakhi-schoolwork.js','utf8');
+          const start=school.indexOf('function install(){');
+          const end=school.indexOf('install();\nreturn{VERSION:VERSION');
+          if(start<0||end<0) throw new Error('sakhi-schoolwork install block not found');
+          let schoolNext=school.slice(0,start)+"function install(){return true;}\n"+school.slice(end);
+          schoolNext=schoolNext.replace('install();\nreturn{VERSION:VERSION,LETTER_PICTURES:LETTER_PICTURES,enhanceActivity:enhanceActivity,renderSchool:renderSchool,mappedAvoid:mappedAvoid,install:install};',
+            'return{VERSION:VERSION,LETTER_PICTURES:LETTER_PICTURES,enhanceActivity:enhanceActivity,renderSchool:renderSchool,mappedAvoid:mappedAvoid,mapAvoid:mappedAvoid,install:install};');
+          fs.writeFileSync('sakhi-schoolwork.js',schoolNext);
+          mustReplace('tests/schoolwork-experience.test.cjs',
+            "function gen(id,avoid=[]){return context.SakhiActivities.generate(id,2,'seed',avoid,{});}",
+            "function gen(id,avoid=[]){return context.SakhiSchoolwork.enhanceActivity(baseActivity(id),avoid);}");
+          mustReplace('tests/source-architecture.test.cjs',
+            "assert(/\\b__schoolworkInstalled\\b/.test(school),'schoolwork should use an explicit installed marker for its bridge');",
+            "assert(!/\\bA\\.generate\\s*=/.test(school),'schoolwork must not replace SakhiActivities.generate; the canonical generator owns generation');\nassert(!/\\bA\\.canGenerate\\s*=/.test(school),'schoolwork must not replace SakhiActivities.canGenerate');\nassert(!/\\bT\\.render\\s*=/.test(school),'schoolwork must not replace SakhiTemplates.render; the canonical renderer owns routing');\nassert(/function install\\(\\)\\{return true;\\}/.test(school),'schoolwork install must remain a no-op compatibility bridge');");
+          NODE
+      - name: Verify layer one
+        run: |
+          npm run test:source-architecture
+          npm run test:schoolwork
+          npm run test:student-experience
+          npm run build
+          npm run validate:dist
+      - name: Commit layer one
+        run: |
+          if ! git diff --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add sakhi-activities.js sakhi-templates.js sakhi-schoolwork.js tests/source-architecture.test.cjs tests/schoolwork-experience.test.cjs index.html manifest.json sw.js vendor/kokoro-runtime.js
+            git commit -m "Layer 1 canonical schoolwork hooks"
+            git push origin HEAD:main
+          fi
