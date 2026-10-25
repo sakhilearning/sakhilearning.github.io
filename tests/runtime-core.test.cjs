@@ -21,8 +21,8 @@ function src(f){return fs.readFileSync(path.join(root,f),'utf8');}
   let built=ctx.SakhiPlan.build();
   if(built.program_day!==1)throw new Error('Fresh learner must start on program day 1');
   const domains=built.missions.map(m=>m.domain).join('|');
-  if(domains!=='math|science|language|reading|logic')throw new Error('Daily priorities are not math, science, listening, reading, and rotating enrichment: '+domains);
-  if(built.missions.length!==5||built.missions.some(m=>!m.pick||!m.focus))throw new Error('Daily plan is missing a clear adaptive mission');
+  if(domains!=='math|science|language|reading|writing|logic')throw new Error('Daily priorities are not math, science, listening, reading, and rotating enrichment: '+domains);
+  if(built.missions.length!==6||built.missions.some(m=>!m.pick||!m.focus))throw new Error('Daily plan is missing a clear adaptive mission');
   if(!built.offscreen||built.offscreen.domain!=='science')throw new Error('Day 1 should include a hands-on science mission');
   sessions.push({status:'LEFT_EARLY'});
   built=ctx.SakhiPlan.build();
@@ -35,5 +35,5 @@ function src(f){return fs.readFileSync(path.join(root,f),'utf8');}
   const pctx={window:{},console,Date,crypto:{randomUUID:()=> 'id'},localStorage:{getItem:k=>store[k]||null,setItem:(k,v)=>{store[k]=v},removeItem:k=>{delete store[k]}}};pctx.window=pctx;pctx.SakhiCurriculum={skill:()=>null,skillsIn:()=>[]};pctx.SakhiCloud={enqueue:()=>{}};vm.createContext(pctx);vm.runInContext(src('sakhi-progress.js'),pctx,{filename:'sakhi-progress.js'});
   pctx.SakhiProgress.load();pctx.SakhiProgress.evidence('reading.test');
   if(Object.keys(pctx.SakhiProgress.load().skills).length!==0)throw new Error('Reading evidence mutated learner skill state outside completeActivity');
-  console.log('Runtime core passed: inline boot data, five daily priorities, six-month pacing, early-exit pacing, read-only evidence access');
+  console.log('Runtime core passed: inline boot data, six daily priorities including writing, rolling annual pacing, early-exit pacing, read-only evidence access');
 })().catch(e=>{console.error(e);process.exit(1);});

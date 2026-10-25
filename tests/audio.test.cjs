@@ -2,10 +2,10 @@ const fs=require('fs'),vm=require('vm'),path=require('path');
 const root=path.join(__dirname,'..');
 function src(f){return fs.readFileSync(path.join(root,f),'utf8');}
 (async function(){
-  let started=0,audibleStarted=0,cloudCalls=0,serverCalls=0,localCalls=0;
+  let started=0,audibleStarted=0,cloudCalls=0,serverCalls=0,localCalls=0,decodedCount=0;
   function FakeSource(){this.buffer=null;this.onended=null;} FakeSource.prototype.connect=function(){}; FakeSource.prototype.start=function(){started++;if(this.buffer&&this.buffer.duration)audibleStarted++;setTimeout(()=>this.onended&&this.onended(),1);}; FakeSource.prototype.stop=function(){this.onended&&this.onended();};
   function FakeGain(){this.gain={value:1};} FakeGain.prototype.connect=function(){};
-  function AC(){this.state='running';this.destination={};} AC.prototype.resume=async function(){}; AC.prototype.createBuffer=()=>({}); AC.prototype.createBufferSource=()=>new FakeSource(); AC.prototype.createGain=()=>new FakeGain(); AC.prototype.decodeAudioData=async function(){return {duration:.2};};
+  function AC(){this.state='running';this.destination={};} AC.prototype.resume=async function(){}; AC.prototype.createBuffer=()=>({}); AC.prototype.createBufferSource=()=>new FakeSource(); AC.prototype.createGain=()=>new FakeGain(); AC.prototype.decodeAudioData=async function(){decodedCount++;return {duration:.2};};
   const lines=[
     'Which answer is best? Choice one is left. Choice two is right.',
     'Slow request should be cancelled.',
@@ -36,6 +36,12 @@ function src(f){return fs.readFileSync(path.join(root,f),'utf8');}
   if(st.provider!=='kokoro-local'||st.naturalMode!=='kokoro-local-first'||st.naturalVoice!=='af_heart'||st.naturalSpeed!==.86||st.appleMobile||st.localClips<lines.length||serverCalls!==0)throw new Error('local Kokoro diagnostics incorrect: '+JSON.stringify(st));
   if(started<1||audibleStarted<1)throw new Error('Expected unlock and bundled narration playback');
   if(cloudCalls!==0)throw new Error('The cloud speech provider should not be required for narration');
+  ctx.SakhiAudio.configureSceneSound({character:'AUTO',actor:'dinosaur',music:false,volume:.2});if(ctx.SakhiAudio.characterRate()!==.9)throw new Error('Dinosaur voice effect missing');
+  ctx.SakhiAudio.configureSceneSound({character:'AUTO',actor:'unicorn',music:false,volume:.2});if(ctx.SakhiAudio.characterRate()!==1.1)throw new Error('Pixie voice effect missing');ctx.SakhiAudio.stopSceneSound();if(ctx.SakhiAudio.characterRate()!==1)throw new Error('Leaving a scene did not restore the clear guide');
+  const fetchedBeforeRepeat=localCalls,decodedBeforeRepeat=decodedCount;
+  await ctx.SakhiAudio.speak(lines[0]);
+  if(localCalls!==fetchedBeforeRepeat||decodedCount!==decodedBeforeRepeat)throw new Error('Repeat narration fetched or decoded a warmed clip again');
+  if(ctx.SakhiAudio.hintText({math_family:'fractions',hints:['dynamic new hint']},0)!=='Look carefully.')throw new Error('Catalog hint audio contract does not match the bundled cue');
   const audibleBefore=audibleStarted;
   const stale=ctx.SakhiAudio.speak(lines[1]);
   await new Promise(resolve=>setTimeout(resolve,2));

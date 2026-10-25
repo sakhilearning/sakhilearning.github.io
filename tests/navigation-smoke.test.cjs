@@ -32,7 +32,7 @@ if (!/@keyframes\s+pageIn/.test(css) || !/transition:/.test(css)) {
   throw new Error('The UI should include page motion and transition styling');
 }
 
-if (!/id="parentGate"/.test(html) || !/Try the grown-up question again/.test(app)) {
+if (!/id="parentGate"/.test(html) || !/That PIN did not match/.test(app)) {
   throw new Error('Parent dashboard needs an explicit failure path for the grown-up gate');
 }
 

@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Sakhi Learning Trails">
 <meta name="sakhi-build" content="__SAKHI_VERSION__">
-<meta name="description" content="Sakhi Learning Trails — a magical Kindergarten learning adventure.">
+<meta name="description" content="Sakhi Learning Trails — an adaptive Kindergarten through Grade 6 learning adventure.">
 <title>Sakhi Learning Trails</title>
 <link rel="manifest" href="./manifest.json?v=__SAKHI_VERSION__">
 <link rel="apple-touch-icon" href="./icon-180.png?v=__SAKHI_VERSION__">
@@ -59,7 +59,7 @@ html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,sans-seri
   </section>
   <section class="view" data-view="map"><div class="section-title"><small>EXPLORE & PRACTICE</small><h1>Choose a learning world</h1><p>This is optional subject practice. Your Today’s Adventure already chooses the right lessons and order; use Explore when you want extra practice in one subject.</p></div><div id="mapGrid" class="map-grid"></div></section>
   <section class="view" data-view="rewards"><div class="section-title"><small>TREASURE ROOM</small><h1>Your Magic Collection</h1><p>Practice, persistence, and brave tries make the kingdom glow.</p></div><div class="big-reward"><span>⭐</span><b id="rewardTotal">0</b><small>Trail Stars</small></div><div id="rewardRecent" class="reward-recent"></div></section>
-  <section class="view" data-view="parent"><div class="section-title parent-title"><small>GROWN-UP VIEW</small><h1>Parent Dashboard</h1><p>Learning history, next steps, account sync, and settings.</p></div><div id="parentGate" class="parent-gate"><h2>Quick grown-up check</h2><p>What is 8 + 7?</p><label for="gateAnswer">Answer</label><input id="gateAnswer" type="text" inputmode="numeric" autocomplete="off" maxlength="2"><button class="primary" id="gateBtn">Open Parent Dashboard</button></div><div id="parentBody" hidden></div></section>
+  <section class="view" data-view="parent"><div class="section-title parent-title"><small>GROWN-UP VIEW</small><h1>Parent Dashboard</h1><p>Learning history, next steps, account sync, and settings.</p></div><div id="parentGate" class="parent-gate"><h2>Parent PIN</h2><p>A grown-up can unlock curriculum and time settings here.</p><label for="gateAnswer">Answer</label><input id="gateAnswer" type="text" inputmode="numeric" autocomplete="off" maxlength="2"><button class="primary" id="gateBtn">Open Parent Dashboard</button></div><div id="parentBody" hidden></div></section>
 </main>
 <nav class="bottom-nav" aria-label="Main navigation"><button data-nav="home" class="active">⌂<span>Home</span></button><button data-nav="map">⌘<span>Explore</span></button><button data-nav="rewards">✦<span>Treasures</span></button><button data-nav="parent">♡<span>Parents</span></button></nav>
 <div class="overlay" id="celebrate"><div class="celebrate-card"><small>A treasure, just for you</small><div class="celebrate-icon" id="celebrateIcon">✨</div><h2 id="celebrateTitle">Wonderful work!</h2><p id="celebrateBody"></p><b class="celebrate-reward" id="celebrateReward">✦ 3 trail stars earned</b><button class="primary huge" id="continueBtn">Next little adventure →</button></div></div>

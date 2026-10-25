@@ -1,0 +1,217 @@
+{
+  "provider": "OpenMoji",
+  "source": "https://github.com/hfg-gmuend/openmoji",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "modified": false,
+  "files": [
+    {
+      "name": "dinosaur",
+      "annotation": "sauropod",
+      "hexcode": "1F995",
+      "file": "dinosaur.svg",
+      "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F995.svg",
+      "sha256": "6f3b4eb18ef15939d02180930a5c6f8e8eb3f8f9eb1c80a2aeb7008d6d0fbab2"
+    },
+    {
+      "name": "trex",
+      "annotation": "T-Rex",
+      "hexcode": "1F996",
+      "file": "trex.svg",
+      "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F996.svg",
+      "sha256": "a295b38d62605a0472b7273d4fb4e43b69c258c1bdb1c44bd33c38908dd9f6a8"
+    },
+    {
+      "name": "horse",
+      "annotation": "horse",
+      "hexcode": "1F40E",
+      "file": "horse.svg",
+      "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F40E.svg",
+      "sha256": "97b0d31440be69c8dd55064159e18aa48fcb71738fbb36829b0f856d30d6b377"
+    },
+    {
+      "name": "unicorn",
+      "annotation": "unicorn",
+      "hexcode": "1F984",
+      "file": "unicorn.svg",
+      "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F984.svg",
+      "sha256": "a0a942925c9a508041986dbebdaf65cf8e44fe7f9ee195afef6df48ba732f4b1"
+    },
+    {
+      "name": "princess",
+      "annotation": "princess",
+      "hexcode": "1F478",
+      "file": "princess.svg",
+      "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F478.svg",
+      "sha256": "9fc077598cc7b894037d50f10f784f0e44fe74a0437144a9678bd0241b11c267"
+    },
+    {
+      "name": "chair",
+      "annotation": "chair",
+      "hexcode": "1FA91",
+      "file": "chair.svg",
+      "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1FA91.svg",
+      "sha256": "f96416e824ac9e0333f62fd6833835f81b9881a68a2eae34ebe5e90d5e46d43d"
+    },
+    {
+      "name": "toy",
+      "annotation": "teddy bear",
+      "hexcode": "1F9F8",
+      "file": "toy.svg",
+      "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F9F8.svg",
+      "sha256": "e8bad9face297b0f928858af866a956e91365c5fc15148e9f10ddc465787b055"
+    },
+    {
+      "name": "wand",
+      "annotation": "magic wand",
+      "hexcode": "1FA84",
+      "file": "wand.svg",
+      "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1FA84.svg",
+      "sha256": "7afb782d8b7a8bf5356f30ef00852f52af68b9ccc02c2382fe9c14bf4afae0e5"
+    },
+    {
+      "name": "ring",
+      "annotation": "ring",
+      "hexcode": "1F48D",
+      "file": "ring.svg",
+      "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F48D.svg",
+      "sha256": "c79c0ee50b7377d82b7dd5684a719dda1ef560281b65a68cf15c9f01371c3978"
+    },
+    {
+      "name": "mouse",
+      "annotation": "mouse",
+      "hexcode": "1F401",
+      "file": "mouse.svg",
+      "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F401.svg",
+      "sha256": "9fa0f265fa66d6cf74a43965146ac3e277adf38449aa1337055db690e59ae17b"
+    },
+    {
+      "name": "cat",
+      "annotation": "cat",
+      "hexcode": "1F408",
+      "file": "cat.svg",
+      "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F408.svg",
+      "sha256": "d028cef4726d15bc5c84ff1751db9d90c35d990151972a5f044afd53691beff6"
+    },
+    {
+      "name": "fish",
+      "annotation": "fish",
+      "hexcode": "1F41F",
+      "file": "fish.svg",
+      "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F41F.svg",
+      "sha256": "7a7ce0d35b38b61549bf1ab5342df3a443d9974d138fa95b5abdc3ce9b6e8cdf"
+    },
+    {
+      "name": "tropicalfish",
+      "annotation": "tropical fish",
+      "hexcode": "1F420",
+      "file": "tropicalfish.svg",
+      "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F420.svg",
+      "sha256": "c0395b59d99e196c663d9ae022b0edd94c29609c7adefcb3a0c364095784fb16"
+    },
+    {
+      "name": "ball",
+      "annotation": "soccer ball",
+      "hexcode": "26BD",
+      "file": "ball.svg",
+      "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/26BD.svg",
+      "sha256": "f3d7e883a1d7a0776e5aa16ea857530884a3c12b192475fb116d351241f0bc8a"
+    },
+    {
+      "name": "apple",
+      "annotation": "red apple",
+      "hexcode": "1F34E",
+      "file": "apple.svg",
+      "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F34E.svg",
+      "sha256": "b4db458333fa917a803c8d36865ae57ae5ea54d2aa0e1f906518d3f0c9bf2bcb"
+    },
+    {
+      "name": "candy",
+      "annotation": "candy",
+      "hexcode": "1F36C",
+      "file": "candy.svg",
+      "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F36C.svg",
+      "sha256": "abca571f338bc11c28f6e1b334d0bf0693da5f6d944abf2fc4679e3f7417b45f"
+    },
+    {
+      "name": "cake",
+      "annotation": "shortcake",
+      "hexcode": "1F370",
+      "file": "cake.svg",
+      "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F370.svg",
+      "sha256": "0a7d0e0515cc1cef27d6f0f7eea0bcd10f42ef22c764224995aa8e7dc3e52b50"
+    },
+    {
+      "name": "carrot",
+      "annotation": "carrot",
+      "hexcode": "1F955",
+      "file": "carrot.svg",
+      "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F955.svg",
+      "sha256": "703332895b3b583e966fd4405f4bdab91a5b005b55d2103a255f4a7394dd074d"
+    },
+    {
+      "name": "clip",
+      "annotation": "paperclip",
+      "hexcode": "1F4CE",
+      "file": "clip.svg",
+      "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F4CE.svg",
+      "sha256": "9371c387a2799eea03d297ea8f5b8ea61bea85b1ceb6963bbf852085ae25e7da"
+    },
+    {
+      "name": "hat",
+      "annotation": "top hat",
+      "hexcode": "1F3A9",
+      "file": "hat.svg",
+      "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F3A9.svg",
+      "sha256": "a02b3ac7511f87b39bfb1c9e89b23dcc7d4ec220dc486879bd11633cdb9912d4"
+    },
+    {
+      "name": "die",
+      "annotation": "game die",
+      "hexcode": "1F3B2",
+      "file": "die.svg",
+      "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F3B2.svg",
+      "sha256": "a171c086b515e1b324b8f1af27fd5302f966d8a10e81702801b76ee71f6d622c"
+    },
+    {
+      "name": "block",
+      "annotation": "brick",
+      "hexcode": "1F9F1",
+      "file": "block.svg",
+      "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F9F1.svg",
+      "sha256": "e3530593fb4c69cd34224c860ea01da94c0430ac4361517377633c59947ea06c"
+    },
+    {
+      "name": "crayon",
+      "annotation": "crayon",
+      "hexcode": "1F58D",
+      "file": "crayon.svg",
+      "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F58D.svg",
+      "sha256": "677c0ba5348f3c1ae4881b6d0ebe494551e4ad2379f77475a86f4bf9018c49ab"
+    },
+    {
+      "name": "seed",
+      "annotation": "seedling",
+      "hexcode": "1F331",
+      "file": "seed.svg",
+      "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F331.svg",
+      "sha256": "5f7b280dd0435ea429e6086f18f11a4e02ce46b2497c2231a115feca40634513"
+    },
+    {
+      "name": "butterfly",
+      "annotation": "butterfly",
+      "hexcode": "1F98B",
+      "file": "butterfly.svg",
+      "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F98B.svg",
+      "sha256": "47b4971766ec7d4d913142eac844bb33c526b72839209c8acb531483a2f4072d"
+    },
+    {
+      "name": "star",
+      "annotation": "star",
+      "hexcode": "2B50",
+      "file": "star.svg",
+      "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/2B50.svg",
+      "sha256": "0927c3818e30711a17aa2a14b6b7383f4aab767c865d8f88ad491e91b0de49f0"
+    }
+  ]
+}

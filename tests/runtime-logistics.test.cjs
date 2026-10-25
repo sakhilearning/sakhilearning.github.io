@@ -27,7 +27,7 @@ const instantCue=path.join(root,'assets/audio/sakhi-ready-next.wav');if(!fs.exis
 const app = read('sakhi-app.js');
 const adaptive = read('sakhi-adaptive.js');
 const plan = read('sakhi-plan.js');
-if (!app.includes("answer==='15'")) throw new Error('Grown-up parent check changed');
+if (!app.includes('configureParentGate') || !read('sakhi-family.js').includes('PBKDF2')) throw new Error('Parent PIN gate is missing');
 if (!app.includes('[data-trail-domain]') || !app.includes('startTrail')) throw new Error('Trail cards are not wired for interaction');
 if (!app.includes('ensureVoiceReady') || !app.includes('voicePrepare') || app.includes('Starting voice')) throw new Error('Kokoro readiness gate is incomplete');
 for (const token of ['todayWorldCard', 'OPTIONAL SUBJECT PRACTICE', 'startChosenLesson', 'advanceProgramDay', 'curriculumSkill', 'recentQuestionKeys', 'cloudMagicLink', 'cloudResendConfirm']) {

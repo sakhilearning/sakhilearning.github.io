@@ -22,13 +22,17 @@ const moduleOrder=[
   'sakhi-quality.js',
   'sakhi-progress.js',
   'sakhi-mastery-policy.js',
+  'sakhi-family.js',
   'sakhi-adaptive.js',
   'sakhi-plan.js',
   'sakhi-audio.js',
+  'sakhi-scene-plan.js',
+  'sakhi-play-scenes.js',
   'sakhi-templates.js',
   'sakhi-schoolwork.js',
   'sakhi-library-art.js',
   'sakhi-wrapups.js',
+  'sakhi-resources.js',
   'sakhi-app.js',
   'sakhi-experience.js'
 ];
@@ -85,7 +89,7 @@ const runtimeData=[
   `window.SAKHI_ICON_DATA=${JSON.stringify(dataUri('icon-192.png','image/png'))};`
 ].join('\n');
 const runtimeJs=moduleOrder.map(f=>`\n/* ===== ${f} ===== */\n${read(f)}\n`).join('');
-const flatCss=flattenLayers(read('sakhi-production.css'))+'\n'+read('sakhi-schoolwork.css')+'\n'+read('sakhi-layout-guardrails.css')+'\n'+read('sakhi-experience.css');
+const flatCss=flattenLayers(read('sakhi-production.css'))+'\n'+read('sakhi-schoolwork.css')+'\n'+read('sakhi-layout-guardrails.css')+'\n'+read('sakhi-experience.css')+'\n'+read('sakhi-play-scenes.css');
 /* Every substitution uses a replacer FUNCTION, never a replacement string.
    String.replace treats $&, $`, $' and $n in a replacement string as special
    patterns: sakhi-schoolwork.js contains the regex anchor '$' -- the characters

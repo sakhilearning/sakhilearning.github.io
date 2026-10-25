@@ -32,8 +32,35 @@ function assessmentVisual(kind){
   return'';
 }
 function wireCountables(root){var tapped=0;root.querySelectorAll('[data-count-object]').forEach(function(b){b.onclick=function(){if(b.dataset.counted==='1')return;b.dataset.counted='1';b.setAttribute('aria-pressed','true');tapped++;b.classList.add('counted');var m=b.querySelector('.count-mark');if(m)m.textContent=String(tapped);};});}
+function catalogMedia(root,v){
+ var box=document.createElement('div');box.className='catalog-visual';root.appendChild(box);
+ function text(s,cls){var p=document.createElement('div');p.className=cls||'';p.textContent=s;box.appendChild(p);return p;}
+ function svg(){var el=document.createElementNS('http://www.w3.org/2000/svg','svg');el.setAttribute('viewBox','0 0 400 230');el.setAttribute('role','img');box.appendChild(el);return el;}
+ function shape(parent,kind,attrs,value){var node=document.createElementNS('http://www.w3.org/2000/svg',kind);Object.keys(attrs).forEach(function(k){node.setAttribute(k,attrs[k]);});if(value!==undefined)node.textContent=value;parent.appendChild(node);return node;}
+ function objects(n,cross){var row=document.createElement('div');row.className='catalog-objects';for(var i=0;i<Math.min(100,n);i++){var b=document.createElement('button');b.type='button';b.textContent=cross&&i<n&&i>=n-cross?'◌':'★';b.className='catalog-counter';b.setAttribute('aria-label','Object '+(i+1)+(cross&&i>=n-cross?' given away':''));b.setAttribute('aria-pressed','false');b.onclick=function(){if(this.getAttribute('aria-pressed')==='true')return;this.setAttribute('aria-pressed','true');this.classList.add('counted');};row.appendChild(b);}box.appendChild(row);}
+ if(v.type==='objects'||v.type==='takeaway'){objects(v.n===undefined?v.a:v.n,v.b);if(v.type==='takeaway')text(v.b+' objects were given away. Hollow counters show those objects.');}
+ else if(v.type==='groups'){objects(v.a);text('+','catalog-symbol');objects(v.b);}
+ else if(v.type==='tens'){text(Math.floor(v.n/10)+' groups of ten and '+v.n%10+' ones','catalog-number');objects(Math.floor(v.n/10));}
+ else if(v.type==='array'){for(var i=0;i<Math.min(v.a,10);i++)objects(Math.min(v.b,10));text(v.a+' equal rows of '+v.b);}
+ else if(v.type==='fraction'){var strip=document.createElement('div');strip.className='fraction-strip';strip.style.gridTemplateColumns='repeat('+Math.min(v.d,10)+',1fr)';strip.setAttribute('role','img');strip.setAttribute('aria-label',v.n+' shaded parts out of '+v.d+' equal parts');for(var i=0;i<v.d;i++){var cell=document.createElement('span');cell.className=i<v.n?'filled':'';strip.appendChild(cell);}box.appendChild(strip);}
+ else if(v.type==='clock'){var s=svg();s.setAttribute('aria-label','Analog clock');shape(s,'circle',{cx:200,cy:115,r:100,fill:'#fff9ed',stroke:'#7953aa','stroke-width':5});for(var n=1;n<=12;n++){var angle=n*Math.PI/6;shape(s,'text',{x:200+80*Math.sin(angle),y:121-80*Math.cos(angle),'text-anchor':'middle',fill:'#493168','font-size':17},n);}[[v.minute*6,78,5],[(v.hour%12)*30+v.minute/2,53,8]].forEach(function(h){var angle=h[0]*Math.PI/180;shape(s,'line',{x1:200,y1:115,x2:200+h[1]*Math.sin(angle),y2:115-h[1]*Math.cos(angle),stroke:'#493168','stroke-width':h[2],'stroke-linecap':'round'});});shape(s,'circle',{cx:200,cy:115,r:6,fill:'#dd8254'});}
+ else if(v.type==='coins'){var row=document.createElement('div');row.className='catalog-coins';v.values.forEach(function(n){var c=document.createElement('span');c.textContent=n+'¢';row.appendChild(c);});box.appendChild(row);}
+ else if(v.type==='bars'){['a','b'].forEach(function(k){var bar=document.createElement('div');bar.className='catalog-bar';bar.style.width=(v[k]*9+10)+'%';bar.textContent=k.toUpperCase()+': '+v[k]+' units';box.appendChild(bar);});}
+ else if(v.type==='lines'){var s=svg();s.setAttribute('aria-label',v.relationship+' line diagram');shape(s,'line',{x1:75,y1:130,x2:325,y2:130,stroke:'#7652ab','stroke-width':6});shape(s,'line',v.relationship==='Parallel'?{x1:75,y1:70,x2:325,y2:70,stroke:'#dd8254','stroke-width':6}:v.relationship==='Perpendicular'?{x1:200,y1:30,x2:200,y2:210,stroke:'#dd8254','stroke-width':6}:{x1:100,y1:40,x2:300,y2:200,stroke:'#dd8254','stroke-width':6});}
+ else if(v.type==='angle'){var s=svg(),rad=v.degrees*Math.PI/180;s.setAttribute('aria-label','An angle with two rays');shape(s,'path',{d:'M '+(100+140*Math.cos(rad))+' '+(180-140*Math.sin(rad))+' L 100 180 L 290 180',fill:'none',stroke:'#7652ab','stroke-width':6});}
+ else if(v.type==='circle'){var s=svg();s.setAttribute('aria-label','Circle with a labeled radius');shape(s,'circle',{cx:200,cy:115,r:90,fill:'#f0e8fa',stroke:'#7652ab','stroke-width':4});shape(s,'line',{x1:200,y1:115,x2:290,y2:115,stroke:'#dd8254','stroke-width':4});shape(s,'text',{x:230,y:100,'font-size':18},v.radius+' cm');}
+ else if(v.type==='dimensions'){var s=svg();s.setAttribute('aria-label','Dimensions for the problem');shape(s,v.triangle?'polygon':'rect',v.triangle?{points:'90,180 310,180 200,40',fill:'#eee3fa',stroke:'#7652ab','stroke-width':3}:{x:90,y:40,width:220,height:140,fill:'#eee3fa',stroke:'#7652ab','stroke-width':3});shape(s,'text',{x:180,y:210,'font-size':18},v.a+' cm');shape(s,'text',{x:320,y:110,'font-size':18},v.b+' cm');}
+ else if(v.type==='bonds'){text('Whole: '+(v.a+v.b),'catalog-number');text(v.a+' + ?','catalog-equation');}
+ else if(v.type==='ordinal'){text(Array.from({length:10},function(_,i){return i+1===v.a?'★':'●';}).join('   '),'catalog-number');}
+ else if(v.type==='shape'){text(v.symbol,'catalog-shape');}
+ else if(v.type==='color'){box.style.background=v.color;box.style.minHeight='100px';box.setAttribute('role','img');box.setAttribute('aria-label','Color swatch');}
+ else text(v.text||'','catalog-equation');
+}
+
 function media(root,q,domain){
   if(!q.media)return;
+  if(q.media.mathModel&&window.SakhiScenePlayer&&SakhiScenePlayer.poster(root,q))return;
+  if(q.media.catalog)catalogMedia(root,q.media.catalog);
   if(q.media.visual){var visual=document.createElement('div');visual.className='assessment-visual visual-'+q.media.visual;visual.setAttribute('role','img');visual.setAttribute('aria-label',q.media.alt||'Question illustration');visual.innerHTML=assessmentVisual(q.media.visual);root.appendChild(visual);}
   if(q.media.passage){var p=document.createElement('div');p.className='passage';p.textContent=q.media.passage;root.appendChild(p);}
   if(q.media.count){var d=document.createElement('div');d.className='object-field';d.innerHTML=SakhiPresentation.objectSet(domain,q.media.count);root.appendChild(d);wireCountables(d);var tip=document.createElement('small');tip.className='count-tip';tip.textContent='Tap each treasure as you count.';root.appendChild(tip);}
@@ -78,6 +105,7 @@ function media(root,q,domain){
 }
 function renderBase(root,q,ctx){return render(root,q,ctx);}
 function render(root,q,ctx){
+  if(window.SakhiScenePlayer&&q.media&&q.media.mathModel){var scene=SakhiScenePlayer.render(root,q,ctx);if(scene)return scene;}
   var school=window.SakhiSchoolwork&&typeof window.SakhiSchoolwork.renderSchool==='function'?window.SakhiSchoolwork.renderSchool(root,q,ctx):null;if(school)return school;
   clear(root);media(root,q,ctx.domain);var state={response:null};
   if(q.template==='choice'){
@@ -113,5 +141,5 @@ function render(root,q,ctx){
   var p=document.createElement('div');p.className='practice-card';var icon=document.createElement('div');icon.className='practice-icon';icon.textContent='✏️';var text=document.createElement('p');text.textContent=q.prompt;p.appendChild(icon);p.appendChild(text);root.appendChild(p);
   return{immediate:false,isReady:function(){return true;},check:function(){return{correct:true,response:'done'};},reset:function(){}};
 }
-return{render:render,renderBase:renderBase,assessmentVisual:assessmentVisual};
+return{render:render,renderBase:renderBase,renderMedia:media,assessmentVisual:assessmentVisual};
 })();

@@ -18,10 +18,13 @@ async function load(){
 function requireData(){if(!data)throw new Error('Curriculum not loaded');}
 function skill(id){requireData();return byId[id]||null;}
 function domains(){requireData();return data.domains.slice();}
-function skillsIn(d){requireData();return data.skills.filter(function(s){return s.domain_id===d&&s.active;});}
+function grade(){var p=window.SakhiProgress;return p?Math.max(0,Math.min(6,Number(p.load().settings.grade)||0)):0;}
+function eligible(s){return!!s&&Number(s.grade_min||0)<=grade();}
+function allSkills(){requireData();return data.skills.slice();}
+function skillsIn(d,options){requireData();return data.skills.filter(function(s){return s.domain_id===d&&s.active&&(options&&options.all||eligible(s));});}
 function prerequisites(id){var s=skill(id);return s&&Array.isArray(s.prerequisites)?s.prerequisites.slice():[];}
-function isAvailable(id,masteryOf){return prerequisites(id).every(function(p){var m=masteryOf(p);return m==='MOSTLY_MASTERED'||m==='MASTERED';});}
+function isAvailable(id,masteryOf){return prerequisites(id).every(function(p){var m=masteryOf(p),pre=skill(p);return (pre&&Number(pre.grade_min||0)<grade())||m==='MOSTLY_MASTERED'||m==='MASTERED';});}
 function frontier(d,masteryOf){return skillsIn(d).filter(function(s){var m=masteryOf(s.skill_id);return m!=='MASTERED'&&m!=='MOSTLY_MASTERED'&&isAvailable(s.skill_id,masteryOf);});}
 function nextAfter(id,masteryOf){var s=skill(id);if(!s)return null;var arr=skillsIn(s.domain_id),i=arr.findIndex(function(x){return x.skill_id===id;});for(var j=i+1;j<arr.length;j++){if(isAvailable(arr[j].skill_id,masteryOf))return arr[j];}return null;}
-return{load:load,skill:skill,domains:domains,skillsIn:skillsIn,prerequisites:prerequisites,isAvailable:isAvailable,frontier:frontier,nextAfter:nextAfter,version:function(){return data&&data.curriculum_version;}};
+return{grade:grade,eligible:eligible,allSkills:allSkills,load:load,skill:skill,domains:domains,skillsIn:skillsIn,prerequisites:prerequisites,isAvailable:isAvailable,frontier:frontier,nextAfter:nextAfter,version:function(){return data&&data.curriculum_version;}};
 })();

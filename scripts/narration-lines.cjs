@@ -75,7 +75,9 @@ function collect({ quietSeeds = 60, maxSeeds = 400 } = {}) {
           for (const question of activity.questions) {
             for (const segment of Audio.questionSegments(question, false)) add(segment);
             for (const segment of Audio.questionSegments(question, true)) add(segment);
-            for (const hint of question.hints || []) add(hint);
+            // Ask the playback owner for what hints actually say. Catalog math
+            // currently shows dynamic hints on screen and plays a local cue.
+            for (let i=0;i<(question.hints||[]).length;i++) add(Audio.hintText(question,i));
           }
           quiet = lines.size === before ? quiet + 1 : 0;
         }

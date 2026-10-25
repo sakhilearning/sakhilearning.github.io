@@ -105,7 +105,14 @@ function svgObject(kind,i){
   if(kind==='spark')return '<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 4 L39 24 L60 32 L39 40 L32 60 L25 40 L4 32 L25 24Z" fill="#ffd36e" stroke="#fff" stroke-width="3"/></svg>';
   return '<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 5 L39 23 L59 24 L44 37 L49 57 L32 46 L15 57 L20 37 L5 24 L25 23Z" fill="'+(k%2?'#ffd36e':'#ff8cbd')+'" stroke="#fff" stroke-width="3"/></svg>';
 }
-function objectSet(domain,count){var w=WORLD[domain]||WORLD.reading;return Array.from({length:count},function(_,i){return '<button class="learn-object" type="button" aria-label="countable object '+(i+1)+'" aria-pressed="false" data-count-object><span class="object-art">'+svgObject(w.object,i)+'</span><small class="count-mark" aria-hidden="true"></small></button>';}).join('');}
+function mathObject(kind,index){
+ var stickers=['dinosaur','trex','horse','unicorn','princess','chair','toy','wand','ring','mouse','cat','fish','tropicalfish','ball','apple','candy','cake','carrot','clip','hat','die','block','crayon','seed','butterfly','star'];
+ if(stickers.indexOf(kind)>=0)return '<img class="math-sticker" src="./assets/theme-media/math-stickers/'+kind+'.svg" alt="" aria-hidden="true" draggable="false">';
+ if(kind==='button')return '<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="26" fill="#c991cf" stroke="#805786" stroke-width="3"/><circle cx="32" cy="32" r="19" fill="none" stroke="#e7b8e9" stroke-width="3"/><g fill="#805786"><circle cx="25" cy="25" r="4"/><circle cx="39" cy="25" r="4"/><circle cx="25" cy="39" r="4"/><circle cx="39" cy="39" r="4"/></g></svg>';
+ if(kind==='berry')return '<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M12 22q20-13 40 0 0 22-20 36Q12 44 12 22" fill="#e96a81" stroke="#ad4667" stroke-width="3"/><path d="m17 20 10-4 5-12 6 12 11 4-13 6-4-5-5 5Z" fill="#78b26c"/><g fill="#ffda9a"><ellipse cx="23" cy="32" rx="2" ry="3"/><ellipse cx="40" cy="32" rx="2" ry="3"/><ellipse cx="31" cy="43" rx="2" ry="3"/></g></svg>';
+ return svgObject(kind,index||0);
+}
+function objectSet(domain,count,art){var w=WORLD[domain]||WORLD.reading;return Array.from({length:count},function(_,i){return '<button class="learn-object" type="button" aria-label="countable object '+(i+1)+'" aria-pressed="false" data-count-object><span class="object-art">'+(art?mathObject(art,i):svgObject(w.object,i))+'</span><small class="count-mark" aria-hidden="true"></small></button>';}).join('');}
 function storyCue(domain,skill,qIndex){
   var t=SakhiTrails.get(domain),n=(qIndex||0)+1,cues={
     reading:['Look closely for the clue that helps this word or sentence make sense.','Now try the same reading idea on a fresh example.','Use the sounds and meaning together before you choose.','Read it once more and explain what clue helped you.','Stretch the idea into one last new reading example.'],
@@ -122,5 +129,5 @@ function storyCue(domain,skill,qIndex){
 }
 function celebration(domain){var t=SakhiTrails.get(domain);return{title:'Wonderful work!',body:t.companion+' helped you move farther through '+t.name+'.',icon:t.icon};}
 function worldTokens(domain){return WORLD[domain]||WORLD.reading;}
-return{esc:esc,scene:scene,mediaFor:mediaFor,gallery:gallery,objectSet:objectSet,storyCue:storyCue,celebration:celebration,worldTokens:worldTokens};
+return{mathObject:mathObject,esc:esc,scene:scene,mediaFor:mediaFor,gallery:gallery,objectSet:objectSet,storyCue:storyCue,celebration:celebration,worldTokens:worldTokens};
 })();

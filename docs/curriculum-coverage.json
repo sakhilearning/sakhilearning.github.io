@@ -1,0 +1,2074 @@
+{
+  "source_rows": 295,
+  "canonical_skills": 410,
+  "original_skills": 141,
+  "assignments": "Grade assignments inferred from the pasted sequence; parent can select any lesson.",
+  "missing_sources": "Original uploaded files and screenshots were unavailable; every recovered pasted lesson is retained.",
+  "rows": [
+    {
+      "source_title": "Grouping Colors",
+      "source_turn": "85fe05ef-f4aa-4039-b854-9ff1230cfe73",
+      "grade": 0,
+      "skill_id": "math.catalog.grouping_colors",
+      "generator": "classify"
+    },
+    {
+      "source_title": "Big and Small",
+      "source_turn": "85fe05ef-f4aa-4039-b854-9ff1230cfe73",
+      "grade": 0,
+      "skill_id": "math.catalog.big_and_small",
+      "generator": "measurement"
+    },
+    {
+      "source_title": "Size Comparison",
+      "source_turn": "85fe05ef-f4aa-4039-b854-9ff1230cfe73",
+      "grade": 0,
+      "skill_id": "math.catalog.size_comparison",
+      "generator": "measurement"
+    },
+    {
+      "source_title": "Length Comparison",
+      "source_turn": "85fe05ef-f4aa-4039-b854-9ff1230cfe73",
+      "grade": 0,
+      "skill_id": "math.catalog.length_comparison",
+      "generator": "measurement"
+    },
+    {
+      "source_title": "Height Comparison",
+      "source_turn": "85fe05ef-f4aa-4039-b854-9ff1230cfe73",
+      "grade": 0,
+      "skill_id": "math.catalog.height_comparison",
+      "generator": "measurement"
+    },
+    {
+      "source_title": "Weight Comparison",
+      "source_turn": "85fe05ef-f4aa-4039-b854-9ff1230cfe73",
+      "grade": 0,
+      "skill_id": "math.catalog.weight_comparison",
+      "generator": "measurement"
+    },
+    {
+      "source_title": "Counting to 5",
+      "source_turn": "85fe05ef-f4aa-4039-b854-9ff1230cfe73",
+      "grade": 0,
+      "skill_id": "math.cardinality_20",
+      "generator": "count"
+    },
+    {
+      "source_title": "Patterns",
+      "source_turn": "85fe05ef-f4aa-4039-b854-9ff1230cfe73",
+      "grade": 0,
+      "skill_id": "math.patterns",
+      "generator": "pattern"
+    },
+    {
+      "source_title": "Counting to 10 (Pre-K)",
+      "source_turn": "85fe05ef-f4aa-4039-b854-9ff1230cfe73",
+      "grade": 0,
+      "skill_id": "math.cardinality_20",
+      "generator": "count"
+    },
+    {
+      "source_title": "All Together",
+      "source_turn": "85fe05ef-f4aa-4039-b854-9ff1230cfe73",
+      "grade": 0,
+      "skill_id": "math.addition_5",
+      "generator": "add"
+    },
+    {
+      "source_title": "Number Words",
+      "source_turn": "85fe05ef-f4aa-4039-b854-9ff1230cfe73",
+      "grade": 0,
+      "skill_id": "math.catalog.number_words",
+      "generator": "numberWords"
+    },
+    {
+      "source_title": "Ordinal Numbers to 5th",
+      "source_turn": "85fe05ef-f4aa-4039-b854-9ff1230cfe73",
+      "grade": 0,
+      "skill_id": "math.catalog.ordinal_numbers_to_5th",
+      "generator": "ordinal"
+    },
+    {
+      "source_title": "Compare to 10",
+      "source_turn": "85fe05ef-f4aa-4039-b854-9ff1230cfe73",
+      "grade": 0,
+      "skill_id": "math.catalog.compare_to_10",
+      "generator": "compare"
+    },
+    {
+      "source_title": "2D Shapes",
+      "source_turn": "85fe05ef-f4aa-4039-b854-9ff1230cfe73",
+      "grade": 0,
+      "skill_id": "math.geometry",
+      "generator": "shape"
+    },
+    {
+      "source_title": "Add to 5",
+      "source_turn": "85fe05ef-f4aa-4039-b854-9ff1230cfe73",
+      "grade": 0,
+      "skill_id": "math.addition_5",
+      "generator": "add"
+    },
+    {
+      "source_title": "3D Solids",
+      "source_turn": "85fe05ef-f4aa-4039-b854-9ff1230cfe73",
+      "grade": 0,
+      "skill_id": "math.geometry",
+      "generator": "shape"
+    },
+    {
+      "source_title": "Subtract from 5",
+      "source_turn": "85fe05ef-f4aa-4039-b854-9ff1230cfe73",
+      "grade": 0,
+      "skill_id": "math.subtraction_5",
+      "generator": "sub"
+    },
+    {
+      "source_title": "Left vs. Right",
+      "source_turn": "bbd6c1ce-e57e-4987-ac9f-f62f925106e7",
+      "grade": 0,
+      "skill_id": "math.catalog.left_vs_right",
+      "generator": "position"
+    },
+    {
+      "source_title": "Counting to 10",
+      "source_turn": "bbd6c1ce-e57e-4987-ac9f-f62f925106e7",
+      "grade": 0,
+      "skill_id": "math.cardinality_20",
+      "generator": "count"
+    },
+    {
+      "source_title": "Counting to Twenty",
+      "source_turn": "bbd6c1ce-e57e-4987-ac9f-f62f925106e7",
+      "grade": 0,
+      "skill_id": "math.cardinality_20",
+      "generator": "count"
+    },
+    {
+      "source_title": "Same & Similar",
+      "source_turn": "bbd6c1ce-e57e-4987-ac9f-f62f925106e7",
+      "grade": 0,
+      "skill_id": "math.catalog.same_and_similar",
+      "generator": "classify"
+    },
+    {
+      "source_title": "Different",
+      "source_turn": "bbd6c1ce-e57e-4987-ac9f-f62f925106e7",
+      "grade": 0,
+      "skill_id": "math.catalog.different",
+      "generator": "classify"
+    },
+    {
+      "source_title": "Ordinal Numbers to 10th",
+      "source_turn": "bbd6c1ce-e57e-4987-ac9f-f62f925106e7",
+      "grade": 0,
+      "skill_id": "math.catalog.ordinal_numbers_to_10th",
+      "generator": "ordinal"
+    },
+    {
+      "source_title": "Associations",
+      "source_turn": "bbd6c1ce-e57e-4987-ac9f-f62f925106e7",
+      "grade": 0,
+      "skill_id": "math.catalog.associations",
+      "generator": "classify"
+    },
+    {
+      "source_title": "Compare with Measuring",
+      "source_turn": "bbd6c1ce-e57e-4987-ac9f-f62f925106e7",
+      "grade": 0,
+      "skill_id": "math.catalog.compare_with_measuring",
+      "generator": "measurement"
+    },
+    {
+      "source_title": "Compare Capacity",
+      "source_turn": "bbd6c1ce-e57e-4987-ac9f-f62f925106e7",
+      "grade": 0,
+      "skill_id": "math.catalog.compare_capacity",
+      "generator": "measurement"
+    },
+    {
+      "source_title": "Number Bonds",
+      "source_turn": "bbd6c1ce-e57e-4987-ac9f-f62f925106e7",
+      "grade": 0,
+      "skill_id": "math.number_bonds",
+      "generator": "bond"
+    },
+    {
+      "source_title": "Addition Below 10",
+      "source_turn": "bbd6c1ce-e57e-4987-ac9f-f62f925106e7",
+      "grade": 0,
+      "skill_id": "math.addition",
+      "generator": "add"
+    },
+    {
+      "source_title": "One More Than",
+      "source_turn": "bbd6c1ce-e57e-4987-ac9f-f62f925106e7",
+      "grade": 0,
+      "skill_id": "math.catalog.one_more_than",
+      "generator": "add"
+    },
+    {
+      "source_title": "One Less Than",
+      "source_turn": "bbd6c1ce-e57e-4987-ac9f-f62f925106e7",
+      "grade": 0,
+      "skill_id": "math.catalog.one_less_than",
+      "generator": "subtract"
+    },
+    {
+      "source_title": "Addition Sentences",
+      "source_turn": "bbd6c1ce-e57e-4987-ac9f-f62f925106e7",
+      "grade": 0,
+      "skill_id": "math.addition",
+      "generator": "add"
+    },
+    {
+      "source_title": "Subtraction Sentences",
+      "source_turn": "bbd6c1ce-e57e-4987-ac9f-f62f925106e7",
+      "grade": 0,
+      "skill_id": "math.subtraction",
+      "generator": "sub"
+    },
+    {
+      "source_title": "Counting by Tens",
+      "source_turn": "bbd6c1ce-e57e-4987-ac9f-f62f925106e7",
+      "grade": 0,
+      "skill_id": "math.catalog.counting_by_tens",
+      "generator": "patterns"
+    },
+    {
+      "source_title": "Place Value to 100",
+      "source_turn": "bbd6c1ce-e57e-4987-ac9f-f62f925106e7",
+      "grade": 0,
+      "skill_id": "math.place_value",
+      "generator": "teen"
+    },
+    {
+      "source_title": "Counting to 100",
+      "source_turn": "bbd6c1ce-e57e-4987-ac9f-f62f925106e7",
+      "grade": 0,
+      "skill_id": "math.count_sequence",
+      "generator": "count_sequence"
+    },
+    {
+      "source_title": "Subtraction Below 10",
+      "source_turn": "bbd6c1ce-e57e-4987-ac9f-f62f925106e7",
+      "grade": 0,
+      "skill_id": "math.subtraction",
+      "generator": "sub"
+    },
+    {
+      "source_title": "Addition to 100",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.addition_to_100",
+      "generator": "add"
+    },
+    {
+      "source_title": "Adding With Zero",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.adding_with_zero",
+      "generator": "add"
+    },
+    {
+      "source_title": "Basic Associative Property",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.basic_associative_property",
+      "generator": "properties"
+    },
+    {
+      "source_title": "Addition By Counting",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.addition_by_counting",
+      "generator": "add"
+    },
+    {
+      "source_title": "Adding and Doubling",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.adding_and_doubling",
+      "generator": "add"
+    },
+    {
+      "source_title": "Subtraction As Inverse of Addition",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.subtraction_as_inverse_of_addition",
+      "generator": "subtract"
+    },
+    {
+      "source_title": "Subtracting Zero or All",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.subtracting_zero_or_all",
+      "generator": "subtract"
+    },
+    {
+      "source_title": "Subtracting By Counting",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.subtracting_by_counting",
+      "generator": "subtract"
+    },
+    {
+      "source_title": "Vertical Addition and Subtraction",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.vertical_addition_and_subtraction",
+      "generator": "subtract"
+    },
+    {
+      "source_title": "Addition to 100",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.addition_to_100",
+      "generator": "add"
+    },
+    {
+      "source_title": "Counting By Two, Five, and Ten",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.counting_by_two_five_and_ten",
+      "generator": "patterns"
+    },
+    {
+      "source_title": "Greater Than & Less Than",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.greater_than_and_less_than",
+      "generator": "compare"
+    },
+    {
+      "source_title": "Ordering Numbers",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.ordering_numbers",
+      "generator": "compare"
+    },
+    {
+      "source_title": "Adding Below Twenty",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.adding_below_twenty",
+      "generator": "add"
+    },
+    {
+      "source_title": "Adding Three Numbers",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.adding_three_numbers",
+      "generator": "add"
+    },
+    {
+      "source_title": "Missing Addends",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.missing_addends",
+      "generator": "bonds"
+    },
+    {
+      "source_title": "Subtraction Below Twenty",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.subtraction_below_twenty",
+      "generator": "subtract"
+    },
+    {
+      "source_title": "Doubling Below Twenty",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.doubling_below_twenty",
+      "generator": "add"
+    },
+    {
+      "source_title": "Intro to Coins",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.intro_to_coins",
+      "generator": "money"
+    },
+    {
+      "source_title": "Counting by Nickels and Dimes",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.counting_by_nickels_and_dimes",
+      "generator": "money"
+    },
+    {
+      "source_title": "Quarters and Equal Amounts",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.quarters_and_equal_amounts",
+      "generator": "money"
+    },
+    {
+      "source_title": "Addition and Subtraction Below Fifty",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.addition_and_subtraction_below_fifty",
+      "generator": "subtract"
+    },
+    {
+      "source_title": "Addition Below Fifty With Carrying",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.addition_below_fifty_with_carrying",
+      "generator": "add"
+    },
+    {
+      "source_title": "Subtraction Below Fifty With Regrouping",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.subtraction_below_fifty_with_regrouping",
+      "generator": "subtract"
+    },
+    {
+      "source_title": "Addition Below One Hundred",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.addition_below_one_hundred",
+      "generator": "add"
+    },
+    {
+      "source_title": "Subtraction Below One Hundred",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.subtraction_below_one_hundred",
+      "generator": "subtract"
+    },
+    {
+      "source_title": "Telling time I - hours",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.telling_time_i_hours",
+      "generator": "time"
+    },
+    {
+      "source_title": "Telling time II - half hours",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.telling_time_ii_half_hours",
+      "generator": "time"
+    },
+    {
+      "source_title": "Elapsed time I - hours",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.elapsed_time_i_hours",
+      "generator": "time"
+    },
+    {
+      "source_title": "Days of the week",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.days_of_the_week",
+      "generator": "calendar"
+    },
+    {
+      "source_title": "Reading a calendar",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.reading_a_calendar",
+      "generator": "calendar"
+    },
+    {
+      "source_title": "Reading a calendar II",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.reading_a_calendar_ii",
+      "generator": "calendar"
+    },
+    {
+      "source_title": "Using a schedule",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.using_a_schedule",
+      "generator": "time"
+    },
+    {
+      "source_title": "Introduction to weight",
+      "source_turn": "856a71ab-1679-43c6-8e95-4ca24b040ac6",
+      "grade": 1,
+      "skill_id": "math.catalog.introduction_to_weight",
+      "generator": "measurement"
+    },
+    {
+      "source_title": "Place Value and Regrouping",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.place_value_and_regrouping",
+      "generator": "place"
+    },
+    {
+      "source_title": "Comparison and Ordering, to Two Hundred",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.comparison_and_ordering_to_two_hundred",
+      "generator": "compare"
+    },
+    {
+      "source_title": "Rounding to the Nearest Ten",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.rounding_to_the_nearest_ten",
+      "generator": "round"
+    },
+    {
+      "source_title": "Counting By Twos, Fives and Tens",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.counting_by_twos_fives_and_tens",
+      "generator": "patterns"
+    },
+    {
+      "source_title": "Patterns and Counting By Twos, Fives and Tens",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.patterns_and_counting_by_twos_fives_and_tens",
+      "generator": "patterns"
+    },
+    {
+      "source_title": "Even and Odd Numbers",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.even_and_odd_numbers",
+      "generator": "parity"
+    },
+    {
+      "source_title": "Counting Coins Including Quarters",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.counting_coins_including_quarters",
+      "generator": "money"
+    },
+    {
+      "source_title": "Comparing Coins",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.comparing_coins",
+      "generator": "money"
+    },
+    {
+      "source_title": "Half Dollars and Dollars",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.half_dollars_and_dollars",
+      "generator": "money"
+    },
+    {
+      "source_title": "Change",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.change",
+      "generator": "money"
+    },
+    {
+      "source_title": "Adding Tens",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.adding_tens",
+      "generator": "add"
+    },
+    {
+      "source_title": "Two-Digit Addition",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.two_digit_addition",
+      "generator": "add"
+    },
+    {
+      "source_title": "Two-Digit Addition With Carrying",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.two_digit_addition_with_carrying",
+      "generator": "add"
+    },
+    {
+      "source_title": "Rounding and Addition",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.rounding_and_addition",
+      "generator": "round"
+    },
+    {
+      "source_title": "Adding Three Two-Digit Numbers",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.adding_three_two_digit_numbers",
+      "generator": "add"
+    },
+    {
+      "source_title": "Subtracting Tens",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.subtracting_tens",
+      "generator": "subtract"
+    },
+    {
+      "source_title": "Two-Digit Subtraction",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.two_digit_subtraction",
+      "generator": "subtract"
+    },
+    {
+      "source_title": "Two-Digit Subtraction With Regrouping",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.two_digit_subtraction_with_regrouping",
+      "generator": "subtract"
+    },
+    {
+      "source_title": "Rounding and Subtraction",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.rounding_and_subtraction",
+      "generator": "round"
+    },
+    {
+      "source_title": "Introduction to Fractions",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.introduction_to_fractions",
+      "generator": "fractions"
+    },
+    {
+      "source_title": "Fractions and Word Problems",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.fractions_and_word_problems",
+      "generator": "fractions"
+    },
+    {
+      "source_title": "Basic Multiplication",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.basic_multiplication",
+      "generator": "multiply"
+    },
+    {
+      "source_title": "Counting to Multiply",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.counting_to_multiply",
+      "generator": "multiply"
+    },
+    {
+      "source_title": "Multiplying By Two, Five, or Ten",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.multiplying_by_two_five_or_ten",
+      "generator": "multiply"
+    },
+    {
+      "source_title": "Multiplication Word Problems",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.multiplication_word_problems",
+      "generator": "multiply"
+    },
+    {
+      "source_title": "Basic Division",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.basic_division",
+      "generator": "divide"
+    },
+    {
+      "source_title": "Counting Backwards to Divide",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.counting_backwards_to_divide",
+      "generator": "divide"
+    },
+    {
+      "source_title": "Remainders",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.remainders",
+      "generator": "divide"
+    },
+    {
+      "source_title": "Place Value Through Hundreds",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.place_value_through_hundreds",
+      "generator": "place"
+    },
+    {
+      "source_title": "Comparing Numbers up to One Thousand",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.comparing_numbers_up_to_one_thousand",
+      "generator": "compare"
+    },
+    {
+      "source_title": "Adding Hundreds",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.adding_hundreds",
+      "generator": "add"
+    },
+    {
+      "source_title": "Adding Hundreds With Carrying",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.adding_hundreds_with_carrying",
+      "generator": "add"
+    },
+    {
+      "source_title": "Subtracting Hundreds",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.subtracting_hundreds",
+      "generator": "subtract"
+    },
+    {
+      "source_title": "Subtracting Hundreds With Regrouping",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.subtracting_hundreds_with_regrouping",
+      "generator": "subtract"
+    },
+    {
+      "source_title": "Subtracting With Regrouping And Zeroes",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.subtracting_with_regrouping_and_zeroes",
+      "generator": "subtract"
+    },
+    {
+      "source_title": "Subtraction Review and Vertical Form",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.subtraction_review_and_vertical_form",
+      "generator": "subtract"
+    },
+    {
+      "source_title": "Identify Solid Figures",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.identify_solid_figures",
+      "generator": "shapes"
+    },
+    {
+      "source_title": "Identify Shapes",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.identify_shapes",
+      "generator": "shapes"
+    },
+    {
+      "source_title": "Counting Sides and Vertices of Plane Shapes",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.counting_sides_and_vertices_of_plane_shapes",
+      "generator": "shapes"
+    },
+    {
+      "source_title": "Counting Vertices, Edges, Faces",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.counting_vertices_edges_faces",
+      "generator": "vertices"
+    },
+    {
+      "source_title": "Comparing Vertices, Edges, Faces",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.comparing_vertices_edges_faces",
+      "generator": "vertices"
+    },
+    {
+      "source_title": "Plane Shapes and Solid Figures",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.plane_shapes_and_solid_figures",
+      "generator": "shapes"
+    },
+    {
+      "source_title": "Elapsed time II - hours and half hours",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.elapsed_time_ii_hours_and_half_hours",
+      "generator": "time"
+    },
+    {
+      "source_title": "Months",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.months",
+      "generator": "calendar"
+    },
+    {
+      "source_title": "Comparing units of time",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.comparing_units_of_time",
+      "generator": "conversion"
+    },
+    {
+      "source_title": "Using a schedule II",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.using_a_schedule_ii",
+      "generator": "time"
+    },
+    {
+      "source_title": "Elapsed time III - quarter hours",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.elapsed_time_iii_quarter_hours",
+      "generator": "time"
+    },
+    {
+      "source_title": "Customary weight - choose the best unit of measure",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.customary_weight_choose_the_best_unit_of_measure",
+      "generator": "measurement"
+    },
+    {
+      "source_title": "Customary weight - choose the best estimate",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.customary_weight_choose_the_best_estimate",
+      "generator": "measurement"
+    },
+    {
+      "source_title": "Metric weight - choose the best unit of measure",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.metric_weight_choose_the_best_unit_of_measure",
+      "generator": "measurement"
+    },
+    {
+      "source_title": "Metric weight - choose the best estimate",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.metric_weight_choose_the_best_estimate",
+      "generator": "measurement"
+    },
+    {
+      "source_title": "Customary distance - choose the best unit of measure",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.customary_distance_choose_the_best_unit_of_measure",
+      "generator": "measurement"
+    },
+    {
+      "source_title": "Customary distance - choose the best estimate",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.customary_distance_choose_the_best_estimate",
+      "generator": "measurement"
+    },
+    {
+      "source_title": "Metric distance - choose the best estimate",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.metric_distance_choose_the_best_estimate",
+      "generator": "measurement"
+    },
+    {
+      "source_title": "Metric distance - choose the best unit of measure",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.metric_distance_choose_the_best_unit_of_measure",
+      "generator": "measurement"
+    },
+    {
+      "source_title": "Customary capacity - choose the best estimate",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.customary_capacity_choose_the_best_estimate",
+      "generator": "measurement"
+    },
+    {
+      "source_title": "Metric capacity - choose the best estimate",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.metric_capacity_choose_the_best_estimate",
+      "generator": "measurement"
+    },
+    {
+      "source_title": "Temperature",
+      "source_turn": "b74583bf-81b3-441f-a85c-460ac5869ca9",
+      "grade": 2,
+      "skill_id": "math.catalog.temperature",
+      "generator": "measurement"
+    },
+    {
+      "source_title": "Place Value Below Ten Thousand",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.place_value_below_ten_thousand",
+      "generator": "place"
+    },
+    {
+      "source_title": "Comparing Numbers Below Ten Thousand",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.comparing_numbers_below_ten_thousand",
+      "generator": "compare"
+    },
+    {
+      "source_title": "Rounding",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.rounding",
+      "generator": "round"
+    },
+    {
+      "source_title": "Addition and Inequalities",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.addition_and_inequalities",
+      "generator": "add"
+    },
+    {
+      "source_title": "Properties of Addition",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.properties_of_addition",
+      "generator": "properties"
+    },
+    {
+      "source_title": "Addition Up To Ten Thousand",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.addition_up_to_ten_thousand",
+      "generator": "add"
+    },
+    {
+      "source_title": "Subtraction Up To Ten Thousand",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.subtraction_up_to_ten_thousand",
+      "generator": "subtract"
+    },
+    {
+      "source_title": "Multiplying By Two, Four, Five and Ten",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.multiplying_by_two_four_five_and_ten",
+      "generator": "multiply"
+    },
+    {
+      "source_title": "Multiplying By Zero and One",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.multiplying_by_zero_and_one",
+      "generator": "multiply"
+    },
+    {
+      "source_title": "Multiplying By Three and Nine",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.multiplying_by_three_and_nine",
+      "generator": "multiply"
+    },
+    {
+      "source_title": "Multiplying By Six, Seven and Eight",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.multiplying_by_six_seven_and_eight",
+      "generator": "multiply"
+    },
+    {
+      "source_title": "Squares",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.squares",
+      "generator": "multiply"
+    },
+    {
+      "source_title": "Multiplication Practice",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.multiplication_practice",
+      "generator": "multiply"
+    },
+    {
+      "source_title": "Properties of Multiplication",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.properties_of_multiplication",
+      "generator": "properties"
+    },
+    {
+      "source_title": "Using Multiplication To Divide",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.using_multiplication_to_divide",
+      "generator": "divide"
+    },
+    {
+      "source_title": "Division Definitions",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.division_definitions",
+      "generator": "divide"
+    },
+    {
+      "source_title": "Dividing By Two, Five and Ten",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.dividing_by_two_five_and_ten",
+      "generator": "divide"
+    },
+    {
+      "source_title": "Dividing By Three, Four and Nine",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.dividing_by_three_four_and_nine",
+      "generator": "divide"
+    },
+    {
+      "source_title": "Dividing By Six, Seven and Eight",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.dividing_by_six_seven_and_eight",
+      "generator": "divide"
+    },
+    {
+      "source_title": "Dividing With One and Zero",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.dividing_with_one_and_zero",
+      "generator": "divide"
+    },
+    {
+      "source_title": "Equivalent Fractions",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.equivalent_fractions",
+      "generator": "fractions"
+    },
+    {
+      "source_title": "Comparing Fractions",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.comparing_fractions",
+      "generator": "fractions"
+    },
+    {
+      "source_title": "Adding Fractions",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.adding_fractions",
+      "generator": "fractions"
+    },
+    {
+      "source_title": "Subtracting Fractions",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.subtracting_fractions",
+      "generator": "fractions"
+    },
+    {
+      "source_title": "Tenths and Hundredths",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.tenths_and_hundredths",
+      "generator": "fractionDecimal"
+    },
+    {
+      "source_title": "Tenths, Hundredths, and Money",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.tenths_hundredths_and_money",
+      "generator": "fractionDecimal"
+    },
+    {
+      "source_title": "Adding Money",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.adding_money",
+      "generator": "money"
+    },
+    {
+      "source_title": "Subtracting Money",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.subtracting_money",
+      "generator": "money"
+    },
+    {
+      "source_title": "Powers of Ten",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.powers_of_ten",
+      "generator": "powers"
+    },
+    {
+      "source_title": "Multiplication of 2-digit numbers by 1-digit numbers",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.multiplication_of_2_digit_numbers_by_1_digit_numbers",
+      "generator": "multiply"
+    },
+    {
+      "source_title": "Multiplication of 3-digit numbers by 1-digit numbers",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.multiplication_of_3_digit_numbers_by_1_digit_numbers",
+      "generator": "multiply"
+    },
+    {
+      "source_title": "Multiplication Practice",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.multiplication_practice",
+      "generator": "multiply"
+    },
+    {
+      "source_title": "Division",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.division",
+      "generator": "divide"
+    },
+    {
+      "source_title": "Dividing Two-Digit Numbers",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.dividing_two_digit_numbers",
+      "generator": "divide"
+    },
+    {
+      "source_title": "Dividing Three-Digit Numbers",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.dividing_three_digit_numbers",
+      "generator": "divide"
+    },
+    {
+      "source_title": "Unit Conversion",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.unit_conversion",
+      "generator": "conversion"
+    },
+    {
+      "source_title": "Metric Unit Conversion",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.metric_unit_conversion",
+      "generator": "conversion"
+    },
+    {
+      "source_title": "Polygons",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.polygons",
+      "generator": "shapes"
+    },
+    {
+      "source_title": "Perimeter of Squares",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.perimeter_of_squares",
+      "generator": "perimeter"
+    },
+    {
+      "source_title": "Perimeter of Shapes",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.perimeter_of_shapes",
+      "generator": "perimeter"
+    },
+    {
+      "source_title": "Area of Squares",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.area_of_squares",
+      "generator": "area"
+    },
+    {
+      "source_title": "Area of Shapes",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.area_of_shapes",
+      "generator": "area"
+    },
+    {
+      "source_title": "Triangles",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.triangles",
+      "generator": "shapes"
+    },
+    {
+      "source_title": "Quadrilaterals",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.quadrilaterals",
+      "generator": "shapes"
+    },
+    {
+      "source_title": "Solid Figures",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.solid_figures",
+      "generator": "shapes"
+    },
+    {
+      "source_title": "Complex Solid Figures",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.complex_solid_figures",
+      "generator": "shapes"
+    },
+    {
+      "source_title": "Converting minutes and hours II",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.converting_minutes_and_hours_ii",
+      "generator": "conversion"
+    },
+    {
+      "source_title": "Elapsed time IV - 5 minute intervals",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.elapsed_time_iv_5_minute_intervals",
+      "generator": "time"
+    },
+    {
+      "source_title": "Elapsed time V - minute intervals",
+      "source_turn": "63574f21-2cf7-48a5-be95-4ba2284373e6",
+      "grade": 3,
+      "skill_id": "math.catalog.elapsed_time_v_minute_intervals",
+      "generator": "time"
+    },
+    {
+      "source_title": "Place value through hundred thousands",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.place_value_through_hundred_thousands",
+      "generator": "place"
+    },
+    {
+      "source_title": "Place value through hundred millions",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.place_value_through_hundred_millions",
+      "generator": "place"
+    },
+    {
+      "source_title": "Comparing whole numbers",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.comparing_whole_numbers",
+      "generator": "compare"
+    },
+    {
+      "source_title": "Estimation for addition",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.estimation_for_addition",
+      "generator": "add"
+    },
+    {
+      "source_title": "Estimation for subtraction",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.estimation_for_subtraction",
+      "generator": "subtract"
+    },
+    {
+      "source_title": "Subtract whole numbers",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.subtract_whole_numbers",
+      "generator": "subtract"
+    },
+    {
+      "source_title": "Subtract across zeroes",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.subtract_across_zeroes",
+      "generator": "subtract"
+    },
+    {
+      "source_title": "Expressions using parentheses",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.expressions_using_parentheses",
+      "generator": "order"
+    },
+    {
+      "source_title": "Adding equals to both sides of an equation",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.adding_equals_to_both_sides_of_an_equation",
+      "generator": "algebra"
+    },
+    {
+      "source_title": "Multiplication properties and division rules",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.multiplication_properties_and_division_rules",
+      "generator": "properties"
+    },
+    {
+      "source_title": "Multiplying by 2-digit numbers",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.multiplying_by_2_digit_numbers",
+      "generator": "multiply"
+    },
+    {
+      "source_title": "Estimation using multiplication",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.estimation_using_multiplication",
+      "generator": "multiply"
+    },
+    {
+      "source_title": "Evaluating expressions with all four operations",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.evaluating_expressions_with_all_four_operations",
+      "generator": "order"
+    },
+    {
+      "source_title": "Using variables and evaluating expressions using variables",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.using_variables_and_evaluating_expressions_using_variables",
+      "generator": "algebra"
+    },
+    {
+      "source_title": "Factoring",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.factoring",
+      "generator": "factors"
+    },
+    {
+      "source_title": "Multiples",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.multiples",
+      "generator": "factors"
+    },
+    {
+      "source_title": "Division with remainders",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.division_with_remainders",
+      "generator": "divide"
+    },
+    {
+      "source_title": "Division with quotients with zeroes",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.division_with_quotients_with_zeroes",
+      "generator": "divide"
+    },
+    {
+      "source_title": "Fractional parts of a number",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.fractional_parts_of_a_number",
+      "generator": "fractions"
+    },
+    {
+      "source_title": "Equivalent Fractions",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.equivalent_fractions",
+      "generator": "fractions"
+    },
+    {
+      "source_title": "Simplest form",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.simplest_form",
+      "generator": "fractions"
+    },
+    {
+      "source_title": "Comparing Fractions",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.comparing_fractions",
+      "generator": "fractions"
+    },
+    {
+      "source_title": "Mixed Numbers",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.mixed_numbers",
+      "generator": "fractions"
+    },
+    {
+      "source_title": "Add and Subtract Fractions",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.add_and_subtract_fractions",
+      "generator": "fractions"
+    },
+    {
+      "source_title": "Fractions and decimals",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.fractions_and_decimals",
+      "generator": "fractionDecimal"
+    },
+    {
+      "source_title": "Mixed Numbers and Decimals",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.mixed_numbers_and_decimals",
+      "generator": "fractionDecimal"
+    },
+    {
+      "source_title": "Compare Decimals",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.compare_decimals",
+      "generator": "decimals"
+    },
+    {
+      "source_title": "Compare Decimals to Fractions",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.compare_decimals_to_fractions",
+      "generator": "fractions"
+    },
+    {
+      "source_title": "Round decimals",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.round_decimals",
+      "generator": "decimals"
+    },
+    {
+      "source_title": "Add and Subtract Decimals",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.add_and_subtract_decimals",
+      "generator": "decimals"
+    },
+    {
+      "source_title": "Probability",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.probability",
+      "generator": "probability"
+    },
+    {
+      "source_title": "Faces, Edges, Vertices",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.faces_edges_vertices",
+      "generator": "vertices"
+    },
+    {
+      "source_title": "Identify Solid Figures",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.identify_solid_figures",
+      "generator": "shapes"
+    },
+    {
+      "source_title": "Lines, Line Segments, Rays",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.lines_line_segments_rays",
+      "generator": "lines"
+    },
+    {
+      "source_title": "Parallel, Perpendicular, Intersecting Lines",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.parallel_perpendicular_intersecting_lines",
+      "generator": "lines"
+    },
+    {
+      "source_title": "Angles",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.angles",
+      "generator": "angles"
+    },
+    {
+      "source_title": "Circle Parts",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.circle_parts",
+      "generator": "circleParts"
+    },
+    {
+      "source_title": "Congruence",
+      "source_turn": "94ac36f3-fb2e-4218-af55-56661053ea98",
+      "grade": 4,
+      "skill_id": "math.catalog.congruence",
+      "generator": "lines"
+    },
+    {
+      "source_title": "Prime and composite numbers",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.prime_and_composite_numbers",
+      "generator": "prime"
+    },
+    {
+      "source_title": "Basic Exponents",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.basic_exponents",
+      "generator": "powers"
+    },
+    {
+      "source_title": "Prime Factorization and Exponents",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.prime_factorization_and_exponents",
+      "generator": "primeFactor"
+    },
+    {
+      "source_title": "Greatest Common Factors",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.greatest_common_factors",
+      "generator": "gcf"
+    },
+    {
+      "source_title": "Factors vs. Multiples",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.factors_vs_multiples",
+      "generator": "factors"
+    },
+    {
+      "source_title": "Mixed Numbers and Improper Fractions",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.mixed_numbers_and_improper_fractions",
+      "generator": "fractions"
+    },
+    {
+      "source_title": "Place Value Through Billions",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.place_value_through_billions",
+      "generator": "place"
+    },
+    {
+      "source_title": "Place Value Through Thousandths",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.place_value_through_thousandths",
+      "generator": "decimals"
+    },
+    {
+      "source_title": "Equivalent Fractions and Decimals",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.equivalent_fractions_and_decimals",
+      "generator": "fractionDecimal"
+    },
+    {
+      "source_title": "Comparing Decimals, Fractions, and Mixed Numbers",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.comparing_decimals_fractions_and_mixed_numbers",
+      "generator": "fractions"
+    },
+    {
+      "source_title": "Order of Operations",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.order_of_operations",
+      "generator": "order"
+    },
+    {
+      "source_title": "Expressions in Word Problems",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.expressions_in_word_problems",
+      "generator": "algebra"
+    },
+    {
+      "source_title": "Equations with variables",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.equations_with_variables",
+      "generator": "algebra"
+    },
+    {
+      "source_title": "Distributive Property",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.distributive_property",
+      "generator": "properties"
+    },
+    {
+      "source_title": "Commutative Properties of Addition and Multiplication",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.commutative_properties_of_addition_and_multiplication",
+      "generator": "properties"
+    },
+    {
+      "source_title": "Associative Properties of Addition and Multiplication",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.associative_properties_of_addition_and_multiplication",
+      "generator": "properties"
+    },
+    {
+      "source_title": "Identity Properties and Multiplication by Zero",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.identity_properties_and_multiplication_by_zero",
+      "generator": "properties"
+    },
+    {
+      "source_title": "Adding and Subtracting Fractions with unlike Denominators",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.adding_and_subtracting_fractions_with_unlike_denominators",
+      "generator": "fractions"
+    },
+    {
+      "source_title": "Adding Fractions with Sums Greater Than One",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.adding_fractions_with_sums_greater_than_one",
+      "generator": "fractions"
+    },
+    {
+      "source_title": "Adding Fractions and Mixed Numbers",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.adding_fractions_and_mixed_numbers",
+      "generator": "fractions"
+    },
+    {
+      "source_title": "Adding two mixed numbers",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.adding_two_mixed_numbers",
+      "generator": "fractions"
+    },
+    {
+      "source_title": "Subtracting Mixed Numbers from Integers",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.subtracting_mixed_numbers_from_integers",
+      "generator": "fractions"
+    },
+    {
+      "source_title": "Subtracting mixed numbers with like denominators",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.subtracting_mixed_numbers_with_like_denominators",
+      "generator": "fractions"
+    },
+    {
+      "source_title": "Subtracting Mixed Numbers with Unlike Denominators",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.subtracting_mixed_numbers_with_unlike_denominators",
+      "generator": "fractions"
+    },
+    {
+      "source_title": "Multiplying Fractions",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.multiplying_fractions",
+      "generator": "fractions"
+    },
+    {
+      "source_title": "Multiplying With Mixed Numbers",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.multiplying_with_mixed_numbers",
+      "generator": "fractions"
+    },
+    {
+      "source_title": "Multiplying Two Mixed Numbers",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.multiplying_two_mixed_numbers",
+      "generator": "fractions"
+    },
+    {
+      "source_title": "Dividing Integers By Fractions",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.dividing_integers_by_fractions",
+      "generator": "fractions"
+    },
+    {
+      "source_title": "Dividing fractions by integers",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.dividing_fractions_by_integers",
+      "generator": "fractions"
+    },
+    {
+      "source_title": "Dividing fractions by fractions",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.dividing_fractions_by_fractions",
+      "generator": "fractions"
+    },
+    {
+      "source_title": "Dividing fractions and mixed numbers",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.dividing_fractions_and_mixed_numbers",
+      "generator": "fractions"
+    },
+    {
+      "source_title": "Estimating decimal addition and subtraction",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.estimating_decimal_addition_and_subtraction",
+      "generator": "decimals"
+    },
+    {
+      "source_title": "Multiplying Decimals By Integers",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.multiplying_decimals_by_integers",
+      "generator": "decimals"
+    },
+    {
+      "source_title": "Multiplying Decimals By Decimals",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.multiplying_decimals_by_decimals",
+      "generator": "decimals"
+    },
+    {
+      "source_title": "Whole Numbers Dividing Into Decimals",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.whole_numbers_dividing_into_decimals",
+      "generator": "decimals"
+    },
+    {
+      "source_title": "Dividing Decimals by Whole Numbers",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.dividing_decimals_by_whole_numbers",
+      "generator": "decimals"
+    },
+    {
+      "source_title": "Dividing Whole Numbers By Decimals",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.dividing_whole_numbers_by_decimals",
+      "generator": "decimals"
+    },
+    {
+      "source_title": "Dividing Decimals By Decimals",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.dividing_decimals_by_decimals",
+      "generator": "decimals"
+    },
+    {
+      "source_title": "Dividing With Powers Of Ten",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.dividing_with_powers_of_ten",
+      "generator": "decimals"
+    },
+    {
+      "source_title": "Two Digit Divisors",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.two_digit_divisors",
+      "generator": "divide"
+    },
+    {
+      "source_title": "Mean, Median and Mode",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.mean_median_and_mode",
+      "generator": "statistics"
+    },
+    {
+      "source_title": "Estimating Angles",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.estimating_angles",
+      "generator": "angles"
+    },
+    {
+      "source_title": "Parallel, Perpendicular, Intersecting Lines",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.parallel_perpendicular_intersecting_lines",
+      "generator": "lines"
+    },
+    {
+      "source_title": "Triangle Angles",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.triangle_angles",
+      "generator": "angleSum"
+    },
+    {
+      "source_title": "Quadrilateral Angles",
+      "source_turn": "99777f3b-602b-44c0-8a4c-2453907bd785",
+      "grade": 5,
+      "skill_id": "math.catalog.quadrilateral_angles",
+      "generator": "angleSum"
+    },
+    {
+      "source_title": "Prime Factorization and Exponents Review",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.prime_factorization_and_exponents_review",
+      "generator": "primeFactor"
+    },
+    {
+      "source_title": "Greatest Common Factors of Three Numbers",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.greatest_common_factors_of_three_numbers",
+      "generator": "gcf"
+    },
+    {
+      "source_title": "Least Common Multiples",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.least_common_multiples",
+      "generator": "lcm"
+    },
+    {
+      "source_title": "Least Common Multilpes of Three Numbers",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.least_common_multiples_of_three_numbers",
+      "generator": "lcm"
+    },
+    {
+      "source_title": "Equivalent Fractions",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.equivalent_fractions",
+      "generator": "fractions"
+    },
+    {
+      "source_title": "Ordering Fractions",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.ordering_fractions",
+      "generator": "fractions"
+    },
+    {
+      "source_title": "Ordering Mixed Numbers",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.ordering_mixed_numbers",
+      "generator": "fractions"
+    },
+    {
+      "source_title": "Equivalent Fractions and Decimals",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.equivalent_fractions_and_decimals",
+      "generator": "fractionDecimal"
+    },
+    {
+      "source_title": "Integers",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.integers",
+      "generator": "integers"
+    },
+    {
+      "source_title": "Absolute Value and Adding Integers",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.absolute_value_and_adding_integers",
+      "generator": "integers"
+    },
+    {
+      "source_title": "Subtracting Integers",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.subtracting_integers",
+      "generator": "integers"
+    },
+    {
+      "source_title": "Multipling Integers",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.multiplying_integers",
+      "generator": "integers"
+    },
+    {
+      "source_title": "Dividing Integers",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.dividing_integers",
+      "generator": "integers"
+    },
+    {
+      "source_title": "Comparing Rational Numbers",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.comparing_rational_numbers",
+      "generator": "integers"
+    },
+    {
+      "source_title": "Properties Review",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.properties_review",
+      "generator": "properties"
+    },
+    {
+      "source_title": "Algebraic Expressions",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.algebraic_expressions",
+      "generator": "algebra"
+    },
+    {
+      "source_title": "Simplifying Algebraic Expressions",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.simplifying_algebraic_expressions",
+      "generator": "algebra"
+    },
+    {
+      "source_title": "Algebraic Formulas",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.algebraic_formulas",
+      "generator": "algebra"
+    },
+    {
+      "source_title": "Solving Addition and Subtraction Equations",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.solving_addition_and_subtraction_equations",
+      "generator": "algebra"
+    },
+    {
+      "source_title": "Solving Multiplication and Division Equations",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.solving_multiplication_and_division_equations",
+      "generator": "algebra"
+    },
+    {
+      "source_title": "Cross Products",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.cross_products",
+      "generator": "cross"
+    },
+    {
+      "source_title": "Percents",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.percents",
+      "generator": "percent"
+    },
+    {
+      "source_title": "Percents and Decimals",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.percents_and_decimals",
+      "generator": "percent"
+    },
+    {
+      "source_title": "Percents and Word Problems",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.percents_and_word_problems",
+      "generator": "percent"
+    },
+    {
+      "source_title": "Probability",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.probability",
+      "generator": "probability"
+    },
+    {
+      "source_title": "Unit Conversion With Metric Units",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.unit_conversion_with_metric_units",
+      "generator": "conversion"
+    },
+    {
+      "source_title": "Unit Conversion With English Units",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.unit_conversion_with_english_units",
+      "generator": "conversion"
+    },
+    {
+      "source_title": "Unit Conversion Between Metric and English",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.unit_conversion_between_metric_and_english",
+      "generator": "conversion"
+    },
+    {
+      "source_title": "Area of Squares and Rectangles",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.area_of_squares_and_rectangles",
+      "generator": "area"
+    },
+    {
+      "source_title": "Area of Triangles",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.area_of_triangles",
+      "generator": "area"
+    },
+    {
+      "source_title": "Area of Parallelograms and Trapezoids",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.area_of_parallelograms_and_trapezoids",
+      "generator": "area"
+    },
+    {
+      "source_title": "Volume of Cubes and Rectangular Prisms",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.volume_of_cubes_and_rectangular_prisms",
+      "generator": "volume"
+    },
+    {
+      "source_title": "Surface area of Cubes and Rectangular Prisms",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.surface_area_of_cubes_and_rectangular_prisms",
+      "generator": "surface"
+    },
+    {
+      "source_title": "Circumference of a Circle",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.circumference_of_a_circle",
+      "generator": "circle"
+    },
+    {
+      "source_title": "Area of a Circle",
+      "source_turn": "5b90a5c9-f2ce-4dd0-b949-12760db00e0b",
+      "grade": 6,
+      "skill_id": "math.catalog.area_of_a_circle",
+      "generator": "circle"
+    }
+  ]
+}

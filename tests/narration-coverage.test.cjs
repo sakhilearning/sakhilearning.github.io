@@ -46,4 +46,4 @@ if (!String(manifest.model || '').includes('int8') || constant('DTYPE') !== 'q8'
 const missingFiles = required.filter(text => !manifest.files[text] || !fs.existsSync(path.join(root, 'assets/audio/narration', manifest.files[text])));
 if (missingFiles.length) throw new Error(`${missingFiles.length} required narration clips are not bundled — run npm run narration:generate`);
 
-console.log(`Narration coverage passed: ${required.length} local Kokoro lines cover every spoken segment across 141 skills × 5 bands, taught and untaught.`);
+console.log(`Narration coverage passed: ${required.length} local Kokoro lines cover every spoken segment across ${reachable.length} reachable text segments; new catalog math uses a cue rather than full dynamic narration.`);

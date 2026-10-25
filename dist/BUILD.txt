@@ -1,2 +1,2 @@
-Sakhi Learning Trails 4.10.0
+Sakhi Learning Trails 4.12.0
 Self-contained runtime: index.html
