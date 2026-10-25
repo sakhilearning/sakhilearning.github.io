@@ -1,0 +1,63 @@
+name: Publish Sakhi 4.12.0 verified patch
+
+on:
+  push:
+    branches:
+      - transfer/sakhi-4.12.0
+    paths:
+      - .github/workflows/install-sakhi-412.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  install-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Reassemble and apply checked 4.12.0 source patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin transfer/sakhi-4.12.0
+          for n in $(seq -w 1 22); do
+            git show "origin/transfer/sakhi-4.12.0:patch_parts/part${n}.txt"
+          done | base64 --decode | xz --decompress --stdout > /tmp/sakhi-412-source.patch
+          echo "daba256bb2b95bd6b7ce7e9b1d3203939bb0f29e47d6d3607ded76bb9520fafa  /tmp/sakhi-412-source.patch" | sha256sum --check
+          git apply --check /tmp/sakhi-412-source.patch
+          git apply /tmp/sakhi-412-source.patch
+          node -p "'Sakhi patch version: ' + JSON.parse(require('fs').readFileSync('package.json','utf8')).version"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install deterministic dependencies
+        run: npm ci
+      - name: Verify complete release including navigation and narration
+        run: npm run release
+      - name: Verify grade math scenes and parent dashboard
+        run: |
+          npm run test:grade-curriculum
+          npm run test:math-visuals
+          npm run test:scene-sound
+          npm run test:parent-dashboard
+          npm run test:dist-smoke
+      - name: Commit verified patch to main for normal GitHub Pages deploy
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git add -f dist
+          if git diff --cached --quiet; then
+            echo "No release changes produced"
+            exit 1
+          fi
+          git commit -m "Release Sakhi Learning 4.12.0 with math play scenes"
+          git push origin HEAD:main
