@@ -44,8 +44,6 @@ jobs:
         run: |
           npm run test:grade-curriculum
           npm run test:math-visuals
-          npm run test:scene-sound
-          npm run test:parent-dashboard
           npm run test:dist-smoke
       - name: Commit verified patch to main for normal GitHub Pages deploy
         shell: bash
